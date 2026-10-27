@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FARAFERO STORE - نظام إدارة المحل والمخزون</title>
+    <title>FARAFERO STORE - لوحة عرض المنتجات والمخزون</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
@@ -61,16 +61,19 @@
         </div>
     </header>
 
-    <!-- NAVIGATION BAR -->
+    <!-- NAVIGATION BAR (شريط التنقل السفلي المحدث) -->
     <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-2 py-3 flex justify-around shadow-2xl z-50 max-w-xl mx-auto md:max-w-7xl">
         <button onclick="switchTab('pos')" id="nav-pos" class="nav-btn text-xs font-bold text-rose-600 flex flex-col items-center transition-all">
             <i class="fa-solid fa-cash-register text-lg mb-1"></i> كاشير المحل
+        </button>
+        <button onclick="switchTab('catalog')" id="nav-catalog" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center transition-all">
+            <i class="fa-solid fa-eye text-lg mb-1"></i> عرض المنتجات (داشبورد)
         </button>
         <button onclick="switchTab('inventory')" id="nav-inventory" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center transition-all">
             <i class="fa-solid fa-boxes-stacked text-lg mb-1"></i> حركة المخزون
         </button>
         <button onclick="requestAdminAccess()" id="nav-admin" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center transition-all">
-            <i class="fa-solid fa-chart-line text-lg mb-1"></i> لوحة التحكم والأرباح
+            <i class="fa-solid fa-chart-line text-lg mb-1"></i> الإدارة والأرباح
         </button>
     </div>
 
@@ -131,7 +134,25 @@
             </div>
         </div>
 
-        <!-- TAB 2: INVENTORY (حركة المخزون) -->
+        <!-- TAB 2: CATALOG DASHBOARD (لوحة عرض المنتجات والصور والأسعار للاطلاع فقط بدون أي تعديل) -->
+        <div id="tab-catalog" class="app-tab hidden space-y-6">
+            <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-4">
+                <div class="flex items-center justify-between border-b pb-3">
+                    <div>
+                        <h3 class="text-xl font-black text-slate-900">داشبورد عرض المنتجات والمواصفات</h3>
+                        <p class="text-xs text-slate-500 mt-1">عرض شامل لكل المنتجات بالصور، الأسعار، والأعداد (للاطلاع فقط - بدون تعديل)</p>
+                    </div>
+                    <span class="bg-blush-50 text-blush-600 text-xs font-bold px-3 py-1.5 rounded-xl border border-blush-200">عرض فقط (Read-Only)</span>
+                </div>
+                
+                <input type="text" id="catalog-search" oninput="renderCatalogDashboard()" placeholder="ابحث في المنتجات المعروضة..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-rose-500">
+
+                <!-- شبكة عرض المنتجات بالصور والأسعار والأعداد -->
+                <div id="catalog-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-h-[600px] overflow-y-auto custom-scrollbar p-1"></div>
+            </div>
+        </div>
+
+        <!-- TAB 3: INVENTORY (حركة المخزون) -->
         <div id="tab-inventory" class="app-tab hidden space-y-6">
             <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-4">
                 <div class="flex justify-between items-center border-b pb-3">
@@ -160,7 +181,7 @@
             </div>
         </div>
 
-        <!-- TAB 3: ADMIN / DASHBOARD (لوحة التحكم والأرباح) -->
+        <!-- TAB 4: ADMIN / DASHBOARD (لوحة التحكم والأرباح) -->
         <div id="tab-admin" class="app-tab hidden space-y-6">
             <div class="flex justify-between items-center bg-rose-50 border border-rose-200 p-4 rounded-2xl">
                 <div class="flex items-center space-x-2 space-x-reverse">
@@ -240,7 +261,7 @@
         </div>
     </div>
 
-    <!-- ADD / EDIT PRODUCT MODAL (نافذة إضافة وتعديل المنتج والمواصفات بالكامل) -->
+    <!-- ADD / EDIT PRODUCT MODAL (محمي بكلمة المرور للإدارة فقط) -->
     <div id="product-modal" class="fixed inset-0 z-50 hidden bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-4">
             <div class="flex justify-between border-b pb-3">
@@ -328,8 +349,8 @@
 
     <!-- SCRIPT ENGINE -->
     <script>
-        const STORAGE_KEY_PRODS = 'farafero_shop_products_system_v5';
-        const STORAGE_KEY_ORDERS = 'farafero_shop_orders_system_v5';
+        const STORAGE_KEY_PRODS = 'farafero_shop_products_system_v6';
+        const STORAGE_KEY_ORDERS = 'farafero_shop_orders_system_v6';
         const ADMIN_PIN = "2580";
 
         const defaultProducts = [
@@ -367,6 +388,7 @@
         function renderAll() {
             renderPOSProducts();
             renderPOSCart();
+            renderCatalogDashboard();
             renderInventoryView();
             renderDashboard();
         }
@@ -385,6 +407,40 @@
                         <div class="flex justify-between items-center mt-1">
                             <span class="font-black text-rose-600">${p.price} EGP</span>
                             <span class="text-[9px] ${p.stock > 0 ? 'bg-slate-200 text-slate-700' : 'bg-rose-100 text-rose-600'} px-1.5 py-0.5 rounded-md font-bold">المخزون: ${p.stock}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // دالة عرض المنتجات في الداشبورد الجديدة (للاطلاع فقط - بدون أي أزرار تعديل أو حذف أو خصم)
+        function renderCatalogDashboard() {
+            const grid = document.getElementById('catalog-grid');
+            const searchInput = document.getElementById('catalog-search');
+            if(!grid) return;
+            const search = searchInput ? searchInput.value.toLowerCase() : '';
+            grid.innerHTML = '';
+
+            state.products.filter(p => p.name.toLowerCase().includes(search)).forEach(p => {
+                grid.innerHTML += `
+                    <div class="bg-white rounded-3xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between space-y-3">
+                        <div class="h-40 rounded-2xl overflow-hidden bg-slate-100 relative">
+                            <img src="${p.image}" class="w-full h-full object-cover">
+                            <span class="absolute top-2 right-2 bg-white/90 text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm">${p.category}</span>
+                        </div>
+                        <div class="space-y-1">
+                            <h4 class="font-black text-slate-900 text-sm line-clamp-1">${p.name}</h4>
+                            <div class="flex justify-between items-center text-xs pt-1">
+                                <span class="text-slate-500 font-bold">السعر:</span>
+                                <span class="font-black text-rose-600 text-sm">${p.price} EGP</span>
+                            </div>
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="text-slate-500 font-bold">الكمية المتاحة:</span>
+                                <span class="font-black ${p.stock > 3 ? 'text-emerald-600' : 'text-rose-600'}">${p.stock} قطعة</span>
+                            </div>
+                        </div>
+                        <div class="bg-slate-50 text-slate-400 text-center py-2 rounded-xl text-[10px] font-bold border border-slate-100">
+                            🔒 عرض فقط (غير قابل للتعديل)
                         </div>
                     </div>
                 `;
@@ -599,7 +655,6 @@
             }
         }
 
-        // فتح نافذة الإضافة الجديدة
         function openAddProductModal() {
             document.getElementById('modal-title').innerText = 'إضافة منتج جديد للمخزن';
             document.getElementById('edit-prod-id').value = '';
@@ -610,7 +665,6 @@
             document.getElementById('product-modal').classList.remove('hidden');
         }
 
-        // فتح نافذة التعديل لمنتج موجود
         function openEditProductModal(id) {
             const p = state.products.find(x => x.id === id);
             if (!p) return;
@@ -628,7 +682,6 @@
             document.getElementById('product-modal').classList.add('hidden');
         }
 
-        // حفظ أو تعديل المنتج (الاسم، السعر، المخزون، المواصفات بالكامل)
         function saveProductData() {
             const editId = document.getElementById('edit-prod-id').value;
             const name = document.getElementById('prod-name').value.trim();
@@ -640,7 +693,6 @@
             if (!name || isNaN(price)) return alert('برجاء إدخال اسم المنتج والسعر بشكل صحيح!');
 
             if (editId) {
-                // تعديل منتج موجود
                 const p = state.products.find(x => x.id === editId);
                 if (p) {
                     p.name = name;
@@ -651,7 +703,6 @@
                 }
                 alert('تم تعديل بيانات المنتج بنجاح!');
             } else {
-                // إضافة منتج جديد
                 const newProd = {
                     id: 'p' + Date.now(),
                     name,
@@ -678,7 +729,7 @@
         }
 
         function switchTab(tab) {
-            const tabs = ['pos', 'inventory', 'admin'];
+            const tabs = ['pos', 'catalog', 'inventory', 'admin'];
             tabs.forEach(t => {
                 const el = document.getElementById('tab-' + t);
                 if (el) el.classList.add('hidden');
@@ -691,7 +742,7 @@
             });
             
             const targetTab = document.getElementById('tab-' + tab);
-            if (targetTab) targetTab.classList.remove('hidden');
+            if (targetTab) targetTab.classList.net ? targetTab.classList.remove('hidden') : targetTab.classList.remove('hidden');
             
             const activeBtn = document.getElementById('nav-' + tab);
             if (activeBtn) {
