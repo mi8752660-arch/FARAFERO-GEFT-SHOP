@@ -61,7 +61,7 @@
         </div>
     </header>
 
-    <!-- NAVIGATION BAR (شريط التنقل السفلي) -->
+    <!-- NAVIGATION BAR -->
     <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-2 py-3 flex justify-around shadow-2xl z-50 max-w-xl mx-auto md:max-w-7xl">
         <button onclick="switchTab('pos')" id="nav-pos" class="nav-btn text-xs font-bold text-rose-600 flex flex-col items-center transition-all">
             <i class="fa-solid fa-cash-register text-lg mb-1"></i> كاشير المحل
@@ -191,7 +191,7 @@
                 <div class="lg:col-span-8 bg-white rounded-3xl p-6 border shadow-sm space-y-4">
                     <div class="flex justify-between items-center border-b pb-3">
                         <h3 class="text-lg font-black text-slate-900">إدارة وتعديل المخزون والأسعار</h3>
-                        <button onclick="toggleNewProductModal()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md">
+                        <button onclick="openAddProductModal()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md">
                             <i class="fa-solid fa-plus ml-1"></i> إضافة منتج جديد للمحل
                         </button>
                     </div>
@@ -202,7 +202,7 @@
                                     <th class="p-3">المنتج</th>
                                     <th class="p-3">السعر</th>
                                     <th class="p-3">المخزون الحالي</th>
-                                    <th class="p-3 text-left">إجراء وتوسيع المخزون (+)</th>
+                                    <th class="p-3 text-left">التحكم الكامل (تعديل / حذف / +)</th>
                                 </tr>
                             </thead>
                             <tbody id="admin-inventory-table" class="divide-y font-medium"></tbody>
@@ -240,28 +240,44 @@
         </div>
     </div>
 
-    <!-- ADD PRODUCT MODAL -->
-    <div id="add-product-modal" class="fixed inset-0 z-50 hidden bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+    <!-- ADD / EDIT PRODUCT MODAL (نافذة إضافة وتعديل المنتج والمواصفات بالكامل) -->
+    <div id="product-modal" class="fixed inset-0 z-50 hidden bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-4">
             <div class="flex justify-between border-b pb-3">
-                <h3 class="font-black text-lg">إضافة منتج جديد للمخزن</h3>
-                <button onclick="toggleNewProductModal()">✕</button>
+                <h3 id="modal-title" class="font-black text-lg">إضافة منتج جديد للمخزن</h3>
+                <button onclick="closeProductModal()">✕</button>
             </div>
+            <input type="hidden" id="edit-prod-id">
             <div class="space-y-3 text-xs font-bold">
-                <input type="text" id="new-prod-name" placeholder="اسم المنتج" class="w-full border p-2.5 rounded-xl">
-                <input type="number" id="new-prod-price" placeholder="السعر (EGP)" class="w-full border p-2.5 rounded-xl">
-                <input type="number" id="new-prod-stock" placeholder="الكمية الأولية بالمخزن" class="w-full border p-2.5 rounded-xl">
-                <select id="new-prod-category" class="w-full border p-2.5 rounded-xl">
-                    <option value="ملابس وهدايا">ملابس وهدايا</option>
-                    <option value="إكسسوارات">إكسسوارات</option>
-                    <option value="صناديق وتغليف">صناديق وتغليف</option>
-                    <option value="عطور">عطور</option>
-                </select>
-                <input type="text" id="new-prod-image" placeholder="رابط صورة المنتج https://..." class="w-full border p-2.5 rounded-xl">
+                <div>
+                    <label class="text-slate-600 block mb-1">اسم المنتج / الموديل:</label>
+                    <input type="text" id="prod-name" placeholder="اسم المنتج..." class="w-full border p-2.5 rounded-xl">
+                </div>
+                <div>
+                    <label class="text-slate-600 block mb-1">السعر (EGP):</label>
+                    <input type="number" id="prod-price" placeholder="سعر البيع..." class="w-full border p-2.5 rounded-xl">
+                </div>
+                <div>
+                    <label class="text-slate-600 block mb-1">الكمية بالمخزن:</label>
+                    <input type="number" id="prod-stock" placeholder="الكمية..." class="w-full border p-2.5 rounded-xl">
+                </div>
+                <div>
+                    <label class="text-slate-600 block mb-1">القسم:</label>
+                    <select id="prod-category" class="w-full border p-2.5 rounded-xl">
+                        <option value="ملابس وهدايا">ملابس وهدايا</option>
+                        <option value="إكسسوارات">إكسسوارات</option>
+                        <option value="صناديق وتغليف">صناديق وتغليف</option>
+                        <option value="عطور">عطور</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-slate-600 block mb-1">رابط الصورة (URL):</label>
+                    <input type="text" id="prod-image" placeholder="https://..." class="w-full border p-2.5 rounded-xl">
+                </div>
             </div>
             <div class="flex space-x-2 space-x-reverse pt-2">
-                <button onclick="toggleNewProductModal()" class="w-1/2 bg-slate-100 py-3 rounded-xl font-bold">إلغاء</button>
-                <button onclick="addNewProduct()" class="w-1/2 bg-rose-600 text-white py-3 rounded-xl font-bold shadow-md">حفظ بالمخزن</button>
+                <button onclick="closeProductModal()" class="w-1/2 bg-slate-100 py-3 rounded-xl font-bold">إلغاء</button>
+                <button onclick="saveProductData()" class="w-1/2 bg-rose-600 text-white py-3 rounded-xl font-bold shadow-md">حفظ البيانات</button>
             </div>
         </div>
     </div>
@@ -312,8 +328,8 @@
 
     <!-- SCRIPT ENGINE -->
     <script>
-        const STORAGE_KEY_PRODS = 'farafero_shop_products_system_v4';
-        const STORAGE_KEY_ORDERS = 'farafero_shop_orders_system_v4';
+        const STORAGE_KEY_PRODS = 'farafero_shop_products_system_v5';
+        const STORAGE_KEY_ORDERS = 'farafero_shop_orders_system_v5';
         const ADMIN_PIN = "2580";
 
         const defaultProducts = [
@@ -342,7 +358,7 @@
             }
 
             renderAll();
-            switchTab('pos'); // البدء دائماً في صفحة الكاشير
+            switchTab('pos');
         }
 
         function saveProducts() { localStorage.setItem(STORAGE_KEY_PRODS, JSON.stringify(state.products)); }
@@ -458,11 +474,10 @@
                             <td class="p-2.5 font-bold text-slate-800">${p.name}</td>
                             <td class="p-2.5 font-black text-rose-600">${p.price} EGP</td>
                             <td class="p-2.5 font-bold">${p.stock} قطعة</td>
-                            <td class="p-2.5 text-left flex items-center justify-end space-x-2 space-x-reverse">
-                                <button onclick="increaseStock('${p.id}')" title="زيادة المخزون (+1)" class="bg-emerald-50 hover:bg-emerald-600 text-emerald-600 hover:text-white border border-emerald-200 px-2.5 py-1 rounded-xl font-black text-xs transition-all shadow-sm">
-                                    +
-                                </button>
-                                <button onclick="deleteProd('${p.id}')" class="text-rose-500 font-bold hover:underline ml-2">حذف</button>
+                            <td class="p-2.5 text-left flex items-center justify-end space-x-1.5 space-x-reverse">
+                                <button onclick="increaseStock('${p.id}')" title="زيادة المخزون (+1)" class="bg-emerald-50 hover:bg-emerald-600 text-emerald-600 hover:text-white border px-2 py-1 rounded-lg font-bold text-[11px] shadow-sm">+</button>
+                                <button onclick="openEditProductModal('${p.id}')" title="تعديل" class="bg-sky-50 hover:bg-sky-600 text-sky-600 hover:text-white border px-2.5 py-1 rounded-lg font-bold text-[11px] shadow-sm">تعديل</button>
+                                <button onclick="deleteProd('${p.id}')" class="text-rose-500 font-bold hover:underline text-xs mr-1">حذف</button>
                             </td>
                         </tr>`;
                 });
@@ -584,42 +599,84 @@
             }
         }
 
-        function toggleNewProductModal() {
-            const modal = document.getElementById('add-product-modal');
-            if(modal) modal.classList.toggle('hidden'); 
+        // فتح نافذة الإضافة الجديدة
+        function openAddProductModal() {
+            document.getElementById('modal-title').innerText = 'إضافة منتج جديد للمخزن';
+            document.getElementById('edit-prod-id').value = '';
+            document.getElementById('prod-name').value = '';
+            document.getElementById('prod-price').value = '';
+            document.getElementById('prod-stock').value = '';
+            document.getElementById('prod-image').value = '';
+            document.getElementById('product-modal').classList.remove('hidden');
         }
 
-        function addNewProduct() {
-            const nameEl = document.getElementById('new-prod-name');
-            const priceEl = document.getElementById('new-prod-price');
-            const stockEl = document.getElementById('new-prod-stock');
-            const catEl = document.getElementById('new-prod-category');
-            const imgEl = document.getElementById('new-prod-image');
+        // فتح نافذة التعديل لمنتج موجود
+        function openEditProductModal(id) {
+            const p = state.products.find(x => x.id === id);
+            if (!p) return;
+            document.getElementById('modal-title').innerText = 'تعديل بيانات ومواصفات المنتج';
+            document.getElementById('edit-prod-id').value = p.id;
+            document.getElementById('prod-name').value = p.name;
+            document.getElementById('prod-price').value = p.price;
+            document.getElementById('prod-stock').value = p.stock;
+            document.getElementById('prod-category').value = p.category;
+            document.getElementById('prod-image').value = p.image;
+            document.getElementById('product-modal').classList.remove('hidden');
+        }
 
-            const name = nameEl ? nameEl.value : '';
-            const price = priceEl ? parseFloat(priceEl.value) : 0;
-            const stock = stockEl ? parseInt(stockEl.value) : 1;
-            const category = catEl ? catEl.value : 'ملابس وهدايا';
-            const image = imgEl && imgEl.value ? imgEl.value : "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&q=80";
-            
-            if (!name || !price) return alert('برجاء إدخال اسم المنتج والسعر الأساسي!');
-            
-            state.products.push({ id: 'p' + Date.now(), name, price, stock: stock || 1, category, image });
+        function closeProductModal() {
+            document.getElementById('product-modal').classList.add('hidden');
+        }
+
+        // حفظ أو تعديل المنتج (الاسم، السعر، المخزون، المواصفات بالكامل)
+        function saveProductData() {
+            const editId = document.getElementById('edit-prod-id').value;
+            const name = document.getElementById('prod-name').value.trim();
+            const price = parseFloat(document.getElementById('prod-price').value);
+            const stock = parseInt(document.getElementById('prod-stock').value);
+            const category = document.getElementById('prod-category').value;
+            const image = document.getElementById('prod-image').value.trim() || "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&q=80";
+
+            if (!name || isNaN(price)) return alert('برجاء إدخال اسم المنتج والسعر بشكل صحيح!');
+
+            if (editId) {
+                // تعديل منتج موجود
+                const p = state.products.find(x => x.id === editId);
+                if (p) {
+                    p.name = name;
+                    p.price = price;
+                    p.stock = isNaN(stock) ? p.stock : stock;
+                    p.category = category;
+                    p.image = image;
+                }
+                alert('تم تعديل بيانات المنتج بنجاح!');
+            } else {
+                // إضافة منتج جديد
+                const newProd = {
+                    id: 'p' + Date.now(),
+                    name,
+                    price,
+                    stock: isNaN(stock) ? 1 : stock,
+                    category,
+                    image
+                };
+                state.products.push(newProd);
+                alert('تم إضافة المنتج الجديد للمخزن بنجاح!');
+            }
+
             saveProducts();
-            toggleNewProductModal();
+            closeProductModal();
             renderAll();
-            alert('تم إضافة المنتج بنجاح للمخزن!');
         }
 
         function deleteProd(id) {
-            if (confirm('هل أنت متأكد من حذف هذا المنتج؟')) {
+            if (confirm('هل أنت متأكد من حذف هذا المنتج نهائياً؟')) {
                 state.products = state.products.filter(x => x.id !== id);
                 saveProducts();
                 renderAll();
             }
         }
 
-        // نظام التبديل بين الأقسام بفعالية وثبات كامل
         function switchTab(tab) {
             const tabs = ['pos', 'inventory', 'admin'];
             tabs.forEach(t => {
