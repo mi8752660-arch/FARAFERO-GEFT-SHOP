@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FARAFERO GIFT SHOP | Luxury Gifts & Custom Packaging</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        farafero: {
+                            blush: '#FFF5F5',
+                            rose: '#E89CAE',
+                            'rose-dark': '#D46A84',
+                            gold: '#D4AF37',
+                            navy: '#0F172A',
+                            'navy-light': '#1E293B',
+                            slate: '#64748B'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #FFF9FA 0%, #F5EFEB 100%);
+            color: #0F172A;
+            min-height: 100vh;
+        }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(232, 156, 174, 0.25);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(232, 156, 174, 0.15);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FFF5F5;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #E89CAE;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #D46A84;
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white !important; color: black !important; }
+            .invoice-shadow { box-shadow: none !important; border: none !important; }
+        }
+        .print-only { display: none; }
+    </style>
+</head>
+<body class="flex flex-col justify-between selection:bg-farafero-rose selection:text-white">
+
+    <!-- Header / Navigation -->
+    <header class="sticky top-0 z-40 glass-panel border-b shadow-sm no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- Brand Logo -->
+                <div class="flex items-center gap-3 cursor-pointer group" onclick="switchView('store')">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-farafero-navy via-farafero-navy-light to-farafero-rose-dark flex items-center justify-center text-farafero-gold shadow-md group-hover:scale-105 transition-transform duration-300">
+                        <i class="fa-solid fa-gift text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-extrabold tracking-tight text-farafero-navy font-serif">FARAFERO <span class="text-farafero-rose-dark font-sans text-xs uppercase tracking-widest font-bold bg-farafero-blush px-2 py-0.5 rounded-full border border-farafero-rose/30">GIFT SHOP</span></h1>
+                        <p class="text-[11px] text-farafero-slate tracking-wide">Curated Gifts & Personalized Elegance</p>
+                    </div>
+                </div>
+
+                <!-- Navigation Tabs -->
+                <nav class="hidden md:flex items-center gap-1 bg-white/80 p-1.5 rounded-2xl border border-farafero-rose/20 shadow-inner">
+                    <button id="nav-store" onclick="switchView('store')" class="px-5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 flex items-center gap-2 bg-farafero-navy text-white shadow-md">
+                        <i class="fa-solid fa-store text-farafero-rose"></i> Storefront
+                    </button>
+                    <button id="nav-pos" onclick="switchView('pos')" class="px-5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 flex items-center gap-2 text-farafero-slate hover:text-farafero-navy">
+                        <i class="fa-solid fa-cash-register text-farafero-gold"></i> POS Cashier
+                    </button>
+                    <button id="nav-admin" onclick="switchView('admin')" class="px-5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 flex items-center gap-2 text-farafero-slate hover:text-farafero-navy">
+                        <i class="fa-solid fa-chart-line text-blue-500"></i> Dashboard
+                    </button>
+                </nav>
+
+                <!-- Actions (Cart & Mobile Navigation) -->
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleCartDrawer()" class="relative p-3 rounded-2xl bg-farafero-blush hover:bg-farafero-rose/20 text-farafero-navy transition-all border border-farafero-rose/30">
+                        <i class="fa-solid fa-bag-shopping text-xl"></i>
+                        <span id="cart-count" class="absolute -top-1.5 -right-1.5 bg-farafero-rose-dark text-white text-[11px] font-extrabold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow-sm">0</span>
+                    </button>
+
+                    <!-- Mobile Menu Dropdown -->
+                    <div class="md:hidden relative">
+                        <button onclick="toggleMobileNav()" class="p-3 rounded-2xl bg-white text-farafero-navy border border-gray-200 hover:bg-gray-50">
+                            <i class="fa-solid fa-bars text-lg"></i>
+                        </button>
+                        <div id="mobile-menu" class="hidden absolute right-0 mt-3 w-52 bg-white rounded-2xl shadow-2xl border border-gray-100 py-2 z-50">
+                            <button onclick="switchView('store'); toggleMobileNav();" class="w-full text-left px-4 py-2.5 text-xs font-bold text-farafero-navy hover:bg-farafero-blush flex items-center gap-2.5">
+                                <i class="fa-solid fa-store text-farafero-rose"></i> Storefront
+                            </button>
+                            <button onclick="switchView('pos'); toggleMobileNav();" class="w-full text-left px-4 py-2.5 text-xs font-bold text-farafero-navy hover:bg-farafero-blush flex items-center gap-2.5">
+                                <i class="fa-solid fa-cash-register text-farafero-gold"></i> POS Cashier
+                            </button>
+                            <button onclick="switchView('admin'); toggleMobileNav();" class="w-full text-left px-4 py-2.5 text-xs font-bold text-farafero-navy hover:bg-farafero-blush flex items-center gap-2.5">
+                                <i class="fa-solid fa-chart-line text-blue-500"></i> Dashboard
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN APP CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+
+        <!-- ================= STOREFRONT VIEW ================= -->
+        <section id="view-store" class="space-y-12">
+            <!-- Hero Banner -->
+            <div class="relative rounded-3xl overflow-hidden bg-gradient-to-r from-farafero-navy via-farafero-navy-light to-farafero-rose-dark p-8 sm:p-14 text-white shadow-2xl">
+                <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#E89CAE_1px,transparent_1px)] [background-size:16px_16px]"></div>
+                <div class="relative z-10 max-w-2xl space-y-4">
+                    <span class="inline-flex items-center gap-1.5 bg-white/15 backdrop-blur-md text-farafero-gold text-xs font-bold px-3.5 py-1.5 rounded-full border border-white/20">
+                        <i class="fa-solid fa-sparkles"></i> Custom Packaging & Express Delivery
+                    </span>
+                    <h2 class="text-3xl sm:text-5xl font-extrabold font-serif leading-tight">Craft Memories Wrapped in Perfection ✨</h2>
+                    <p class="text-gray-200 text-sm sm:text-base leading-relaxed">Choose premium gifts, design custom luxury packaging, write heartfelt greeting notes, and send smiles directly to your loved ones anywhere in Egypt.</p>
+                    <div class="pt-4 flex flex-wrap gap-4">
+                        <a href="#customizer-section" class="bg-farafero-rose hover:bg-farafero-rose-dark text-white font-bold px-7 py-3.5 rounded-2xl shadow-lg transition-all flex items-center gap-2.5 text-sm">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Build Custom Packaging
+                        </a>
+                        <a href="#products-section" class="bg-white/10 backdrop-blur-md border border-white/30 text-white font-bold px-7 py-3.5 rounded-2xl hover:bg-white/20 transition-all text-sm">
+                            Browse Collection
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Custom Packaging Builder -->
+            <div id="customizer-section" class="glass-card rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+                <div class="border-b border-gray-100 pb-4 flex items-center justify-between flex-wrap gap-4">
+                    <div>
+                        <h3 class="text-2xl font-bold font-serif text-farafero-navy flex items-center gap-2.5">
+                            <i class="fa-solid fa-box-open text-farafero-rose-dark"></i> Interactive Gift Packaging Builder
+                        </h3>
+                        <p class="text-xs text-farafero-slate mt-1">Personalize box style, wrapping sheet, decorative ribbons, and printed greeting cards</p>
+                    </div>
+                    <span class="text-xs bg-farafero-blush text-farafero-rose-dark font-extrabold px-3 py-1.5 rounded-full border border-farafero-rose/30">Custom Gift Studio</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Box Selection -->
+                    <div class="space-y-2">
+                        <label class="block text-xs font-extrabold text-farafero-navy uppercase tracking-wider">1. Luxury Box Style</label>
+                        <select id="cust-box" class="w-full bg-white border border-farafero-rose/30 rounded-2xl p-3 text-xs font-bold text-farafero-navy focus:outline-none focus:ring-2 focus:ring-farafero-rose" onchange="calculateCustomizerPrice()">
+                            <option value="0" data-name="Standard Box">Standard Cardboard Box (Free)</option>
+                            <option value="150" data-name="Engraved Wooden Box">Engraved Wooden Box (+150 EGP)</option>
+                            <option value="90" data-name="Classic Velvet Box">Classic Velvet Box (+90 EGP)</option>
+                            <option value="200" data-name="Modern Acrylic Box">Modern Acrylic Box (+200 EGP)</option>
+                        </select>
+                    </div>
+
+                    <!-- Wrapping Paper -->
+                    <div class="space-y-2">
+                        <label class="block text-xs font-extrabold text-farafero-navy uppercase tracking-wider">2. Wrapping Paper</label>
+                        <select id="cust-wrap" class="w-full bg-white border border-farafero-rose/30 rounded-2xl p-3 text-xs font-bold text-farafero-navy focus:outline-none focus:ring-2 focus:ring-farafero-rose" onchange="calculateCustomizerPrice()">
+                            <option value="0" data-name="Clear Wrap">Transparent Clear Wrap (Free)</option>
+                            <option value="60" data-name="Gold Marble Paper">Gold Marble Foil Paper (+60 EGP)</option>
+                            <option value="70" data-name="Classic Floral Rose Paper">Classic Floral Rose Paper (+70 EGP)</option>
+                            <option value="50" data-name="Eco Kraft Paper">Vintage Eco Kraft Paper (+50 EGP)</option>
+                        </select>
+                    </div>
+
+                    <!-- Ribbon Type -->
+                    <div class="space-y-2">
+                        <label class="block text-xs font-extrabold text-farafero-navy uppercase tracking-wider">3. Decorative Ribbon</label>
+                        <select id="cust-ribbon" class="w-full bg-white border border-farafero-rose/30 rounded-2xl p-3 text-xs font-bold text-farafero-navy focus:outline-none focus:ring-2 focus:ring-farafero-rose" onchange="calculateCustomizerPrice()">
+                            <option value="0" data-name="No Ribbon">No Ribbon (Free)</option>
+                            <option value="30" data-name="Red Satin Ribbon">Red Satin Ribbon (+30 EGP)</option>
+                            <option value="40" data-name="Royal Gold Ribbon">Royal Gold Metallic Ribbon (+40 EGP)</option>
+                            <option value="30" data-name="Soft Pink Ribbon">Soft Pink Silk Ribbon (+30 EGP)</option>
+                        </select>
+                    </div>
+
+                    <!-- Greeting Card -->
+                    <div class="space-y-2">
+                        <label class="block text-xs font-extrabold text-farafero-navy uppercase tracking-wider">4. Greeting Card</label>
+                        <select id="cust-card" class="w-full bg-white border border-farafero-rose/30 rounded-2xl p-3 text-xs font-bold text-farafero-navy focus:outline-none focus:ring-2 focus:ring-farafero-rose" onchange="calculateCustomizerPrice()">
+                            <option value="0" data-name="No Card">No Greeting Card (Free)</option>
+                            <option value="50" data-name="3D Laser Pop-up Card">3D Laser Pop-up Card (+50 EGP)</option>
+                            <option value="30" data-name="Floral Note Card">Floral Gold Foil Note Card (+30 EGP)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Custom Message Input -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-extrabold text-farafero-navy uppercase tracking-wider">Personalized Message (Printed inside the card)</label>
+                    <textarea id="cust-message" rows="2" placeholder="Write your warm greeting message here..." class="w-full bg-white border border-gray-200 rounded-2xl p-3.5 text-xs text-farafero-navy focus:outline-none focus:ring-2 focus:ring-farafero-rose"></textarea>
+                </div>
+
+                <div class="flex items-center justify-between pt-4 border-t border-gray-100 flex-wrap gap-4">
+                    <div>
+                        <span class="text-xs text-farafero-slate">Total Custom Packaging Cost: </span>
+                        <span id="customizer-total-price" class="text-lg font-extrabold text-farafero-rose-dark ml-1">0 EGP</span>
+                    </div>
+                    <button onclick="addCustomizationToCart()" class="bg-farafero-navy text-white font-bold px-6 py-3 rounded-2xl hover:bg-farafero-navy-light transition-all flex items-center gap-2 text-xs shadow-md">
+                        <i class="fa-solid fa-plus text-farafero-gold"></i> Add Packaging to Shopping Bag
+                    </button>
+                </div>
+            </div>
+
+            <!-- Products Showcase Section -->
+            <div id="products-section" class="space-y-6">
+                <div class="flex items-center justify-between flex-wrap gap-4">
+                    <div>
+                        <h3 class="text-2xl font-bold font-serif text-farafero-navy">Explore Featured Gift Items</h3>
+                        <p class="text-xs text-farafero-slate">Select gifts to pair with your custom packaging</p>
+                    </div>
+                    <div class="flex items-center gap-2 overflow-x-auto pb-2 w-full sm:w-auto" id="category-filters">
+                        <!-- Filters rendered by JS -->
+                    </div>
+                </div>
+
+                <!-- Products Grid -->
+                <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- Cards injected by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= POS CASHIER VIEW ================= -->
+        <section id="view-pos" class="hidden space-y-6">
+            <div class="flex items-center justify-between flex-wrap gap-4 border-b border-gray-200 pb-4">
+                <div>
+                    <h2 class="text-2xl font-bold font-serif text-farafero-navy flex items-center gap-2.5">
+                        <i class="fa-solid fa-cash-register text-farafero-gold"></i> POS Cashier Terminal
+                    </h2>
+                    <p class="text-xs text-farafero-slate">Quick in-store bill generation & instant receipts</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full font-bold flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Terminal Active
+                    </span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- POS Catalog -->
+                <div class="lg:col-span-2 space-y-4">
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-gray-400"></i>
+                        <input type="text" id="pos-search" oninput="renderPosProducts()" placeholder="Search catalog by product name or category..." class="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-2xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-farafero-gold">
+                    </div>
+                    <div id="pos-products-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-4 max-h-[600px] overflow-y-auto p-1">
+                        <!-- POS Products injected via JS -->
+                    </div>
+                </div>
+
+                <!-- POS Receipt & Checkout -->
+                <div class="glass-card rounded-3xl p-6 shadow-sm flex flex-col justify-between h-full space-y-6">
+                    <div>
+                        <div class="flex items-center justify-between border-b border-gray-100 pb-3 mb-4">
+                            <h3 class="font-bold text-base text-farafero-navy flex items-center gap-2">
+                                <i class="fa-solid fa-receipt text-farafero-rose-dark"></i> Current Sale Order
+                            </h3>
+                            <button onclick="clearPosCart()" class="text-xs text-red-500 font-bold hover:underline">Clear</button>
+                        </div>
+                        <div id="pos-cart-items" class="space-y-3 max-h-[300px] overflow-y-auto pr-1">
+                            <!-- Injected JS -->
+                        </div>
+                    </div>
+
+                    <div class="border-t border-gray-100 pt-4 space-y-3">
+                        <div class="flex justify-between text-xs text-farafero-slate">
+                            <span>Subtotal:</span>
+                            <span id="pos-subtotal" class="font-bold text-farafero-navy">0.00 EGP</span>
+                        </div>
+                        <div class="flex justify-between text-xs text-farafero-slate">
+                            <span>VAT (14%):</span>
+                            <span id="pos-tax" class="font-bold text-farafero-navy">0.00 EGP</span>
+                        </div>
+                        <div class="flex justify-between text-base font-extrabold text-farafero-navy pt-2 border-t border-dashed">
+                            <span>Grand Total:</span>
+                            <span id="pos-total" class="text-farafero-rose-dark text-xl">0.00 EGP</span>
+                        </div>
+                        <button onclick="checkoutPos()" class="w-full py-3.5 bg-gradient-to-r from-farafero-gold to-yellow-600 text-white font-extrabold rounded-2xl shadow-lg hover:opacity-95 transition-all flex items-center justify-center gap-2 text-xs">
+                            <i class="fa-solid fa-print"></i> Checkout & Issue Receipt
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= ADMIN DASHBOARD VIEW ================= -->
+        <section id="view-admin" class="hidden space-y-8">
+            <div class="flex items-center justify-between flex-wrap gap-4 border-b border-gray-200 pb-4">
+                <div>
+                    <h2 class="text-2xl font-bold font-serif text-farafero-navy flex items-center gap-2.5">
+                        <i class="fa-solid fa-chart-line text-blue-600"></i> Admin Analytics & Store Operations
+                    </h2>
+                    <p class="text-xs text-farafero-slate">Track overall sales, inventory counts, and manage customer orders</p>
+                </div>
+            </div>
+
+            <!-- Stats Overview Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <div class="glass-card p-5 rounded-3xl shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-sack-dollar"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-farafero-slate font-bold">Total Sales Revenue</p>
+                        <h4 id="stat-sales" class="text-xl font-extrabold text-farafero-navy">0.00 EGP</h4>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded-3xl shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-boxes-packing"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-farafero-slate font-bold">Total Orders Processed</p>
+                        <h4 id="stat-orders-count" class="text-2xl font-extrabold text-farafero-navy">0</h4>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded-3xl shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-farafero-blush text-farafero-rose-dark flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-crown"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-farafero-slate font-bold">Top Selling Item</p>
+                        <h4 id="stat-top-product" class="text-xs font-extrabold text-farafero-navy truncate max-w-[120px]">-</h4>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded-3xl shadow-sm flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-700 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-farafero-slate font-bold">Low Stock Alert (&le; 3)</p>
+                        <h4 id="stat-low-stock" class="text-2xl font-extrabold text-rose-600">0</h4>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Tabs Switcher -->
+            <div class="flex border-b border-gray-200 gap-6">
+                <button id="admin-tab-orders-btn" onclick="switchAdminTab('orders')" class="pb-3 border-b-2 border-farafero-navy font-bold text-farafero-navy text-xs tracking-wide uppercase">Customer Orders</button>
+                <button id="admin-tab-products-btn" onclick="switchAdminTab('products')" class="pb-3 border-b-2 border-transparent text-farafero-slate hover:text-farafero-navy font-bold text-xs tracking-wide uppercase">Product Catalog & Stock</button>
+            </div>
+
+            <!-- Tab 1: Orders -->
+            <div id="admin-tab-orders" class="space-y-4">
+                <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-gray-50 text-farafero-slate font-bold uppercase border-b border-gray-100">
+                                <tr>
+                                    <th class="p-4">Order ID</th>
+                                    <th class="p-4">Recipient</th>
+                                    <th class="p-4">Items</th>
+                                    <th class="p-4">Delivery Time</th>
+                                    <th class="p-4">Total (EGP)</th>
+                                    <th class="p-4">Status</th>
+                                    <th class="p-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-orders-table" class="divide-y divide-gray-100">
+                                <!-- Injected JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Products -->
+            <div id="admin-tab-products" class="hidden space-y-6">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-base font-bold text-farafero-navy">Manage Store Catalog</h3>
+                    <button onclick="openProductModal()" class="bg-farafero-navy text-white px-4 py-2.5 rounded-2xl font-bold text-xs shadow-md hover:bg-farafero-navy-light transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-plus text-farafero-gold"></i> Add New Product
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-gray-50 text-farafero-slate font-bold uppercase border-b border-gray-100">
+                                <tr>
+                                    <th class="p-4">Image</th>
+                                    <th class="p-4">Product Name</th>
+                                    <th class="p-4">Category</th>
+                                    <th class="p-4">Price</th>
+                                    <th class="p-4">Stock</th>
+                                    <th class="p-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-products-table" class="divide-y divide-gray-100">
+                                <!-- Injected JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-farafero-rose/20 py-8 mt-12 no-print">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-farafero-slate space-y-2">
+            <p class="font-bold text-farafero-navy font-serif">FARAFERO GIFT SHOP &copy; 2026</p>
+            <p class="text-gray-400">All prices listed in Egyptian Pounds (EGP). Fully customizable gift store platform.</p>
+        </div>
+    </footer>
+
+    <!-- CART DRAWER -->
+    <div id="cart-drawer" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm hidden transition-opacity">
+        <div class="absolute inset-y-0 right-0 max-w-full flex">
+            <div class="w-screen max-w-md bg-white shadow-2xl flex flex-col justify-between">
+                
+                <!-- Drawer Header -->
+                <div class="p-5 border-b border-gray-100 flex items-center justify-between bg-farafero-blush">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-bag-shopping text-farafero-rose-dark text-xl"></i>
+                        <h3 class="font-bold text-base text-farafero-navy font-serif">Your Shopping Bag</h3>
+                    </div>
+                    <button onclick="toggleCartDrawer()" class="p-2 text-gray-400 hover:text-farafero-navy">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Drawer Content -->
+                <div id="cart-items-container" class="p-5 flex-1 overflow-y-auto space-y-4">
+                    <!-- Injected JS -->
+                </div>
+
+                <!-- Recipient Form & Checkout -->
+                <div class="p-5 border-t border-gray-100 bg-gray-50/50 space-y-3">
+                    <h4 class="text-xs font-extrabold text-farafero-navy uppercase tracking-wider">Recipient Details & Schedule</h4>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <input type="text" id="recipient-name" placeholder="Recipient Name" class="p-2.5 border rounded-xl bg-white font-semibold">
+                        <input type="tel" id="recipient-phone" placeholder="Recipient Phone" class="p-2.5 border rounded-xl bg-white font-semibold">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <input type="date" id="delivery-date" class="p-2.5 border rounded-xl bg-white font-semibold text-farafero-slate">
+                        <input type="time" id="delivery-time" class="p-2.5 border rounded-xl bg-white font-semibold text-farafero-slate">
+                    </div>
+                    
+                    <div class="space-y-1 text-xs text-farafero-slate pt-2 border-t">
+                        <div class="flex justify-between">
+                            <span>Subtotal & Packaging:</span>
+                            <span id="cart-subtotal-val" class="font-bold text-farafero-navy">0 EGP</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Express Delivery:</span>
+                            <span class="font-bold text-farafero-navy">50 EGP</span>
+                        </div>
+                        <div class="flex justify-between text-sm font-extrabold text-farafero-navy pt-2 border-t">
+                            <span>Grand Total:</span>
+                            <span id="cart-total-val" class="text-farafero-rose-dark text-base">0 EGP</span>
+                        </div>
+                    </div>
+
+                    <button onclick="submitOrder()" class="w-full py-3.5 bg-farafero-rose text-white font-extrabold rounded-2xl shadow-lg hover:bg-farafero-rose-dark transition-all flex items-center justify-center gap-2 text-xs">
+                        <i class="fa-solid fa-check"></i> Complete & Place Gift Order
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- PRODUCT MODAL -->
+    <div id="product-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 id="modal-title" class="font-bold text-base text-farafero-navy font-serif">Add New Product</h3>
+                <button onclick="closeProductModal()" class="text-gray-400 hover:text-farafero-navy">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <form id="product-form" onsubmit="saveProduct(event)" class="space-y-3 text-xs">
+                <input type="hidden" id="prod-id">
+                <div>
+                    <label class="block font-bold mb-1">Product Name</label>
+                    <input type="text" id="prod-name" required class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-farafero-rose outline-none font-semibold">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold mb-1">Price (EGP)</label>
+                        <input type="number" id="prod-price" required min="1" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-farafero-rose outline-none font-semibold">
+                    </div>
+                    <div>
+                        <label class="block font-bold mb-1">Stock Quantity</label>
+                        <input type="number" id="prod-stock" required min="0" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-farafero-rose outline-none font-semibold">
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-bold mb-1">Category</label>
+                    <select id="prod-category" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-farafero-rose outline-none font-semibold">
+                        <option value="Birthday Gifts">Birthday Gifts</option>
+                        <option value="Wedding & Anniversary">Wedding & Anniversary</option>
+                        <option value="Flower Bouquets">Flower Bouquets</option>
+                        <option value="Teddy Bears & Toys">Teddy Bears & Toys</option>
+                        <option value="Custom Laser Gifts">Custom Laser Gifts</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-bold mb-1">Image URL (Optional)</label>
+                    <input type="url" id="prod-img" placeholder="https://..." class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-farafero-rose outline-none font-semibold">
+                </div>
+                <div class="pt-3 flex gap-2">
+                    <button type="submit" class="flex-1 py-3 bg-farafero-navy text-white font-bold rounded-xl hover:bg-farafero-navy-light transition-all">Save Product</button>
+                    <button type="button" onclick="closeProductModal()" class="px-4 py-3 bg-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-200">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- INVOICE PRINT MODAL -->
+    <div id="invoice-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 space-y-6 shadow-2xl relative invoice-shadow">
+            <button onclick="closeInvoiceModal()" class="no-print absolute top-4 right-4 text-gray-400 hover:text-farafero-navy">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <div id="invoice-printable-content" class="space-y-4">
+                <!-- Receipt details rendered by JS -->
+            </div>
+            <div class="no-print flex gap-3 border-t pt-4">
+                <button onclick="window.print()" class="flex-1 py-3.5 bg-farafero-navy text-white font-bold rounded-2xl shadow hover:bg-farafero-navy-light transition-all flex items-center justify-center gap-2 text-xs">
+                    <i class="fa-solid fa-print text-farafero-gold"></i> Print Printable Receipt
+                </button>
+                <button onclick="closeInvoiceModal()" class="px-5 py-3.5 bg-gray-100 text-gray-700 font-bold rounded-2xl hover:bg-gray-200 text-xs">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed bottom-6 left-6 z-50 bg-farafero-navy text-white px-5 py-3.5 rounded-2xl shadow-2xl hidden flex items-center gap-3 border border-farafero-rose/40 text-xs">
+        <i class="fa-solid fa-circle-check text-farafero-gold text-lg"></i>
+        <span id="toast-msg" class="font-bold">Notification message</span>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        const defaultProducts = [
+            { id: 1, name: 'Luxury Pink Rose Bouquet', price: 450, category: 'Flower Bouquets', stock: 12, img: 'https://images.unsplash.com/photo-1561181286-d3fee7d55364?w=500&auto=format&fit=crop&q=60' },
+            { id: 2, name: 'Giant Red Teddy Bear', price: 850, category: 'Teddy Bears & Toys', stock: 5, img: 'https://images.unsplash.com/photo-1559454403-b8fb88521f11?w=500&auto=format&fit=crop&q=60' },
+            { id: 3, name: 'Engraved Laser Acrylic Plaque', price: 380, category: 'Custom Laser Gifts', stock: 20, img: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=500&auto=format&fit=crop&q=60' },
+            { id: 4, name: 'Assorted Chocolate & Flowers', price: 650, category: 'Birthday Gifts', stock: 8, img: 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&auto=format&fit=crop&q=60' },
+            { id: 5, name: 'Deluxe Keepsake Box', price: 1200, category: 'Wedding & Anniversary', stock: 3, img: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=500&auto=format&fit=crop&q=60' }
+        ];
+
+        let products = JSON.parse(localStorage.getItem('farafero_products_en')) || defaultProducts;
+        let orders = JSON.parse(localStorage.getItem('farafero_orders_en')) || [];
+        let cart = [];
+        let posCart = [];
+        let activeCategory = 'All';
+
+        function saveData() {
+            localStorage.setItem('farafero_products_en', JSON.stringify(products));
+            localStorage.setItem('farafero_orders_en', JSON.stringify(orders));
+        }
+
+        window.onload = function() {
+            renderCategoryFilters();
+            renderProducts();
+            renderPosProducts();
+            updateCartUI();
+            updateAdminStats();
+            renderAdminOrders();
+            renderAdminProducts();
+        };
+
+        function switchView(viewName) {
+            document.getElementById('view-store').classList.add('hidden');
+            document.getElementById('view-pos').classList.add('hidden');
+            document.getElementById('view-admin').classList.add('hidden');
+
+            document.getElementById('nav-store').className = "px-5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 flex items-center gap-2 text-farafero-slate hover:text-farafero-navy";
+            document.getElementById('nav-pos').className = "px-5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 flex items-center gap-2 text-farafero-slate hover:text-farafero-navy";
+            document.getElementById('nav-admin').className = "px-5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 flex items-center gap-2 text-farafero-slate hover:text-farafero-navy";
+
+            if(viewName === 'store') {
+                document.getElementById('view-store').classList.remove('hidden');
+                document.getElementById('nav-store').className = "px-5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 flex items-center gap-2 bg-farafero-navy text-white shadow-md";
+            } else if(viewName === 'pos') {
+                document.getElementById('view-pos').classList.remove('hidden');
+                document.getElementById('nav-pos').className = "px-5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 flex items-center gap-2 bg-farafero-navy text-white shadow-md";
+            } else if(viewName === 'admin') {
+                document.getElementById('view-admin').classList.remove('hidden');
+                document.getElementById('nav-admin').className = "px-5 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 flex items-center gap-2 bg-farafero-navy text-white shadow-md";
+                updateAdminStats();
+                renderAdminOrders();
+                renderAdminProducts();
+            }
+        }
+
+        function toggleMobileNav() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = message;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3000);
+        }
+
+        /* STOREFRONT LOGIC */
+        function renderCategoryFilters() {
+            const categories = ['All', 'Birthday Gifts', 'Wedding & Anniversary', 'Flower Bouquets', 'Teddy Bears & Toys', 'Custom Laser Gifts'];
+            const container = document.getElementById('category-filters');
+            container.innerHTML = categories.map(cat => `
+                <button onclick="setCategory('${cat}')" class="px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${activeCategory === cat ? 'bg-farafero-navy text-white shadow-sm' : 'bg-white text-farafero-slate hover:bg-farafero-blush'}">
+                    ${cat}
+                </button>
+            `).join('');
+        }
+
+        function setCategory(cat) {
+            activeCategory = cat;
+            renderCategoryFilters();
+            renderProducts();
+        }
+
+        function renderProducts() {
+            const grid = document.getElementById('products-grid');
+            const filtered = activeCategory === 'All' ? products : products.filter(p => p.category === activeCategory);
+
+            if(filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-10 text-farafero-slate font-bold">No products currently available in this category.</div>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(p => `
+                <div class="glass-card rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
+                    <div>
+                        <div class="relative h-48 overflow-hidden bg-gray-100">
+                            <img src="${p.img || 'https://placehold.co/400x300'}" alt="${p.name}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                            <span class="absolute top-3 left-3 bg-white/90 backdrop-blur-md text-farafero-navy text-[10px] font-extrabold px-3 py-1 rounded-full shadow-sm">${p.category}</span>
+                            ${p.stock <= 3 ? `<span class="absolute top-3 right-3 bg-rose-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">Only ${p.stock} Left</span>` : ''}
+                        </div>
+                        <div class="p-5 space-y-1">
+                            <h4 class="font-bold text-farafero-navy text-sm leading-snug">${p.name}</h4>
+                            <p class="text-farafero-rose-dark font-extrabold text-base">${p.price} <span class="text-xs font-semibold">EGP</span></p>
+                        </div>
+                    </div>
+                    <div class="p-5 pt-0">
+                        <button onclick="addToCart(${p.id})" ${p.stock === 0 ? 'disabled' : ''} class="w-full py-2.5 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2 ${p.stock === 0 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-farafero-blush text-farafero-rose-dark hover:bg-farafero-rose hover:text-white'}">
+                            <i class="fa-solid fa-cart-plus"></i> ${p.stock === 0 ? 'Out of Stock' : 'Add to Bag'}
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        /* CUSTOM PACKAGING LOGIC */
+        function calculateCustomizerPrice() {
+            const boxPrice = parseFloat(document.getElementById('cust-box').value) || 0;
+            const wrapPrice = parseFloat(document.getElementById('cust-wrap').value) || 0;
+            const ribbonPrice = parseFloat(document.getElementById('cust-ribbon').value) || 0;
+            const cardPrice = parseFloat(document.getElementById('cust-card').value) || 0;
+            
+            const total = boxPrice + wrapPrice + ribbonPrice + cardPrice;
+            document.getElementById('customizer-total-price').innerText = total + ' EGP';
+            return total;
+        }
+
+        function addCustomizationToCart() {
+            const boxSelect = document.getElementById('cust-box');
+            const wrapSelect = document.getElementById('cust-wrap');
+            const ribbonSelect = document.getElementById('cust-ribbon');
+            const cardSelect = document.getElementById('cust-card');
+            const message = document.getElementById('cust-message').value.trim();
+            const totalPrice = calculateCustomizerPrice();
+
+            if(totalPrice === 0 && !message) {
+                showToast('Please select gift packaging options or enter a card message!');
+                return;
+            }
+
+            const customItem = {
+                id: 'custom-' + Date.now(),
+                name: 'Custom Gift Packaging & Card',
+                price: totalPrice,
+                qty: 1,
+                isCustom: true,
+                details: {
+                    box: boxSelect.options[boxSelect.selectedIndex].getAttribute('data-name'),
+                    wrap: wrapSelect.options[wrapSelect.selectedIndex].getAttribute('data-name'),
+                    ribbon: ribbonSelect.options[ribbonSelect.selectedIndex].getAttribute('data-name'),
+                    card: cardSelect.options[cardSelect.selectedIndex].getAttribute('data-name'),
+                    message: message || 'No custom card note'
+                }
+            };
+
+            cart.push(customItem);
+            updateCartUI();
+            toggleCartDrawer();
+            showToast('Packaging options added to your shopping bag!');
+        }
+
+        /* CART & CHECKOUT */
+        function addToCart(productId) {
+            const prod = products.find(p => p.id === productId);
+            if(!prod || prod.stock <= 0) return;
+
+            const existing = cart.find(item => item.id === productId);
+            if(existing) {
+                if(existing.qty + 1 > prod.stock) {
+                    showToast('Exceeded available stock!');
+                    return;
+                }
+                existing.qty++;
+            } else {
+                cart.push({ id: prod.id, name: prod.name, price: prod.price, qty: 1, isCustom: false });
+            }
+            updateCartUI();
+            showToast('Item added to shopping bag');
+        }
+
+        function updateCartQty(id, change) {
+            const idx = cart.findIndex(item => item.id === id);
+            if(idx > -1) {
+                cart[idx].qty += change;
+                if(cart[idx].qty <= 0) cart.splice(idx, 1);
+            }
+            updateCartUI();
+        }
+
+        function toggleCartDrawer() {
+            document.getElementById('cart-drawer').classList.toggle('hidden');
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cart-items-container');
+            const countEl = document.getElementById('cart-count');
+            const totalCount = cart.reduce((acc, item) => acc + item.qty, 0);
+            countEl.innerText = totalCount;
+
+            if(cart.length === 0) {
+                container.innerHTML = `<div class="text-center py-12 text-farafero-slate text-xs font-bold">Your shopping bag is empty</div>`;
+                document.getElementById('cart-subtotal-val').innerText = '0 EGP';
+                document.getElementById('cart-total-val').innerText = '0 EGP';
+                return;
+            }
+
+            let subtotal = 0;
+            container.innerHTML = cart.map(item => {
+                const itemTotal = item.price * item.qty;
+                subtotal += itemTotal;
+
+                return `
+                    <div class="bg-farafero-blush/60 p-3.5 rounded-2xl border border-farafero-rose/20 flex items-center justify-between gap-3 text-xs">
+                        <div class="space-y-1 flex-1">
+                            <h5 class="font-bold text-farafero-navy">${item.name}</h5>
+                            ${item.isCustom ? `
+                                <div class="text-[10px] text-farafero-slate bg-white p-2 rounded-xl space-y-0.5 border border-gray-100">
+                                    <p>📦 Box: ${item.details.box}</p>
+                                    <p>🎁 Paper: ${item.details.wrap}</p>
+                                    <p>🎀 Ribbon: ${item.details.ribbon}</p>
+                                    <p>✉️ Card Note: "${item.details.message}"</p>
+                                </div>
+                            ` : `
+                                <p class="text-[11px] text-farafero-rose-dark font-extrabold">${item.price} EGP</p>
+                            `}
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="updateCartQty('${item.id}', -1)" class="w-6 h-6 rounded-lg bg-white border flex items-center justify-center font-bold text-farafero-navy hover:bg-gray-100">-</button>
+                            <span class="font-bold text-xs">${item.qty}</span>
+                            <button onclick="updateCartQty('${item.id}', 1)" class="w-6 h-6 rounded-lg bg-white border flex items-center justify-center font-bold text-farafero-navy hover:bg-gray-100">+</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('cart-subtotal-val').innerText = subtotal + ' EGP';
+            document.getElementById('cart-total-val').innerText = (subtotal + 50) + ' EGP';
+        }
+
+        function submitOrder() {
+            if(cart.length === 0) {
+                showToast('Shopping bag is empty!');
+                return;
+            }
+
+            const recipientName = document.getElementById('recipient-name').value.trim();
+            const recipientPhone = document.getElementById('recipient-phone').value.trim();
+            const deliveryDate = document.getElementById('delivery-date').value;
+            const deliveryTime = document.getElementById('delivery-time').value;
+
+            if(!recipientName || !recipientPhone) {
+                showToast('Please provide recipient name and phone number!');
+                return;
+            }
+
+            const subtotal = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+            const total = subtotal + 50;
+
+            const newOrder = {
+                id: 'ORD-' + Math.floor(1000 + Math.random() * 9000),
+                date: new Date().toLocaleDateString('en-US'),
+                recipient: { name: recipientName, phone: recipientPhone },
+                deliveryTime: `${deliveryDate || 'Today'} (${deliveryTime || 'Standard'})`,
+                items: [...cart],
+                subtotal: subtotal,
+                tax: 0,
+                deliveryFee: 50,
+                total: total,
+                status: 'Processing',
+                type: 'Online Store'
+            };
+
+            cart.forEach(cartItem => {
+                if(!cartItem.isCustom) {
+                    const p = products.find(x => x.id === cartItem.id);
+                    if(p) p.stock = Math.max(0, p.stock - cartItem.qty);
+                }
+            });
+
+            orders.unshift(newOrder);
+            cart = [];
+            saveData();
+
+            updateCartUI();
+            toggleCartDrawer();
+            renderProducts();
+            showInvoiceModal(newOrder);
+            showToast('Order received successfully!');
+        }
+
+        /* POS LOGIC */
+        function renderPosProducts() {
+            const query = document.getElementById('pos-search').value.toLowerCase();
+            const grid = document.getElementById('pos-products-grid');
+            const filtered = products.filter(p => p.name.toLowerCase().includes(query) || p.category.toLowerCase().includes(query));
+
+            grid.innerHTML = filtered.map(p => `
+                <div onclick="addToPosCart(${p.id})" class="bg-white p-3 rounded-2xl border border-gray-100 shadow-sm hover:border-farafero-gold cursor-pointer transition-all space-y-2 flex flex-col justify-between">
+                    <div>
+                        <h5 class="font-bold text-xs text-farafero-navy leading-tight">${p.name}</h5>
+                        <p class="text-[10px] text-farafero-slate">${p.category}</p>
+                    </div>
+                    <div class="flex justify-between items-center text-xs pt-1">
+                        <span class="font-bold text-farafero-rose-dark">${p.price} EGP</span>
+                        <span class="text-[10px] bg-gray-100 px-1.5 py-0.5 rounded text-gray-500 font-bold">Stock: ${p.stock}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addToPosCart(productId) {
+            const prod = products.find(p => p.id === productId);
+            if(!prod || prod.stock <= 0) return;
+
+            const existing = posCart.find(item => item.id === productId);
+            if(existing) {
+                if(existing.qty + 1 > prod.stock) {
+                    showToast('Insufficient stock!');
+                    return;
+                }
+                existing.qty++;
+            } else {
+                posCart.push({ id: prod.id, name: prod.name, price: prod.price, qty: 1 });
+            }
+            renderPosCart();
+        }
+
+        function renderPosCart() {
+            const container = document.getElementById('pos-cart-items');
+            if(posCart.length === 0) {
+                container.innerHTML = `<p class="text-xs text-center text-farafero-slate py-6 font-bold">Click catalog items to add to bill</p>`;
+                document.getElementById('pos-subtotal').innerText = '0.00 EGP';
+                document.getElementById('pos-tax').innerText = '0.00 EGP';
+                document.getElementById('pos-total').innerText = '0.00 EGP';
+                return;
+            }
+
+            let subtotal = 0;
+            container.innerHTML = posCart.map(item => {
+                const itemTotal = item.price * item.qty;
+                subtotal += itemTotal;
+                return `
+                    <div class="flex items-center justify-between text-xs bg-white p-2.5 rounded-xl border border-gray-100">
+                        <div class="truncate max-w-[140px]">
+                            <p class="font-bold text-farafero-navy">${item.name}</p>
+                            <p class="text-[10px] text-farafero-slate">${item.price} EGP</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-farafero-navy">x${item.qty}</span>
+                            <span class="font-bold text-farafero-rose-dark">${itemTotal} EGP</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            const tax = subtotal * 0.14;
+            const total = subtotal + tax;
+
+            document.getElementById('pos-subtotal').innerText = subtotal.toFixed(2) + ' EGP';
+            document.getElementById('pos-tax').innerText = tax.toFixed(2) + ' EGP';
+            document.getElementById('pos-total').innerText = total.toFixed(2) + ' EGP';
+        }
+
+        function clearPosCart() {
+            posCart = [];
+            renderPosCart();
+        }
+
+        function checkoutPos() {
+            if(posCart.length === 0) {
+                showToast('Receipt items list is empty!');
+                return;
+            }
+
+            const subtotal = posCart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+            const tax = subtotal * 0.14;
+            const total = subtotal + tax;
+
+            const newPosOrder = {
+                id: 'POS-' + Math.floor(1000 + Math.random() * 9000),
+                date: new Date().toLocaleDateString('en-US'),
+                recipient: { name: 'In-Store Walk-in Customer', phone: '-' },
+                deliveryTime: 'In-Store Pickup',
+                items: [...posCart],
+                subtotal: subtotal,
+                tax: tax,
+                deliveryFee: 0,
+                total: total.toFixed(2),
+                status: 'Completed',
+                type: 'POS Cashier'
+            };
+
+            posCart.forEach(posItem => {
+                const p = products.find(x => x.id === posItem.id);
+                if(p) p.stock = Math.max(0, p.stock - posItem.qty);
+            });
+
+            orders.unshift(newPosOrder);
+            saveData();
+            
+            showInvoiceModal(newPosOrder);
+            showToast('Sale checkout complete!');
+            posCart = [];
+            renderPosCart();
+            renderProducts();
+            renderPosProducts();
+        }
+
+        /* INVOICE MODAL */
+        function showInvoiceModal(order) {
+            const container = document.getElementById('invoice-printable-content');
+            container.innerHTML = `
+                <div class="text-center border-b pb-4 space-y-1">
+                    <h2 class="text-xl font-extrabold font-serif text-farafero-navy">FARAFERO GIFT SHOP</h2>
+                    <p class="text-xs text-farafero-slate">Official Invoice & Customer Receipt</p>
+                    <div class="text-[11px] text-farafero-slate pt-1">Invoice ID: <span class="font-bold text-farafero-navy">${order.id}</span> | Date: ${order.date}</div>
+                </div>
+                
+                <div class="text-xs space-y-1 bg-farafero-blush p-3 rounded-2xl border border-farafero-rose/20">
+                    <p><span class="font-bold">Customer / Recipient:</span> ${order.recipient.name}</p>
+                    <p><span class="font-bold">Phone Number:</span> ${order.recipient.phone}</p>
+                    <p><span class="font-bold">Delivery Schedule:</span> ${order.deliveryTime}</p>
+                </div>
+
+                <div class="space-y-2 border-b pb-3">
+                    <p class="text-xs font-bold text-farafero-navy">Purchased Items & Services:</p>
+                    ${order.items.map(item => `
+                        <div class="flex justify-between text-xs py-1 border-b border-dashed border-gray-200">
+                            <div>
+                                <span class="font-bold">${item.name}</span> (x${item.qty})
+                            </div>
+                            <span class="font-bold text-farafero-rose-dark">${(item.price * item.qty).toFixed(2)} EGP</span>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <div class="space-y-1 text-xs text-farafero-navy pt-1">
+                    ${order.subtotal ? `
+                        <div class="flex justify-between text-farafero-slate">
+                            <span>Subtotal:</span>
+                            <span>${parseFloat(order.subtotal).toFixed(2)} EGP</span>
+                        </div>
+                    ` : ''}
+                    ${order.tax ? `
+                        <div class="flex justify-between text-farafero-slate">
+                            <span>VAT (14%):</span>
+                            <span>${parseFloat(order.tax).toFixed(2)} EGP</span>
+                        </div>
+                    ` : ''}
+                    ${order.deliveryFee ? `
+                        <div class="flex justify-between text-farafero-slate">
+                            <span>Express Delivery:</span>
+                            <span>${parseFloat(order.deliveryFee).toFixed(2)} EGP</span>
+                        </div>
+                    ` : ''}
+                    <div class="flex justify-between text-sm font-extrabold pt-2 border-t text-farafero-rose-dark">
+                        <span>Grand Total:</span>
+                        <span>${parseFloat(order.total).toFixed(2)} EGP</span>
+                    </div>
+                </div>
+
+                <div class="text-center text-[11px] text-farafero-slate border-t pt-3 font-semibold">
+                    Thank you for choosing FARAFERO GIFT SHOP! ✨
+                </div>
+            `;
+            document.getElementById('invoice-modal').classList.remove('hidden');
+        }
+
+        function closeInvoiceModal() {
+            document.getElementById('invoice-modal').classList.add('hidden');
+        }
+
+        function printOrderInvoice(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if(order) showInvoiceModal(order);
+        }
+
+        /* ADMIN DASHBOARD */
+        function switchAdminTab(tab) {
+            if(tab === 'orders') {
+                document.getElementById('admin-tab-orders').classList.remove('hidden');
+                document.getElementById('admin-tab-products').classList.add('hidden');
+                document.getElementById('admin-tab-orders-btn').className = "pb-3 border-b-2 border-farafero-navy font-bold text-farafero-navy text-xs tracking-wide uppercase";
+                document.getElementById('admin-tab-products-btn').className = "pb-3 border-b-2 border-transparent text-farafero-slate hover:text-farafero-navy font-bold text-xs tracking-wide uppercase";
+            } else {
+                document.getElementById('admin-tab-orders').classList.add('hidden');
+                document.getElementById('admin-tab-products').classList.remove('hidden');
+                document.getElementById('admin-tab-orders-btn').className = "pb-3 border-b-2 border-transparent text-farafero-slate hover:text-farafero-navy font-bold text-xs tracking-wide uppercase";
+                document.getElementById('admin-tab-products-btn').className = "pb-3 border-b-2 border-farafero-navy font-bold text-farafero-navy text-xs tracking-wide uppercase";
+            }
+        }
+
+        function updateAdminStats() {
+            const totalSales = orders.reduce((acc, o) => acc + parseFloat(o.total), 0);
+            document.getElementById('stat-sales').innerText = totalSales.toFixed(2) + ' EGP';
+            document.getElementById('stat-orders-count').innerText = orders.length;
+
+            const lowStockCount = products.filter(p => p.stock <= 3).length;
+            document.getElementById('stat-low-stock').innerText = lowStockCount;
+
+            const itemCounts = {};
+            orders.forEach(o => {
+                o.items.forEach(i => {
+                    itemCounts[i.name] = (itemCounts[i.name] || 0) + i.qty;
+                });
+            });
+            let topItem = '-';
+            let maxQty = 0;
+            for(let key in itemCounts) {
+                if(itemCounts[key] > maxQty) {
+                    maxQty = itemCounts[key];
+                    topItem = key;
+                }
+            }
+            document.getElementById('stat-top-product').innerText = topItem;
+        }
+
+        function renderAdminOrders() {
+            const tbody = document.getElementById('admin-orders-table');
+            if(orders.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-farafero-slate font-bold">No customer orders recorded yet.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = orders.map(o => `
+                <tr class="hover:bg-gray-50">
+                    <td class="p-4 font-bold text-farafero-navy">${o.id}</td>
+                    <td class="p-4">
+                        <div class="font-bold text-farafero-navy">${o.recipient.name}</div>
+                        <div class="text-[11px] text-farafero-slate">${o.recipient.phone}</div>
+                    </td>
+                    <td class="p-4 text-[11px]">
+                        ${o.items.map(i => `<div>- ${i.name} (x${i.qty})</div>`).join('')}
+                    </td>
+                    <td class="p-4 text-xs font-semibold text-farafero-navy">${o.deliveryTime}</td>
+                    <td class="p-4 font-bold text-farafero-rose-dark">${o.total} EGP</td>
+                    <td class="p-4">
+                        <select onchange="updateOrderStatus('${o.id}', this.value)" class="text-xs p-1.5 rounded-lg font-bold border outline-none ${getStatusColorClass(o.status)}">
+                            <option value="Processing" ${o.status === 'Processing' ? 'selected' : ''}>Processing</option>
+                            <option value="Wrapped" ${o.status === 'Wrapped' ? 'selected' : ''}>Wrapped</option>
+                            <option value="Out for Delivery" ${o.status === 'Out for Delivery' ? 'selected' : ''}>Out for Delivery</option>
+                            <option value="Completed" ${o.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                        </select>
+                    </td>
+                    <td class="p-4 space-x-2">
+                        <button onclick="printOrderInvoice('${o.id}')" title="Print Invoice" class="text-farafero-navy hover:text-farafero-rose-dark">
+                            <i class="fa-solid fa-print"></i>
+                        </button>
+                        <button onclick="deleteOrder('${o.id}')" title="Delete Order" class="text-rose-500 hover:text-rose-700">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function getStatusColorClass(status) {
+            switch(status) {
+                case 'Processing': return 'bg-amber-100 text-amber-800 border-amber-300';
+                case 'Wrapped': return 'bg-purple-100 text-purple-800 border-purple-300';
+                case 'Out for Delivery': return 'bg-blue-100 text-blue-800 border-blue-300';
+                case 'Completed': return 'bg-emerald-100 text-emerald-800 border-emerald-300';
+                default: return 'bg-gray-100 text-gray-800';
+            }
+        }
+
+        function updateOrderStatus(orderId, newStatus) {
+            const order = orders.find(o => o.id === orderId);
+            if(order) {
+                order.status = newStatus;
+                saveData();
+                showToast(`Order status updated to: ${newStatus}`);
+                renderAdminOrders();
+            }
+        }
+
+        function deleteOrder(orderId) {
+            orders = orders.filter(o => o.id !== orderId);
+            saveData();
+            renderAdminOrders();
+            updateAdminStats();
+            showToast('Order removed');
+        }
+
+        /* PRODUCT MANAGEMENT MODAL */
+        function renderAdminProducts() {
+            const tbody = document.getElementById('admin-products-table');
+            tbody.innerHTML = products.map(p => `
+                <tr class="hover:bg-gray-50">
+                    <td class="p-4">
+                        <img src="${p.img || 'https://placehold.co/100x100'}" class="w-10 h-10 rounded-xl object-cover">
+                    </td>
+                    <td class="p-4 font-bold text-farafero-navy">${p.name}</td>
+                    <td class="p-4 text-xs font-semibold text-farafero-slate">${p.category}</td>
+                    <td class="p-4 font-bold text-farafero-rose-dark">${p.price} EGP</td>
+                    <td class="p-4 font-bold ${p.stock <= 3 ? 'text-rose-600' : 'text-farafero-navy'}">${p.stock}</td>
+                    <td class="p-4 space-x-2">
+                        <button onclick="editProduct(${p.id})" class="text-blue-600 hover:text-blue-800"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="deleteProduct(${p.id})" class="text-rose-500 hover:text-rose-700"><i class="fa-solid fa-trash-can"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openProductModal(isEdit = false) {
+            document.getElementById('modal-title').innerText = isEdit ? 'Edit Product' : 'Add New Product';
+            document.getElementById('product-modal').classList.remove('hidden');
+        }
+
+        function closeProductModal() {
+            document.getElementById('product-form').reset();
+            document.getElementById('prod-id').value = '';
+            document.getElementById('product-modal').classList.add('hidden');
+        }
+
+        function editProduct(id) {
+            const p = products.find(x => x.id === id);
+            if(!p) return;
+            document.getElementById('prod-id').value = p.id;
+            document.getElementById('prod-name').value = p.name;
+            document.getElementById('prod-price').value = p.price;
+            document.getElementById('prod-stock').value = p.stock;
+            document.getElementById('prod-category').value = p.category;
+            document.getElementById('prod-img').value = p.img || '';
+            openProductModal(true);
+        }
+
+        function saveProduct(e) {
+            e.preventDefault();
+            const id = document.getElementById('prod-id').value;
+            const name = document.getElementById('prod-name').value.trim();
+            const price = parseFloat(document.getElementById('prod-price').value);
+            const stock = parseInt(document.getElementById('prod-stock').value);
+            const category = document.getElementById('prod-category').value;
+            const img = document.getElementById('prod-img').value.trim();
+
+            if(id) {
+                const p = products.find(x => x.id == id);
+                if(p) {
+                    p.name = name;
+                    p.price = price;
+                    p.stock = stock;
+                    p.category = category;
+                    p.img = img;
+                }
+            } else {
+                products.push({ id: Date.now(), name, price, stock, category, img });
+            }
+
+            saveData();
+            closeProductModal();
+            renderProducts();
+            renderPosProducts();
+            renderAdminProducts();
+            updateAdminStats();
+            showToast('Product saved successfully!');
+        }
+
+        function deleteProduct(id) {
+            products = products.filter(p => p.id !== id);
+            saveData();
+            renderProducts();
+            renderPosProducts();
+            renderAdminProducts();
+            updateAdminStats();
+            showToast('Product deleted!');
+        }
+    </script>
+</body>
+</html>
