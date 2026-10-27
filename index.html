@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FARAFERO STORE - لوحة عرض المنتجات والمخزون</title>
+    <title>FARAFERO STORE - نظام إدارة المحل والمخزون</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
@@ -61,13 +61,13 @@
         </div>
     </header>
 
-    <!-- NAVIGATION BAR (شريط التنقل السفلي المحدث) -->
+    <!-- NAVIGATION BAR -->
     <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-2 py-3 flex justify-around shadow-2xl z-50 max-w-xl mx-auto md:max-w-7xl">
         <button onclick="switchTab('pos')" id="nav-pos" class="nav-btn text-xs font-bold text-rose-600 flex flex-col items-center transition-all">
-            <i class="fa-solid fa-cash-register text-lg mb-1"></i> كاشير المحل
+            <i class="fa-solid fa-cash-register text-lg mb-1"></i> الحسابات
         </button>
         <button onclick="switchTab('catalog')" id="nav-catalog" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center transition-all">
-            <i class="fa-solid fa-eye text-lg mb-1"></i> عرض المنتجات (داشبورد)
+            <i class="fa-solid fa-eye text-lg mb-1"></i> عرض الهدايا
         </button>
         <button onclick="switchTab('inventory')" id="nav-inventory" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center transition-all">
             <i class="fa-solid fa-boxes-stacked text-lg mb-1"></i> حركة المخزون
@@ -80,17 +80,17 @@
     <!-- MAIN CONTAINER -->
     <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full space-y-6">
 
-        <!-- TAB 1: POS (كاشير المحل) -->
+        <!-- TAB 1: POS (الحسابات) -->
         <div id="tab-pos" class="app-tab space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <div class="lg:col-span-7 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
                     <div class="flex items-center justify-between border-b pb-3">
                         <h3 class="text-xl font-black text-slate-900 flex items-center">
-                            <i class="fa-solid fa-boxes-packing text-blush-600 ml-2"></i> منتجات المحل (اختر للبناء)
+                            <i class="fa-solid fa-boxes-packing text-blush-600 ml-2"></i> الهدايا المتاحة (اختر للبناء)
                         </h3>
                         <span class="text-xs font-bold bg-slate-100 px-3 py-1 rounded-xl">اضغط لإضافة صنف</span>
                     </div>
-                    <input type="text" id="pos-search" oninput="renderPOSProducts()" placeholder="ابحث عن منتج بالاسم..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-rose-500">
+                    <input type="text" id="pos-search" oninput="renderPOSProducts()" placeholder="ابحث عن هدية بالاسم..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-rose-500">
                     <div id="pos-product-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[480px] overflow-y-auto custom-scrollbar p-1"></div>
                 </div>
 
@@ -134,20 +134,19 @@
             </div>
         </div>
 
-        <!-- TAB 2: CATALOG DASHBOARD (لوحة عرض المنتجات والصور والأسعار للاطلاع فقط بدون أي تعديل) -->
+        <!-- TAB 2: CATALOG (عرض الهدايا - للاطلاع فقط بدون أي تعديل) -->
         <div id="tab-catalog" class="app-tab hidden space-y-6">
             <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-4">
                 <div class="flex items-center justify-between border-b pb-3">
                     <div>
-                        <h3 class="text-xl font-black text-slate-900">داشبورد عرض المنتجات والمواصفات</h3>
-                        <p class="text-xs text-slate-500 mt-1">عرض شامل لكل المنتجات بالصور، الأسعار، والأعداد (للاطلاع فقط - بدون تعديل)</p>
+                        <h3 class="text-xl font-black text-slate-900">عرض الهدايا والمواصفات</h3>
+                        <p class="text-xs text-slate-500 mt-1">عرض شامل لكل الهدايا بالصور، الأسعار، والأعداد (للاطلاع فقط - بدون تعديل)</p>
                     </div>
                     <span class="bg-blush-50 text-blush-600 text-xs font-bold px-3 py-1.5 rounded-xl border border-blush-200">عرض فقط (Read-Only)</span>
                 </div>
                 
-                <input type="text" id="catalog-search" oninput="renderCatalogDashboard()" placeholder="ابحث في المنتجات المعروضة..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-rose-500">
+                <input type="text" id="catalog-search" oninput="renderCatalogDashboard()" placeholder="ابحث في الهدايا المعروضة..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-rose-500">
 
-                <!-- شبكة عرض المنتجات بالصور والأسعار والأعداد -->
                 <div id="catalog-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-h-[600px] overflow-y-auto custom-scrollbar p-1"></div>
             </div>
         </div>
@@ -168,7 +167,7 @@
                     <table class="w-full text-right text-xs">
                         <thead class="bg-slate-50 text-slate-500 font-bold border-b">
                             <tr>
-                                <th class="p-3">المنتج</th>
+                                <th class="p-3">الهدية</th>
                                 <th class="p-3">القسم</th>
                                 <th class="p-3">سعر القطعة</th>
                                 <th class="p-3">المخزون المتبقي بالمحل</th>
@@ -188,7 +187,7 @@
                     <i class="fa-solid fa-shield-halved text-rose-600 text-lg"></i>
                     <span class="text-xs font-bold text-rose-900">أنت الآن في لوحة التحكم الإدارية الخاصة بك</span>
                 </div>
-                <button onclick="switchTab('pos')" class="text-xs font-bold bg-white text-rose-600 border border-rose-300 px-3 py-1.5 rounded-xl shadow-sm">العودة للكاشير</button>
+                <button onclick="switchTab('pos')" class="text-xs font-bold bg-white text-rose-600 border border-rose-300 px-3 py-1.5 rounded-xl shadow-sm">العودة للحسابات</button>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -213,14 +212,14 @@
                     <div class="flex justify-between items-center border-b pb-3">
                         <h3 class="text-lg font-black text-slate-900">إدارة وتعديل المخزون والأسعار</h3>
                         <button onclick="openAddProductModal()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md">
-                            <i class="fa-solid fa-plus ml-1"></i> إضافة منتج جديد للمحل
+                            <i class="fa-solid fa-plus ml-1"></i> إضافة هدية جديدة للمحل
                         </button>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-right text-xs">
                             <thead class="bg-slate-50 text-slate-500 font-bold border-b">
                                 <tr>
-                                    <th class="p-3">المنتج</th>
+                                    <th class="p-3">الهدية</th>
                                     <th class="p-3">السعر</th>
                                     <th class="p-3">المخزون الحالي</th>
                                     <th class="p-3 text-left">التحكم الكامل (تعديل / حذف / +)</th>
@@ -261,18 +260,18 @@
         </div>
     </div>
 
-    <!-- ADD / EDIT PRODUCT MODAL (محمي بكلمة المرور للإدارة فقط) -->
+    <!-- ADD / EDIT PRODUCT MODAL -->
     <div id="product-modal" class="fixed inset-0 z-50 hidden bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-4">
             <div class="flex justify-between border-b pb-3">
-                <h3 id="modal-title" class="font-black text-lg">إضافة منتج جديد للمخزن</h3>
+                <h3 id="modal-title" class="font-black text-lg">إضافة هدية جديدة للمخزن</h3>
                 <button onclick="closeProductModal()">✕</button>
             </div>
             <input type="hidden" id="edit-prod-id">
             <div class="space-y-3 text-xs font-bold">
                 <div>
-                    <label class="text-slate-600 block mb-1">اسم المنتج / الموديل:</label>
-                    <input type="text" id="prod-name" placeholder="اسم المنتج..." class="w-full border p-2.5 rounded-xl">
+                    <label class="text-slate-600 block mb-1">اسم الهدية / الموديل:</label>
+                    <input type="text" id="prod-name" placeholder="اسم الهدية..." class="w-full border p-2.5 rounded-xl">
                 </div>
                 <div>
                     <label class="text-slate-600 block mb-1">السعر (EGP):</label>
@@ -349,8 +348,8 @@
 
     <!-- SCRIPT ENGINE -->
     <script>
-        const STORAGE_KEY_PRODS = 'farafero_shop_products_system_v6';
-        const STORAGE_KEY_ORDERS = 'farafero_shop_orders_system_v6';
+        const STORAGE_KEY_PRODS = 'farafero_shop_products_system_v7';
+        const STORAGE_KEY_ORDERS = 'farafero_shop_orders_system_v7';
         const ADMIN_PIN = "2580";
 
         const defaultProducts = [
@@ -413,7 +412,6 @@
             });
         }
 
-        // دالة عرض المنتجات في الداشبورد الجديدة (للاطلاع فقط - بدون أي أزرار تعديل أو حذف أو خصم)
         function renderCatalogDashboard() {
             const grid = document.getElementById('catalog-grid');
             const searchInput = document.getElementById('catalog-search');
@@ -449,7 +447,7 @@
 
         function addToPOS(id) {
             const p = state.products.find(x => x.id === id);
-            if (!p || p.stock <= 0) return alert('عذراً، هذا المنتج نفذ من المخزون بالمحل!');
+            if (!p || p.stock <= 0) return alert('عذراً، هذه الهدية نفذت من المخزون بالمحل!');
             
             const item = state.posCart.find(x => x.id === id);
             if (item) {
@@ -566,7 +564,7 @@
         }
 
         function checkoutPOS() {
-            if (state.posCart.length === 0) return alert('برجاء اختيار منتجات للفاتورة أولاً!');
+            if (state.posCart.length === 0) return alert('برجاء اختيار هدايا للفاتورة أولاً!');
             
             const nameEl = document.getElementById('cust-name');
             const phoneEl = document.getElementById('cust-phone');
@@ -651,12 +649,12 @@
                 closePinModal();
                 switchTab('admin');
             } else {
-                alert('كلمة المرور غير صحيحة! كلمة المرور الخاصة بك هي 2580');
+                alert('كلمة المرور غير صحيحة! كلمة المرور الخاصة بك هي 2580[span_0](start_span)[span_0](end_span)');
             }
         }
 
         function openAddProductModal() {
-            document.getElementById('modal-title').innerText = 'إضافة منتج جديد للمخزن';
+            document.getElementById('modal-title').innerText = 'إضافة هدية جديدة للمخزن';
             document.getElementById('edit-prod-id').value = '';
             document.getElementById('prod-name').value = '';
             document.getElementById('prod-price').value = '';
@@ -668,7 +666,7 @@
         function openEditProductModal(id) {
             const p = state.products.find(x => x.id === id);
             if (!p) return;
-            document.getElementById('modal-title').innerText = 'تعديل بيانات ومواصفات المنتج';
+            document.getElementById('modal-title').innerText = 'تعديل بيانات ومواصفات الهدية';
             document.getElementById('edit-prod-id').value = p.id;
             document.getElementById('prod-name').value = p.name;
             document.getElementById('prod-price').value = p.price;
@@ -690,7 +688,7 @@
             const category = document.getElementById('prod-category').value;
             const image = document.getElementById('prod-image').value.trim() || "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&q=80";
 
-            if (!name || isNaN(price)) return alert('برجاء إدخال اسم المنتج والسعر بشكل صحيح!');
+            if (!name || isNaN(price)) return alert('برجاء إدخال اسم الهدية والسعر بشكل صحيح!');
 
             if (editId) {
                 const p = state.products.find(x => x.id === editId);
@@ -701,7 +699,7 @@
                     p.category = category;
                     p.image = image;
                 }
-                alert('تم تعديل بيانات المنتج بنجاح!');
+                alert('تم تعديل بيانات الهدية بنجاح!');
             } else {
                 const newProd = {
                     id: 'p' + Date.now(),
@@ -712,7 +710,7 @@
                     image
                 };
                 state.products.push(newProd);
-                alert('تم إضافة المنتج الجديد للمخزن بنجاح!');
+                alert('تم إضافة الهدية الجديدة للمخزن بنجاح!');
             }
 
             saveProducts();
@@ -721,7 +719,7 @@
         }
 
         function deleteProd(id) {
-            if (confirm('هل أنت متأكد من حذف هذا المنتج نهائياً؟')) {
+            if (confirm('هل أنت متأكد من حذف هذه الهدية نهائياً؟')) {
                 state.products = state.products.filter(x => x.id !== id);
                 saveProducts();
                 renderAll();
@@ -742,7 +740,7 @@
             });
             
             const targetTab = document.getElementById('tab-' + tab);
-            if (targetTab) targetTab.classList.net ? targetTab.classList.remove('hidden') : targetTab.classList.remove('hidden');
+            if (targetTab) targetTab.classList.remove('hidden');
             
             const activeBtn = document.getElementById('nav-' + tab);
             if (activeBtn) {
