@@ -56,7 +56,7 @@
 
             <div class="flex items-center space-x-2 space-x-reverse bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
                 <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                <span class="text-[11px] font-bold text-emerald-700">النظام متصل وحفظ فوري</span>
+                <span class="text-[11px] font-bold text-emerald-700">النظام متصل محلياً</span>
             </div>
         </div>
     </header>
@@ -247,7 +247,7 @@
                 <div class="lg:col-span-4 bg-white rounded-3xl p-6 border shadow-sm space-y-4">
                     <div class="border-b pb-3">
                         <h3 class="text-lg font-black text-slate-900">سجل الفواتير الصادرة</h3>
-                        <p class="text-xs text-slate-500">اضغط على أي فاتورة لاستعراضها وطباعتها PDF</p>
+                        <p class="text-xs text-slate-500">اضغط على أي فاتورة لاستعراضها أو إلغائها</p>
                     </div>
                     <div id="recent-orders-list" class="space-y-3 max-h-[350px] overflow-y-auto custom-scrollbar"></div>
                 </div>
@@ -274,7 +274,7 @@
         </div>
     </div>
 
-    <!-- VIEW ORDER DETAILS MODAL -->
+    <!-- VIEW ORDER DETAILS MODAL (محدث ليشمل زر إلغاء الفاتورة دون مسحها) -->
     <div id="order-details-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
@@ -298,6 +298,10 @@
                     <span class="text-slate-500 font-bold">تاريخ الإصدار:</span>
                     <span id="view-ord-date" class="font-semibold text-slate-600"></span>
                 </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-500 font-bold">حالة الفاتورة:</span>
+                    <span id="view-ord-status" class="font-bold"></span>
+                </div>
             </div>
 
             <div class="space-y-2">
@@ -310,17 +314,23 @@
                 <span class="text-rose-600 text-lg"><span id="view-ord-total">0</span> EGP</span>
             </div>
 
-            <div class="flex space-x-2 space-x-reverse pt-2">
-                <button onclick="closeOrderModal()" class="w-1/2 bg-slate-100 py-3 rounded-xl font-bold text-xs text-slate-600">إغلاق</button>
-                <button onclick="printCurrentModalOrder()" class="w-1/2 bg-rose-600 hover:bg-rose-700 text-white py-3 rounded-xl font-bold text-xs shadow-md flex items-center justify-center space-x-1.5 space-x-reverse">
-                    <i class="fa-solid fa-print"></i>
-                    <span>طباعة / حفظ PDF</span>
+            <div id="modal-actions-container" class="flex flex-col gap-2 pt-2">
+                <div class="flex space-x-2 space-x-reverse">
+                    <button onclick="closeOrderModal()" class="w-1/3 bg-slate-100 py-3 rounded-xl font-bold text-xs text-slate-600">إغلاق</button>
+                    <button onclick="printCurrentModalOrder()" class="w-2/3 bg-rose-600 hover:bg-rose-700 text-white py-3 rounded-xl font-bold text-xs shadow-md flex items-center justify-center space-x-1.5 space-x-reverse">
+                        <i class="fa-solid fa-print"></i>
+                        <span>طباعة / حفظ PDF</span>
+                    </button>
+                </div>
+                <button id="cancel-order-btn" onclick="cancelCurrentOrder()" class="w-full bg-amber-500 hover:bg-amber-600 text-white py-2.5 rounded-xl font-bold text-xs shadow-sm flex items-center justify-center space-x-1.5 space-x-reverse">
+                    <i class="fa-solid fa-ban"></i>
+                    <span>إلغاء الفاتورة (إرجاع المخزون)</span>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- ADD / EDIT PRODUCT MODAL (محدث ليشمل خانة الكود والصورة) -->
+    <!-- ADD / EDIT PRODUCT MODAL -->
     <div id="product-modal" class="fixed inset-0 z-50 hidden bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-4">
             <div class="flex justify-between border-b pb-3">
@@ -418,8 +428,8 @@
 
     <!-- SCRIPT ENGINE -->
     <script>
-        const STORAGE_KEY_PRODS = 'farafero_shop_products_system_v10';
-        const STORAGE_KEY_ORDERS = 'farafero_shop_orders_system_v10';
+        const STORAGE_KEY_PRODS = 'farafero_shop_products_system_v11';
+        const STORAGE_KEY_ORDERS = 'farafero_shop_orders_system_v11';
         const ADMIN_PIN = "2580";
 
         const defaultProducts = [
@@ -595,8 +605,10 @@
         }
 
         function renderDashboard() {
-            const totalRevenue = state.orders.reduce((a, b) => a + b.total, 0);
-            const totalOrders = state.orders.length;
+            // حساب الإجمالي فقط للفواتير غير الملغية
+            const activeOrders = state.orders.filter(o => o.status !== 'cancelled');
+            const totalRevenue = activeOrders.reduce((a, b) => a + b.total, 0);
+            const totalOrders = activeOrders.length;
             
             let totalCostVal = 0;
             let totalValueVal = 0;
@@ -618,7 +630,7 @@
             const piecesEl = document.getElementById('dash-total-pieces');
 
             if(revEl) revEl.innerText = totalRevenue;
-            if(ordEl) ordEl.innerText = 'عدد الطلبات: ' + totalOrders;
+            if(ordEl) ordEl.innerText = 'الطلبات النشطة: ' + totalOrders;
             if(costEl) costEl.innerText = totalCostVal;
             if(valEl) valEl.innerText = totalValueVal;
             if(piecesEl) piecesEl.innerText = totalPiecesVal;
@@ -649,11 +661,12 @@
             if(ordersList) {
                 ordersList.innerHTML = '';
                 state.orders.forEach(o => {
+                    const isCancelled = o.status === 'cancelled';
                     ordersList.innerHTML += `
-                        <div onclick="openOrderDetails('${o.id}')" class="bg-slate-50 hover:bg-rose-50 border p-3 rounded-2xl text-xs space-y-1 cursor-pointer transition-all shadow-sm">
+                        <div onclick="openOrderDetails('${o.id}')" class="bg-slate-50 hover:bg-rose-50 border p-3 rounded-2xl text-xs space-y-1 cursor-pointer transition-all shadow-sm ${isCancelled ? 'opacity-60 border-amber-300 bg-amber-50/30' : ''}">
                             <div class="flex justify-between items-center">
-                                <b class="text-slate-900">#${o.id}</b>
-                                <span class="font-black text-rose-600">${o.total} EGP</span>
+                                <b class="text-slate-900">#${o.id} ${isCancelled ? '<span class="text-amber-600 text-[10px]">(ملغية)</span>' : ''}</b>
+                                <span class="font-black ${isCancelled ? 'text-slate-400 line-through' : 'text-rose-600'}">${o.total} EGP</span>
                             </div>
                             <p class="text-slate-600 text-[11px] font-semibold">العميل: ${o.customerName} (${o.customerPhone})</p>
                             <p class="text-slate-400 text-[10px]">${o.date}</p>
@@ -672,6 +685,17 @@
             document.getElementById('view-ord-cust-phone').innerText = order.customerPhone;
             document.getElementById('view-ord-date').innerText = order.date;
             document.getElementById('view-ord-total').innerText = order.total;
+
+            const statusEl = document.getElementById('view-ord-status');
+            const cancelBtn = document.getElementById('cancel-order-btn');
+
+            if (order.status === 'cancelled') {
+                statusEl.innerHTML = '<span class="text-amber-600 bg-amber-50 px-2 py-0.5 rounded-md">ملغية (تم إرجاع المخزون)</span>';
+                if(cancelBtn) cancelBtn.classList.add('hidden');
+            } else {
+                statusEl.innerHTML = '<span class="text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">سارية ومعتمدة</span>';
+                if(cancelBtn) cancelBtn.classList.remove('hidden');
+            }
 
             const itemsContainer = document.getElementById('view-ord-items');
             itemsContainer.innerHTML = '';
@@ -695,6 +719,32 @@
             }
 
             document.getElementById('order-details-modal').classList.remove('hidden');
+        }
+
+        // إلغاء الفاتورة دون مسحها وإرجاع الكميات للمخزن
+        function cancelCurrentOrder() {
+            const o = state.currentActiveModalOrder;
+            if (!o || o.status === 'cancelled') return;
+
+            if (confirm(`هل أنت متأكد من إلغاء الفاتورة #${o.id}؟ سيتم إرجاع الكميات للمخزن ولن يتم احتسابها في الإجمالي.`)) {
+                o.status = 'cancelled';
+
+                // إرجاع المخزون للأصناف المباعة
+                if (Array.isArray(o.detailedItems)) {
+                    o.detailedItems.forEach(item => {
+                        const prod = state.products.find(p => p.id === item.id);
+                        if (prod) {
+                            prod.stock += item.qty;
+                        }
+                    });
+                }
+
+                saveProducts();
+                saveOrders();
+                closeOrderModal();
+                renderAll();
+                alert('تم إلغاء الفاتورة وإرجاع الكميات للمخزن بنجاح.');
+            }
         }
 
         function closeOrderModal() {
@@ -744,6 +794,7 @@
                 total: total, 
                 customerName: custName,
                 customerPhone: custPhone,
+                status: 'active',
                 items: state.posCart.map(i => `${i.name} (×${i.qty})`),
                 detailedItems: JSON.parse(JSON.stringify(state.posCart))
             };
@@ -914,7 +965,7 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', initApp);
+        document.appendEventListener ? document.addEventListener('DOMContentLoaded', initApp) : window.onload = initApp;
     </script>
 </body>
 </html>
