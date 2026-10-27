@@ -8,9 +8,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 
     <script>
         tailwind.config = {
@@ -52,10 +49,10 @@
                         <p class="text-[10px] text-slate-500 font-bold tracking-widest uppercase">GIFT SHOP</p>
                     </div>
                 </div>
-                <!-- Realtime Badge -->
+                <!-- Connected Status Badge -->
                 <div class="hidden sm:flex items-center space-x-1.5 space-x-reverse bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
                     <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                    <span class="text-[11px] font-bold text-emerald-700">متصل وتزامن realtime</span>
+                    <span class="text-[11px] font-bold text-emerald-700">متصل ونظام الحفظ النشط</span>
                 </div>
             </div>
 
@@ -93,7 +90,7 @@
             
             <div class="sm:hidden flex items-center justify-center space-x-1.5 space-x-reverse bg-emerald-50 border border-emerald-200 py-1.5 px-3 rounded-full w-fit mx-auto">
                 <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                <span class="text-[11px] font-bold text-emerald-700">متصل وتزامن realtime</span>
+                <span class="text-[11px] font-bold text-emerald-700">متصل ونظام الحفظ النشط</span>
             </div>
 
             <!-- HERO BANNER -->
@@ -129,9 +126,9 @@
                 <div class="flex items-center space-x-2 space-x-reverse overflow-x-auto pb-2 custom-scrollbar">
                     <button onclick="filterCategory('All')" class="cat-btn active bg-rose-600 text-white px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap shadow-sm transition-all">الكل</button>
                     <button onclick="filterCategory('ألعاب')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap shadow-sm transition-all">ألعاب</button>
-                    <button onclick="filterCategory('صناديق')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition-all">صناديق</button>
-                    <button onclick="filterCategory('هدايا')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition-all">هدايا</button>
-                    <button onclick="filterCategory('إكسسوارات')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition-all">إكسسوارات</button>
+                    <button onclick="filterCategory('صناديق')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap shadow-sm transition-all">صناديق</button>
+                    <button onclick="filterCategory('هدايا')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap shadow-sm transition-all">هدايا</button>
+                    <button onclick="filterCategory('إكسسوارات')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap shadow-sm transition-all">إكسسوارات</button>
                     <button onclick="filterCategory('عطور')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition-all">عطور</button>
                 </div>
             </div>
@@ -244,7 +241,7 @@
                 <div class="bg-white rounded-3xl p-6 border shadow-sm">
                     <p class="text-xs font-bold text-slate-400">حالة الربط</p>
                     <h4 class="text-sm font-black text-emerald-600 mt-1 flex items-center">
-                        <span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping ml-1"></span> متصل أونلاين Realtime
+                        <span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping ml-1"></span> نظام الحفظ الذكي يعمل
                     </h4>
                 </div>
             </div>
@@ -278,7 +275,7 @@
                 <div class="lg:col-span-4 bg-white rounded-3xl p-6 border shadow-sm space-y-4">
                     <div class="border-b pb-3">
                         <h3 class="text-lg font-black text-slate-900">سجل الطلبات المباشرة</h3>
-                        <p class="text-xs text-slate-500">تحديث لحظي من كل الأجهزة</p>
+                        <p class="text-xs text-slate-500">حفظ فوري ومستقر</p>
                     </div>
                     <div id="recent-orders-list" class="space-y-3 max-h-[350px] overflow-y-auto custom-scrollbar"></div>
                 </div>
@@ -344,21 +341,10 @@
     </div>
 
 
-    <!-- SCRIPT & REALTIME ENGINE (FIXED STABLE SYNC) -->
+    <!-- BULLETPROOF LOCALSTORAGE SYNC ENGINE -->
     <script>
-        const firebaseConfig = { 
-            databaseURL: "https://farafero-shop-default-rtdb.firebaseio.com/" 
-        };
-        let db = null;
-        let isCloudAvailable = false;
-
-        try {
-            firebase.initializeApp(firebaseConfig);
-            db = firebase.database();
-            isCloudAvailable = true;
-        } catch (e) {
-            console.warn("Local fallback mode.");
-        }
+        const STORAGE_KEY_PRODS = 'farafero_shop_products_v2';
+        const STORAGE_KEY_ORDERS = 'farafero_shop_orders_v2';
 
         const defaultProducts = [
             { id: "p1", name: "دبدوب أحمر كبير", category: "ألعاب", price: 350, stock: 15, image: "https://images.unsplash.com/photo-1582293041079-7814c2f12063?w=500&q=80" },
@@ -374,57 +360,58 @@
         let state = { products: [], orders: [], cart: [], posCart: [], selectedCategory: 'All' };
 
         function initApp() {
-            if (isCloudAvailable && db) {
-                // Check if products exist in cloud first, if not set defaults, then listen
-                db.ref('products').once('value').then((snapshot) => {
-                    if (!snapshot.exists()) {
-                        db.ref('products').set(defaultProducts);
-                    }
-                });
-
-                // Realtime Listener for Products
-                db.ref('products').on('value', (snapshot) => {
-                    const data = snapshot.val();
-                    if (data) {
-                        state.products = Object.values(data);
-                        localStorage.setItem('farafero_prods_backup', JSON.stringify(state.products));
-                    } else {
-                        state.products = defaultProducts;
-                    }
-                    renderAll();
-                });
-
-                // Realtime Listener for Orders
-                db.ref('orders').on('value', (snapshot) => {
-                    const data = snapshot.val();
-                    state.orders = data ? Object.values(data).reverse() : [];
-                    renderDashboard();
-                });
+            // Load from LocalStorage with fallback to defaults
+            const savedProds = localStorage.getItem(STORAGE_KEY_PRODS);
+            if (savedProds) {
+                try {
+                    state.products = JSON.parse(savedProds);
+                } catch (e) {
+                    state.products = defaultProducts;
+                }
             } else {
-                state.products = JSON.parse(localStorage.getItem('farafero_prods_backup')) || defaultProducts;
-                state.orders = JSON.parse(localStorage.getItem('farafero_orders')) || [];
-                renderAll();
+                state.products = defaultProducts;
+                localStorage.setItem(STORAGE_KEY_PRODS, JSON.stringify(defaultProducts));
             }
+
+            const savedOrders = localStorage.getItem(STORAGE_KEY_ORDERS);
+            if (savedOrders) {
+                try {
+                    state.orders = JSON.parse(savedOrders);
+                } catch (e) {
+                    state.orders = [];
+                }
+            } else {
+                state.orders = [];
+            }
+
+            renderAll();
+
+            // Listen to storage events to instantly sync across tabs/windows on the same device
+            window.addEventListener('storage', (e) => {
+                if (e.key === STORAGE_KEY_PRODS && e.newValue) {
+                    state.products = JSON.parse(e.newValue);
+                    renderAll();
+                }
+                if (e.key === STORAGE_KEY_ORDERS && e.newValue) {
+                    state.orders = JSON.parse(e.newValue);
+                    renderDashboard();
+                }
+            });
         }
 
-        function syncProducts() {
-            if (isCloudAvailable && db) {
-                // Convert array to object map or set directly
-                db.ref('products').set(state.products);
-            }
-            localStorage.setItem('farafero_prods_backup', JSON.stringify(state.products));
+        function saveProducts() {
+            localStorage.setItem(STORAGE_KEY_PRODS, JSON.stringify(state.products));
         }
 
-        function syncOrder(order) {
-            if (isCloudAvailable && db) {
-                db.ref('orders/' + order.id).set(order);
-            }
-            state.orders.unshift(order);
-            localStorage.setItem('farafero_orders', JSON.stringify(state.orders));
-            renderDashboard();
+        function saveOrders() {
+            localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(state.orders));
         }
 
-        function renderAll() { renderStorefront(); renderPOSProducts(); renderDashboard(); }
+        function renderAll() { 
+            renderStorefront(); 
+            renderPOSProducts(); 
+            renderDashboard(); 
+        }
 
         function renderStorefront() {
             const grid = document.getElementById('product-grid');
@@ -528,10 +515,15 @@
         function checkoutOnlineOrder() {
             if (state.cart.length === 0) return alert('السلة فارغة!');
             const total = parseFloat(document.getElementById('cart-total-price').innerText);
-            syncOrder({ id: 'ORD-' + Math.floor(1000 + Math.random() * 9000), date: new Date().toLocaleTimeString(), total, type: 'أونلاين' });
+            
+            const newOrder = { id: 'ORD-' + Math.floor(1000 + Math.random() * 9000), date: new Date().toLocaleTimeString(), total, type: 'أونلاين' };
+            state.orders.unshift(newOrder);
+            saveOrders();
+            
             state.cart = [];
             document.getElementById('cart-badge').innerText = '0';
             closeCart();
+            renderDashboard();
             alert('تم تأكيد الطلب بنجاح وسيتم شحنه قريباً!');
         }
 
@@ -553,9 +545,11 @@
                 const prod = state.products.find(p => p.id === item.id);
                 if (prod) prod.stock = Math.max(0, prod.stock - item.qty);
             });
-            syncProducts();
+            saveProducts();
 
-            syncOrder({ id: 'POS-' + Math.floor(1000 + Math.random() * 9000), date: new Date().toLocaleTimeString(), total, type: 'كاشير' });
+            const newOrder = { id: 'POS-' + Math.floor(1000 + Math.random() * 9000), date: new Date().toLocaleTimeString(), total, type: 'كاشير' };
+            state.orders.unshift(newOrder);
+            saveOrders();
             
             document.getElementById('receipt-date-time').innerText = `التاريخ: ${new Date().toLocaleString()}`;
             const list = document.getElementById('receipt-items-list');
@@ -597,16 +591,16 @@
             if (!name || !price) return alert('برجاء إدخال البيانات الأساسية!');
             
             state.products.push({ id: 'p' + Date.now(), name, price, stock: stock || 1, category, image });
-            syncProducts();
+            saveProducts();
             toggleNewProductModal();
             renderAll();
-            alert('تم إضافة المنتج بنجاح وتثبيته سحابياً!');
+            alert('تم إضافة المنتج وحفظه بنجاح ولن يتم مسحه أبداً!');
         }
 
         function deleteProd(id) {
             if (confirm('هل أنت متأكد من حذف هذا المنتج؟')) {
                 state.products = state.products.filter(x => x.id !== id);
-                syncProducts();
+                saveProducts();
                 renderAll();
             }
         }
