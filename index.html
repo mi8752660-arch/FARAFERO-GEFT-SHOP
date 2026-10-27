@@ -236,7 +236,7 @@
             <div class="flex justify-between items-center bg-rose-50 border border-rose-200 p-4 rounded-2xl">
                 <div class="flex items-center space-x-2 space-x-reverse">
                     <i class="fa-solid fa-shield-halved text-rose-600 text-lg"></i>
-                    <span class="text-xs font-bold text-rose-900">أنت في لوحة الإدارة المحمية (خاص بالمدير فقط)</span>
+                    <span class="text-xs font-bold text-rose-900">أنت في لوحة الإدارة المحمية (كلمة المرور: 2580)</span>
                 </div>
                 <button onclick="switchTab('store')" class="text-xs font-bold bg-white text-rose-600 border border-rose-300 px-3 py-1.5 rounded-xl shadow-sm">قفل لوحة الإدارة</button>
             </div>
@@ -333,7 +333,7 @@
             </div>
             <div>
                 <h3 class="font-black text-base text-slate-900">لوحة تحكم المدير</h3>
-                <p class="text-[11px] text-slate-400 mt-1">أدخل كلمة المرور السرية للوصول (الافتراضية: 1234)</p>
+                <p class="text-[11px] text-slate-400 mt-1">أدخل كلمة المرور (2580)</p>
             </div>
             <input type="password" id="admin-pin-input" placeholder="كلمة المرور..." class="w-full border border-slate-200 bg-slate-50 p-3 rounded-xl text-center text-sm font-bold focus:outline-none focus:border-rose-500">
             <div class="flex space-x-2 space-x-reverse pt-1">
@@ -417,9 +417,9 @@
 
     <!-- SCRIPT ENGINE -->
     <script>
-        const STORAGE_KEY_PRODS = 'farafero_shop_products_v7';
-        const STORAGE_KEY_ORDERS = 'farafero_shop_orders_v7';
-        const ADMIN_PIN = "1234"; // تقدر تغير الباسورد ده لرقم سري خاص بك
+        const STORAGE_KEY_PRODS = 'farafero_shop_products_v8';
+        const STORAGE_KEY_ORDERS = 'farafero_shop_orders_v8';
+        const ADMIN_PIN = "2580"; // كلمة المرور الجديدة
 
         const defaultProducts = [
             { id: "p1", name: "دبدوب أحمر كبير", category: "ألعاب", price: 350, stock: 15, image: "https://images.unsplash.com/photo-1582293041079-7814c2f12063?w=500&q=80" },
@@ -561,7 +561,6 @@
             });
         }
 
-        // ADD TO CART WITHOUT ALERT POPUP (SILENT ADD)
         function addToCart(id) {
             const p = state.products.find(x => x.id === id);
             if (!p || p.stock <= 0) return alert('المنتج نفذ من المخزون!');
@@ -719,7 +718,6 @@
             document.getElementById('cart-badge').innerText = state.cart.reduce((a, b) => a + b.qty, 0);
         }
 
-        // ADMIN PIN PROTECTION FUNCTIONS
         function requestAdminAccess() {
             document.getElementById('admin-pin-input').value = '';
             document.getElementById('admin-pin-modal').classList.remove('hidden');
@@ -735,7 +733,7 @@
                 closePinModal();
                 switchTab('admin');
             } else {
-                alert('كلمة المرور غير صحيحة! هذه اللوحة مخصصة للمدير فقط.');
+                alert('كلمة المرور غير صحيحة! كلمة المرور الخاصة بك هي 2580');
             }
         }
 
@@ -773,7 +771,6 @@
                 if (btn) { btn.classList.remove('text-rose-600'); btn.classList.add('text-slate-400'); }
             });
             
-            // Highlight active nav
             const navId = tab === 'admin' ? 'mob-nav-admin' : 'mob-nav-' + tab;
             const activeBtn = document.getElementById(navId);
             if (activeBtn) { activeBtn.classList.remove('text-slate-400'); activeBtn.classList.add('text-rose-600'); }
