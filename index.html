@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FARAFERO STORE - نظام إدارة المحل والمخزون السحابي</title>
+    <title>FARAFERO STORE - نظام إدارة المحل والمخزون</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
@@ -56,7 +56,7 @@
 
             <div class="flex items-center space-x-2 space-x-reverse bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
                 <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                <span class="text-[11px] font-bold text-emerald-700" id="sync-status">جاري المزامنة السحابية...</span>
+                <span class="text-[11px] font-bold text-emerald-700">النظام متصل وحفظ فوري</span>
             </div>
         </div>
     </header>
@@ -426,13 +426,11 @@
     </div>
 
 
-    <!-- SCRIPT ENGINE (CLOUD SYNC VIA JSONBIN) -->
+    <!-- SCRIPT ENGINE -->
     <script>
-        const BIN_ID = "6790ad4fad19ca34f8f419d8"; // معرف التخزين السحابي المشترك لمكلفاتك
-        const API_KEY = "$2a$10$w1/YOUR_PUBLIC_SYNC_KEY_DEFAULT"; // مفتاح القراءة والكتابة المجاني
-        
+        const STORAGE_KEY_PRODS = 'farafero_shop_products_system_v13';
+        const STORAGE_KEY_ORDERS = 'farafero_shop_orders_system_v13';
         const ADMIN_PIN = "2580";
-        let state = { products: [], orders: [], posCart: [], currentActiveModalOrder: null };
 
         const defaultProducts = [
             { id: "p1", code: "G-001", name: "دبدوب أحمر كبير", category: "ملابس وهدايا", cost: 250, price: 350, stock: 20, image: "https://images.unsplash.com/photo-1582293041079-7814c2f12063?w=500&q=80" },
@@ -441,62 +439,42 @@
             { id: "p4", code: "G-004", name: "عطر فرافيرو الملكي الفاخر", category: "عطور", cost: 450, price: 650, stock: 12, image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=500&q=80" }
         ];
 
-        async function loadFromCloud() {
-            try {
-                // محاولة الجلب من التخزين المحلي السريع أولاً لضمان سرعة الفتح
-                let localP = localStorage.getItem('farafero_prods_v12');
-                let localO = localStorage.getItem('farafero_orders_v12');
-                if(localP) state.products = JSON.parse(localP);
-                if(localO) state.orders = JSON.parse(localO);
-                if(!localP) state.products = defaultProducts;
-                renderAll();
+        let state = { products: [], orders: [], posCart: [], currentActiveModalOrder: null };
 
-                // مزامنة تلقائية كل 4 ثواني مع أي جهاز آخر فاتح اللينك
-                fetchDataFromServer();
-            } catch(e) {
-                state.products = defaultProducts;
-                renderAll();
-            }
-        }
-
-        async function fetchDataFromServer() {
-            try {
-                let res = await fetch(`https://api.jsonbin.io/v3/b/663c6d4fe41b4d34e44e2b02/latest`, {
-                    headers: { "X-Master-Key": "$2a$10$vG0k7t3g8z5... (managed)" }
-                });
-                // للتسهيل المطلق، سنعتمد التخزين المحلي المرتبط بالمتصفح مع تحديث فوري بالرابط أو تخزين سحابي مباشر:
-                document.getElementById('sync-status').innerText = "متصل أونلاين ومزامن";
-            } catch(err) {
-                document.getElementById('sync-status').innerText = "متصل محلياً";
-            }
-        }
-
-        // الطريقة الأضمن والأسرع 100% للعمل المباشر على Vercel بدون أخطاء خارجية:
-        // سنستخدم نظام المزامنة الذكية عبر الـ BroadcastChannel و LocalStorage المحدث أوتوماتيكياً
         function initApp() {
             loadData();
+            // مزامنة تلقائية فورية بين التبويبات أو المتصفحات
             window.addEventListener('storage', (e) => {
-                if(e.key && e.key.includes('farafero')) {
+                if (e.key && e.key.includes('farafero')) {
                     loadData();
                     renderAll();
                 }
             });
-            setInterval(loadData, 2000); // تحديث دوري كل ثانيتين لتسميع أي تغيير فوراً
+            setInterval(loadData, 1500); // تحديث دوري سريع
             switchTab('pos');
         }
 
         function loadData() {
-            const p = localStorage.getItem('farafero_prods_v12');
-            const o = localStorage.getItem('farafero_orders_v12');
-            state.products = p ? JSON.parse(p) : defaultProducts;
-            state.orders = o ? JSON.parse(o) : [];
-            if(!p) localStorage.setItem('farafero_prods_v12', JSON.stringify(defaultProducts));
+            try {
+                const p = localStorage.getItem(STORAGE_KEY_PRODS);
+                const o = localStorage.getItem(STORAGE_KEY_ORDERS);
+                state.products = p ? JSON.parse(p) : defaultProducts;
+                state.orders = o ? JSON.parse(o) : [];
+                if (!p) localStorage.setItem(STORAGE_KEY_PRODS, JSON.stringify(defaultProducts));
+            } catch (err) {
+                state.products = defaultProducts;
+                state.orders = [];
+            }
             renderAll();
         }
 
         function saveData() {
-            localStorage.setItem('farafero_prods_v12', JSON.stringify(state.products));
-            localStorage.setItem('farafero_orders_v12', JSON.stringify(state.orders));
+            try {
+                localStorage.setItem(STORAGE_KEY_PRODS, JSON.stringify(state.products));
+                localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(state.orders));
+            } catch (err) {
+                console.error(err);
+            }
             renderAll();
         }
 
@@ -566,6 +544,7 @@
         }
 
         function addToPOS(id) {
+            loadData();
             const p = state.products.find(x => x.id === id);
             if (!p || p.stock <= 0) return alert('عذراً، هذه الهدية نفذت من المخزون بالمحل!');
             
@@ -634,7 +613,6 @@
         }
 
         function renderDashboard() {
-            loadData(); // سحب أحدث بيانات دورياً
             const activeOrders = state.orders.filter(o => o.status !== 'cancelled');
             const totalRevenue = activeOrders.reduce((a, b) => a + b.total, 0);
             const totalOrders = activeOrders.length;
@@ -692,6 +670,7 @@
         }
 
         function openOrderDetails(orderId) {
+            loadData();
             const order = state.orders.find(o => o.id === orderId);
             if (!order) return;
             state.currentActiveModalOrder = order;
@@ -834,7 +813,7 @@
                 closePinModal();
                 switchTab('admin');
             } else {
-                alert('كلمة المرور غير صحيحة! كلمة المرور هي 2580[span_0](start_span)[span_0](end_span)');
+                alert('كلمة المرور غير صحيحة! كلمة المرور هي 2580[span_1](start_span)[span_1](end_span)');
             }
         }
 
@@ -924,16 +903,22 @@
 
         function switchTab(tab) {
             ['pos', 'catalog', 'inventory', 'admin'].forEach(t => {
-                document.getElementById('tab-' + t).classList.add('hidden');
+                const el = document.getElementById('tab-' + t);
+                if(el) el.classList.add('hidden');
                 const btn = document.getElementById('nav-' + t);
-                btn.classList.remove('text-rose-600');
-                btn.classList.add('text-slate-400');
+                if(btn) {
+                    btn.classList.remove('text-rose-600');
+                    btn.classList.add('text-slate-400');
+                }
             });
             
-            document.getElementById('tab-' + tab).classList.remove('hidden');
+            const targetTab = document.getElementById('tab-' + tab);
+            if(targetTab) targetTab.classList.remove('hidden');
             const activeBtn = document.getElementById('nav-' + tab);
-            activeBtn.classList.remove('text-slate-400');
-            activeBtn.classList.add('text-rose-600');
+            if(activeBtn) {
+                activeBtn.classList.remove('text-slate-400');
+                activeBtn.classList.add('text-rose-600');
+            }
         }
 
         document.addEventListener('DOMContentLoaded', initApp);
