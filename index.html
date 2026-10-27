@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FARAFERO GIFT SHOP - نظام الكاشير وإدارة المخزون المحمي</title>
+    <title>FARAFERO - نظام إدارة المخزون والكاشير للمحل</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
@@ -45,159 +45,61 @@
     <header class="bg-white/90 backdrop-blur-md sticky top-0 z-40 border-b border-blush-100 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <div class="flex items-center space-x-3 space-x-reverse">
-                <div class="flex items-center space-x-2 space-x-reverse cursor-pointer" onclick="switchTab('store')">
-                    <div class="w-10 h-10 bg-gradient-to-tr from-blush-500 to-rosegold-500 rounded-2xl flex items-center justify-center text-white shadow-md">
-                        <i class="fa-solid fa-gift text-base"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-lg font-black tracking-wide text-slate-900 leading-tight">FARAFERO</h1>
-                        <p class="text-[10px] text-slate-500 font-bold tracking-widest uppercase">GIFT SHOP</p>
-                    </div>
+                <div class="w-10 h-10 bg-gradient-to-tr from-blush-500 to-rosegold-500 rounded-2xl flex items-center justify-center text-white shadow-md">
+                    <i class="fa-solid fa-store text-base"></i>
                 </div>
-                <div class="hidden sm:flex items-center space-x-1.5 space-x-reverse bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
-                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                    <span class="text-[11px] font-bold text-emerald-700">نظام حماية الإدارة نشط</span>
+                <div>
+                    <h1 class="text-lg font-black tracking-wide text-slate-900 leading-tight">FARAFERO</h1>
+                    <p class="text-[10px] text-slate-500 font-bold tracking-widest uppercase">نظام إدارة المحل والمخزون</p>
                 </div>
             </div>
 
-            <!-- Cart Button -->
-            <div class="flex items-center space-x-3 space-x-reverse">
-                <button onclick="openCart()" class="relative bg-blush-50 hover:bg-blush-100 text-blush-700 p-3 rounded-2xl font-bold transition-all flex items-center space-x-2 space-x-reverse border border-blush-200 shadow-sm">
-                    <i class="fa-solid fa-bag-shopping text-lg"></i>
-                    <span id="cart-badge" class="absolute -top-1.5 -right-1.5 bg-blush-600 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span>
-                </button>
+            <div class="flex items-center space-x-2 space-x-reverse bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
+                <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                <span class="text-[11px] font-bold text-emerald-700">النظام يعمل بكفاءة</span>
             </div>
         </div>
     </header>
 
-    <!-- MOBILE BOTTOM NAVIGATION BAR -->
-    <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-2 py-3 flex justify-around shadow-2xl z-50">
-        <button onclick="switchTab('store')" id="mob-nav-store" class="text-xs font-bold text-rose-600 flex flex-col items-center">
-            <i class="fa-solid fa-store text-lg mb-1"></i> المتجر
+    <!-- MOBILE / DESKTOP BOTTOM NAVIGATION BAR -->
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-4 py-3 flex justify-around shadow-2xl z-50 max-w-xl mx-auto md:max-w-7xl">
+        <button onclick="switchTab('pos')" id="nav-pos" class="text-xs font-bold text-rose-600 flex flex-col items-center">
+            <i class="fa-solid fa-cash-register text-lg mb-1"></i> كاشير المحل
         </button>
-        <button onclick="switchTab('customizer')" id="mob-nav-customizer" class="text-xs font-bold text-slate-400 flex flex-col items-center">
-            <i class="fa-solid fa-wand-magic-sparkles text-lg mb-1"></i> التنسيق
+        <button onclick="switchTab('inventory')" id="nav-inventory" class="text-xs font-bold text-slate-400 flex flex-col items-center">
+            <i class="fa-solid fa-boxes-stacked text-lg mb-1"></i> حركة المخزون
         </button>
-        <button onclick="switchTab('pos')" id="mob-nav-pos" class="text-xs font-bold text-slate-400 flex flex-col items-center">
-            <i class="fa-solid fa-cash-register text-lg mb-1"></i> الكاشير
-        </button>
-        <button onclick="requestAdminAccess()" id="mob-nav-admin" class="text-xs font-bold text-slate-400 flex flex-col items-center">
-            <i class="fa-solid fa-lock text-lg mb-1"></i> الإدارة
+        <button onclick="requestAdminAccess()" id="nav-admin" class="text-xs font-bold text-slate-400 flex flex-col items-center">
+            <i class="fa-solid fa-chart-line text-lg mb-1"></i> لوحة التحكم والأرباح
         </button>
     </div>
 
-    <!-- MAIN APP CONTAINER -->
+    <!-- MAIN CONTAINER -->
     <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full space-y-6">
 
-        <!-- TAB 1: STOREFRONT -->
-        <div id="tab-store" class="space-y-6">
-            <section class="bg-gradient-to-r from-rose-500 via-pink-500 to-blush-600 rounded-3xl p-6 sm:p-10 text-white shadow-xl relative overflow-hidden space-y-4">
-                <div class="absolute -left-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
-                <div class="inline-block bg-white/20 backdrop-blur-md px-3.5 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase">
-                    FARAFERO PREMIUM STORE
-                </div>
-                <h2 class="text-3xl sm:text-4xl font-black leading-tight">
-                    هدايا تُعبّر عن أجمل اللحظات!
-                </h2>
-                <p class="text-white/90 text-sm sm:text-base font-medium max-w-xl leading-relaxed">
-                    اختر من تشكيلتنا المميزة أو صمم صندوق هديتك الخاص بكل سهولة وبأرقى تفاصيل.
-                </p>
-                <div class="pt-2">
-                    <button onclick="switchTab('customizer')" class="bg-white text-rose-600 hover:bg-slate-100 font-black px-6 py-3.5 rounded-2xl shadow-lg transition-all flex items-center space-x-2 space-x-reverse text-sm">
-                        <i class="fa-solid fa-gift text-rose-500"></i>
-                        <span>ابدأ بتصميم هديتك الآن</span>
-                    </button>
-                </div>
-            </section>
-
-            <div class="space-y-4">
-                <div class="relative">
-                    <span class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-slate-400">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                    </span>
-                    <input type="text" id="store-search" oninput="renderStorefront()" placeholder="ابحث عن هدية..." class="w-full bg-white border border-slate-200 rounded-2xl py-3.5 pr-11 pl-4 text-sm font-semibold shadow-sm focus:outline-none focus:border-blush-500">
-                </div>
-
-                <div class="flex items-center space-x-2 space-x-reverse overflow-x-auto pb-2 custom-scrollbar">
-                    <button onclick="filterCategory('All')" class="cat-btn active bg-rose-600 text-white px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap shadow-sm transition-all">الكل</button>
-                    <button onclick="filterCategory('ألعاب')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap shadow-sm transition-all">ألعاب</button>
-                    <button onclick="filterCategory('صناديق')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition-all">صناديق</button>
-                    <button onclick="filterCategory('هدايا')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition-all">هدايا</button>
-                    <button onclick="filterCategory('إكسسوارات')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition-all">إكسسوارات</button>
-                    <button onclick="filterCategory('عطور')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition-all">عطور</button>
-                </div>
-            </div>
-
-            <div id="product-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"></div>
-        </div>
-
-        <!-- TAB 2: CUSTOMIZER -->
-        <div id="tab-customizer" class="hidden space-y-6">
-            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-blush-100 space-y-6">
-                <div class="flex items-center justify-between border-b border-slate-100 pb-4">
-                    <h3 class="text-xl font-black text-slate-900 flex items-center space-x-2 space-x-reverse">
-                        <i class="fa-solid fa-box-open text-blush-600"></i>
-                        <span>استوديو تصميم الهدية المخصصة</span>
-                    </h3>
-                    <span class="text-xs font-extrabold bg-blush-50 text-blush-600 px-3 py-1.5 rounded-xl border border-blush-200">التنسيق</span>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="space-y-1.5">
-                        <label class="text-xs font-bold text-slate-700">نوع الصندوق / البوكس</label>
-                        <select id="box-type" onchange="updatePackagingCost()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-semibold">
-                            <option value="0" data-name="صندوق كرتون قياسي">صندوق كرتون قياسي (مجاناً)</option>
-                            <option value="150" data-name="صندوق خشبي فاخر">صندوق خشبي فاخر (+150 EGP)</option>
-                            <option value="90" data-name="صندوق مخمل قطيفة">صندوق مخملي قطيفة (+90 EGP)</option>
-                        </select>
-                    </div>
-                    <div class="space-y-1.5">
-                        <label class="text-xs font-bold text-slate-700">ورقة التغليف</label>
-                        <select id="wrap-type" onchange="updatePackagingCost()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-semibold">
-                            <option value="0" data-name="سلوفان شفاف">سلوفان شفاف عادي (مجاناً)</option>
-                            <option value="60" data-name="ورق رخامي ذهبي">ورق رخامي ذهبي (+60 EGP)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="space-y-1.5">
-                    <label class="text-xs font-bold text-slate-700">نص كارت الإهداء</label>
-                    <textarea id="gift-message" rows="2" placeholder="اكتب رسالتك لمن تحب..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-medium"></textarea>
-                </div>
-
-                <div class="bg-blush-50 rounded-2xl p-4 flex items-center justify-between border border-blush-200">
-                    <div>
-                        <span class="text-xs font-bold text-slate-500">التكلفة الإجمالية للتغليف:</span>
-                        <div class="text-xl font-black text-blush-700"><span id="packaging-total-price">0</span> EGP</div>
-                    </div>
-                    <button onclick="addPackagingToCart()" class="bg-blush-600 hover:bg-blush-700 text-white font-bold px-5 py-2.5 rounded-xl text-sm shadow-md">
-                        إضافة التغليف للسلة
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 3: POS (الكاشير) -->
-        <div id="tab-pos" class="hidden space-y-6">
+        <!-- TAB 1: POS (كاشير المحل وإنشاء الفواتير للعملاء) -->
+        <div id="tab-pos" class="space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- المنتجات المتاحة -->
                 <div class="lg:col-span-7 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
                     <div class="flex items-center justify-between border-b pb-3">
                         <h3 class="text-xl font-black text-slate-900 flex items-center">
-                            <i class="fa-solid fa-cash-register text-blush-600 ml-2"></i> نقطة البيع والكاشير
+                            <i class="fa-solid fa-boxes-packing text-blush-600 ml-2"></i> منتجات المحل (اختر للبناء)
                         </h3>
-                        <span class="text-xs font-bold bg-slate-100 px-3 py-1 rounded-xl">اختر المنتجات</span>
+                        <span class="text-xs font-bold bg-slate-100 px-3 py-1 rounded-xl">اضغط لإضافة صنف</span>
                     </div>
                     <input type="text" id="pos-search" oninput="renderPOSProducts()" placeholder="ابحث عن منتج بالاسم..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-rose-500">
-                    <div id="pos-product-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[450px] overflow-y-auto custom-scrollbar p-1"></div>
+                    <div id="pos-product-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[480px] overflow-y-auto custom-scrollbar p-1"></div>
                 </div>
 
+                <!-- فاتورة العميل الحالية -->
                 <div class="lg:col-span-5 bg-white rounded-3xl p-6 border border-slate-200 shadow-lg flex flex-col justify-between space-y-4">
                     <div class="space-y-4">
                         <div class="flex items-center justify-between border-b pb-3">
                             <h4 class="font-black text-slate-900 flex items-center">
-                                <i class="fa-solid fa-file-invoice text-rose-600 ml-2"></i> الفاتورة وبيانات العميل
+                                <i class="fa-solid fa-file-invoice text-rose-600 ml-2"></i> فاتورة العميل وتجهيز الطلب
                             </h4>
-                            <button onclick="clearPOSCart()" class="text-xs text-rose-500 font-bold hover:underline">تفريغ السلة</button>
+                            <button onclick="clearPOSCart()" class="text-xs text-rose-500 font-bold hover:underline">إفراغ الفاتورة</button>
                         </div>
 
                         <div class="grid grid-cols-1 gap-3 bg-slate-50 p-3 rounded-2xl border border-slate-100">
@@ -212,8 +114,8 @@
                         </div>
 
                         <div class="space-y-1">
-                            <span class="text-xs font-bold text-slate-700">الأصناف المختارة للفاتورة:</span>
-                            <div id="pos-cart-items" class="divide-y max-h-[180px] overflow-y-auto my-1 text-xs bg-slate-50/50 p-2 rounded-xl border"></div>
+                            <span class="text-xs font-bold text-slate-700">الأصناف المضافة للطلب:</span>
+                            <div id="pos-cart-items" class="divide-y max-h-[170px] overflow-y-auto my-1 text-xs bg-slate-50/50 p-2 rounded-xl border"></div>
                         </div>
                     </div>
 
@@ -224,46 +126,77 @@
                         </div>
                         <button onclick="checkoutPOS()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-black py-4 rounded-2xl shadow-lg text-sm transition-all flex items-center justify-center space-x-2 space-x-reverse">
                             <i class="fa-solid fa-file-pdf"></i>
-                            <span>إتمام البيع وحفظ الفاتورة PDF</span>
+                            <span>تأكيد الطلب وخصم المخزون وحفظ PDF</span>
                         </button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- TAB 4: ADMIN (PROTECTED) -->
+        <!-- TAB 2: INVENTORY (حركة المخزون وإدارتها) -->
+        <div id="tab-inventory" class="hidden space-y-6">
+            <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-4">
+                <div class="flex justify-between items-center border-b pb-3">
+                    <div>
+                        <h3 class="text-xl font-black text-slate-900">متابعة حركة المخزون والكميات</h3>
+                        <p class="text-xs text-slate-500 mt-1">عرض جميع الأصناف والكميات المتاحة في المحل</p>
+                    </div>
+                    <button onclick="requestAdminAccess()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md">
+                        <i class="fa-solid fa-lock ml-1"></i> لوحة الإدارة الكاملة
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right text-xs">
+                        <thead class="bg-slate-50 text-slate-500 font-bold border-b">
+                            <tr>
+                                <th class="p-3">المنتج</th>
+                                <th class="p-3">القسم</th>
+                                <th class="p-3">سعر القطعة</th>
+                                <th class="p-3">المخزون المتبقي بالمحل</th>
+                                <th class="p-3 text-left">الحالة</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventory-view-body" class="divide-y font-medium"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: ADMIN / DASHBOARD (لوحة التحكم والأرباح - محمية برمز سري 2580) -->
         <div id="tab-admin" class="hidden space-y-6">
             <div class="flex justify-between items-center bg-rose-50 border border-rose-200 p-4 rounded-2xl">
                 <div class="flex items-center space-x-2 space-x-reverse">
                     <i class="fa-solid fa-shield-halved text-rose-600 text-lg"></i>
-                    <span class="text-xs font-bold text-rose-900">أنت في لوحة الإدارة المحمية</span>
+                    <span class="text-xs font-bold text-rose-900">أنت الآن في لوحة التحكم الإدارية الخاصة بك</span>
                 </div>
-                <button onclick="switchTab('store')" class="text-xs font-bold bg-white text-rose-600 border border-rose-300 px-3 py-1.5 rounded-xl shadow-sm">قفل لوحة الإدارة</button>
+                <button onclick="switchTab('pos')" class="text-xs font-bold bg-white text-rose-600 border border-rose-300 px-3 py-1.5 rounded-xl shadow-sm">العودة للكاشير</button>
             </div>
 
+            <!-- إحصائيات سريعة -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div class="bg-white rounded-3xl p-6 border shadow-sm">
-                    <p class="text-xs font-bold text-slate-400">إجمالي المبيعات</p>
-                    <h4 class="text-2xl font-black text-slate-900"><span id="dash-total-revenue">0</span> EGP</h4>
+                    <p class="text-xs font-bold text-slate-400">إجمالي مبيعات المحل</p>
+                    <h4 class="text-2xl font-black text-slate-900 mt-1"><span id="dash-total-revenue">0</span> EGP</h4>
                 </div>
                 <div class="bg-white rounded-3xl p-6 border shadow-sm">
-                    <p class="text-xs font-bold text-slate-400">الطلبات المسجلة</p>
-                    <h4 class="text-2xl font-black text-slate-900" id="dash-total-orders">0</h4>
+                    <p class="text-xs font-bold text-slate-400">عدد الطلبات المسجلة</p>
+                    <h4 class="text-2xl font-black text-slate-900 mt-1" id="dash-total-orders">0</h4>
                 </div>
                 <div class="bg-white rounded-3xl p-6 border shadow-sm">
-                    <p class="text-xs font-bold text-slate-400">حالة النظام</p>
-                    <h4 class="text-sm font-black text-emerald-600 mt-1 flex items-center">
-                        <span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping ml-1"></span> حماية بكلمة سر نشطة
+                    <p class="text-xs font-bold text-slate-400">حالة الخصم التلقائي</p>
+                    <h4 class="text-sm font-black text-emerald-600 mt-2 flex items-center">
+                        <span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping ml-1"></span> يتم خصم البضاعة فور البيع
                     </h4>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- إدارة المنتجات والمخزون -->
                 <div class="lg:col-span-8 bg-white rounded-3xl p-6 border shadow-sm space-y-4">
                     <div class="flex justify-between items-center border-b pb-3">
-                        <h3 class="text-lg font-black text-slate-900">إدارة المنتجات والمخزون</h3>
+                        <h3 class="text-lg font-black text-slate-900">إدارة وتعديل المخزون والأسعار</h3>
                         <button onclick="toggleNewProductModal()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md">
-                            <i class="fa-solid fa-plus ml-1"></i> إضافة منتج جديد
+                            <i class="fa-solid fa-plus ml-1"></i> إضافة منتج جديد للمحل
                         </button>
                     </div>
                     <div class="overflow-x-auto">
@@ -271,21 +204,21 @@
                             <thead class="bg-slate-50 text-slate-500 font-bold border-b">
                                 <tr>
                                     <th class="p-3">المنتج</th>
-                                    <th class="p-3">القسم</th>
                                     <th class="p-3">السعر</th>
-                                    <th class="p-3">المخزون المتبقي</th>
+                                    <th class="p-3">المخزون الحالي</th>
                                     <th class="p-3 text-left">إجراء</th>
                                 </tr>
                             </thead>
-                            <tbody id="inventory-table-body" class="divide-y font-medium"></tbody>
+                            <tbody id="admin-inventory-table" class="divide-y font-medium"></tbody>
                         </table>
                     </div>
                 </div>
 
+                <!-- سجل الفواتير السابقة -->
                 <div class="lg:col-span-4 bg-white rounded-3xl p-6 border shadow-sm space-y-4">
                     <div class="border-b pb-3">
                         <h3 class="text-lg font-black text-slate-900">سجل الفواتير الصادرة</h3>
-                        <p class="text-xs text-slate-500">أرشفة تلقائية لكل الفواتير</p>
+                        <p class="text-xs text-slate-500">أرشيف كامل لكل مبيعات العملاء</p>
                     </div>
                     <div id="recent-orders-list" class="space-y-3 max-h-[350px] overflow-y-auto custom-scrollbar"></div>
                 </div>
@@ -294,38 +227,7 @@
 
     </main>
 
-    <!-- SHOPPING BAG MODAL -->
-    <div id="cart-modal" class="fixed inset-0 z-50 hidden bg-slate-900/40 backdrop-blur-sm flex justify-start">
-        <div class="bg-white w-full max-w-md h-full shadow-2xl flex flex-col justify-between p-6 overflow-y-auto">
-            <div class="space-y-6">
-                <div class="flex items-center justify-between border-b pb-4">
-                    <h3 class="text-xl font-black">سلة المشتريات والطلبات</h3>
-                    <button onclick="closeCart()" class="w-8 h-8 rounded-full bg-slate-100 font-bold">✕</button>
-                </div>
-
-                <div class="space-y-3 bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                    <h4 class="text-xs font-bold text-slate-700">بيانات العميل لتأكيد الطلب:</h4>
-                    <div>
-                        <input type="text" id="online-cust-name" placeholder="اسم العميل..." class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-rose-500">
-                    </div>
-                    <div>
-                        <input type="tel" id="online-cust-phone" placeholder="رقم الهاتف..." class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-rose-500">
-                    </div>
-                </div>
-
-                <div id="cart-items-container" class="space-y-3"></div>
-            </div>
-            <div class="space-y-4 pt-4 border-t">
-                <div class="flex justify-between font-black text-lg">
-                    <span>الإجمالي:</span>
-                    <span class="text-blush-600"><span id="cart-total-price">0</span> EGP</span>
-                </div>
-                <button onclick="checkoutOnlineOrder()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-black py-4 rounded-2xl shadow-lg">تأكيد الطلب وحفظ الفاتورة PDF</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ADMIN PIN CODE MODAL (CLEANED) -->
+    <!-- ADMIN PIN CODE MODAL (محمية بالرمز 2580) -->
     <div id="admin-pin-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl w-full max-w-xs p-6 shadow-2xl space-y-4 text-center">
             <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto text-xl shadow-inner">
@@ -347,41 +249,40 @@
     <div id="add-product-modal" class="fixed inset-0 z-50 hidden bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-4">
             <div class="flex justify-between border-b pb-3">
-                <h3 class="font-black text-lg">إضافة منتج جديد للكتالوج</h3>
+                <h3 class="font-black text-lg">إضافة منتج جديد للمخزن</h3>
                 <button onclick="toggleNewProductModal()">✕</button>
             </div>
             <div class="space-y-3 text-xs font-bold">
                 <input type="text" id="new-prod-name" placeholder="اسم المنتج" class="w-full border p-2.5 rounded-xl">
                 <input type="number" id="new-prod-price" placeholder="السعر (EGP)" class="w-full border p-2.5 rounded-xl">
-                <input type="number" id="new-prod-stock" placeholder="الكمية بالمخزن" class="w-full border p-2.5 rounded-xl">
+                <input type="number" id="new-prod-stock" placeholder="الكمية الأولية بالمخزن" class="w-full border p-2.5 rounded-xl">
                 <select id="new-prod-category" class="w-full border p-2.5 rounded-xl">
-                    <option value="ألعاب">ألعاب</option>
-                    <option value="صناديق">صناديق</option>
-                    <option value="هدايا">هدايا</option>
+                    <option value="ملابس وهدايا">ملابس وهدايا</option>
                     <option value="إكسسوارات">إكسسوارات</option>
+                    <option value="صناديق وتغليف">صناديق وتغليف</option>
                     <option value="عطور">عطور</option>
                 </select>
-                <input type="text" id="new-prod-image" placeholder="رابط الصورة https://..." class="w-full border p-2.5 rounded-xl">
+                <input type="text" id="new-prod-image" placeholder="رابط صورة المنتج https://..." class="w-full border p-2.5 rounded-xl">
             </div>
             <div class="flex space-x-2 space-x-reverse pt-2">
                 <button onclick="toggleNewProductModal()" class="w-1/2 bg-slate-100 py-3 rounded-xl font-bold">إلغاء</button>
-                <button onclick="addNewProduct()" class="w-1/2 bg-rose-600 text-white py-3 rounded-xl font-bold shadow-md">حفظ المنتج</button>
+                <button onclick="addNewProduct()" class="w-1/2 bg-rose-600 text-white py-3 rounded-xl font-bold shadow-md">حفظ بالمخزن</button>
             </div>
         </div>
     </div>
 
-    <!-- PRINTABLE RECEIPT -->
+    <!-- PRINTABLE RECEIPT TEMPLATE (للفتورة PDF) -->
     <div id="printable-receipt" class="hidden max-w-xl mx-auto p-8 bg-white border border-slate-200 rounded-2xl text-xs space-y-4">
         <div class="text-center space-y-2 border-b border-slate-200 pb-4">
             <div class="w-12 h-12 bg-rose-600 rounded-2xl text-white font-black text-xl flex items-center justify-center mx-auto shadow-md">F</div>
-            <h1 class="text-2xl font-black text-slate-900 tracking-wider">FARAFERO GIFT SHOP</h1>
-            <p class="text-xs font-bold text-rose-600">فاتورة مبيعات وإثبات شراء رسمية</p>
+            <h1 class="text-2xl font-black text-slate-900 tracking-wider">FARAFERO STORE</h1>
+            <p class="text-xs font-bold text-rose-600">فاتورة مبيعات معتمدة</p>
         </div>
 
         <div class="grid grid-cols-2 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200 text-slate-700 text-[11px]">
             <div class="space-y-1">
                 <p><b>رقم الفاتورة:</b> <span id="rec-id" class="font-bold text-slate-900"></span></p>
-                <p><b>تاريخ الفاتورة:</b> <span id="rec-date"></span></p>
+                <p><b>تاريخ الإصدار:</b> <span id="rec-date"></span></p>
             </div>
             <div class="space-y-1 text-left dir-rtl">
                 <p><b>اسم العميل:</b> <span id="rec-cust-name" class="font-bold text-slate-900"></span></p>
@@ -390,7 +291,7 @@
         </div>
 
         <div class="space-y-2 pt-2">
-            <h3 class="font-black text-slate-900 text-xs border-b pb-1">تفاصيل المنتجات والبضاعة:</h3>
+            <h3 class="font-black text-slate-900 text-xs border-b pb-1">تفاصيل البضاعة المباعة:</h3>
             <table class="w-full text-right text-xs">
                 <thead>
                     <tr class="bg-slate-100 text-slate-600 font-bold border-b">
@@ -404,35 +305,30 @@
         </div>
 
         <div class="border-t-2 border-rose-600 pt-3 flex justify-between items-center text-base font-black text-slate-900">
-            <span>الإجمالي الكلي النهائي:</span>
+            <span>الإجمالي النهائي المستحق:</span>
             <span class="text-rose-600 text-xl"><span id="rec-grand-total">0</span> EGP</span>
         </div>
 
         <div class="text-center pt-6 border-t border-slate-100 text-[10px] text-slate-400 space-y-1 font-bold">
-            <p>شكراً لتسوقكم من FARAFERO GIFT SHOP! ❤️</p>
-            <p>لأي استفسار يسعدنا تواصلكم دائماً</p>
+            <p>شكراً لتعاملكم معنا! ❤️</p>
         </div>
     </div>
 
 
     <!-- SCRIPT ENGINE -->
     <script>
-        const STORAGE_KEY_PRODS = 'farafero_shop_products_v9';
-        const STORAGE_KEY_ORDERS = 'farafero_shop_orders_v9';
-        const ADMIN_PIN = "2580"; // كلمة المرور السرية
+        const STORAGE_KEY_PRODS = 'farafero_shop_products_system_v1';
+        const STORAGE_KEY_ORDERS = 'farafero_shop_orders_system_v1';
+        const ADMIN_PIN = "2580";
 
         const defaultProducts = [
-            { id: "p1", name: "دبدوب أحمر كبير", category: "ألعاب", price: 350, stock: 15, image: "https://images.unsplash.com/photo-1582293041079-7814c2f12063?w=500&q=80" },
-            { id: "p2", name: "صندوق خشبي فاخر", category: "صناديق", price: 150, stock: 10, image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&q=80" },
-            { id: "p3", name: "بوكيه ورد جوري أحمر", category: "هدايا", price: 400, stock: 8, image: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=500&q=80" },
-            { id: "p4", name: "ساعة يد نسائية أنيقة", category: "إكسسوارات", price: 850, stock: 5, image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=500&q=80" },
-            { id: "p5", name: "عطر فرافيرو الملكي الفاخر", category: "عطور", price: 650, stock: 12, image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=500&q=80" },
-            { id: "p6", name: "ميدالية مفاتيح ذهبية مطرزة", category: "هدايا", price: 120, stock: 25, image: "https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=500&q=80" },
-            { id: "p7", name: "صندوق هدايا مخمل قطيفة", category: "صناديق", price: 220, stock: 14, image: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=500&q=80" },
-            { id: "p8", name: "لعبة ديناصور قطني ناعم", category: "ألعاب", price: 280, stock: 9, image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=500&q=80" }
+            { id: "p1", name: "دبدوب أحمر كبير", category: "ملابس وهدايا", price: 350, stock: 20, image: "https://images.unsplash.com/photo-1582293041079-7814c2f12063?w=500&q=80" },
+            { id: "p2", name: "صندوق خشبي فاخر", category: "صناديق وتغليف", price: 150, stock: 15, image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&q=80" },
+            { id: "p3", name: "بوكيه ورد جوري أحمر", category: "ملابس وهدايا", price: 400, stock: 10, image: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=500&q=80" },
+            { id: "p4", name: "عطر فرافيرو الملكي الفاخر", category: "عطور", price: 650, stock: 12, image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=500&q=80" }
         ];
 
-        let state = { products: [], orders: [], cart: [], posCart: [], selectedCategory: 'All' };
+        let state = { products: [], orders: [], posCart: [] };
 
         function initApp() {
             const savedProds = localStorage.getItem(STORAGE_KEY_PRODS);
@@ -456,33 +352,11 @@
         function saveProducts() { localStorage.setItem(STORAGE_KEY_PRODS, JSON.stringify(state.products)); }
         function saveOrders() { localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(state.orders)); }
 
-        function renderAll() { renderStorefront(); renderPOSProducts(); renderDashboard(); }
-
-        function renderStorefront() {
-            const grid = document.getElementById('product-grid');
-            const search = document.getElementById('store-search').value.toLowerCase();
-            grid.innerHTML = '';
-
-            state.products.filter(p => (state.selectedCategory === 'All' || p.category === state.selectedCategory) && p.name.toLowerCase().includes(search)).forEach(p => {
-                grid.innerHTML += `
-                    <div class="bg-white rounded-3xl p-3 border border-slate-100 shadow-sm flex flex-col justify-between group">
-                        <div class="space-y-2">
-                            <div class="h-36 rounded-2xl overflow-hidden bg-slate-100 relative">
-                                <img src="${p.image}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                                <span class="absolute top-2 right-2 bg-white/90 text-[9px] font-bold px-2 py-0.5 rounded-full">${p.category}</span>
-                            </div>
-                            <h4 class="font-bold text-slate-900 text-xs line-clamp-1">${p.name}</h4>
-                            <p class="text-[10px] ${p.stock > 0 ? 'text-slate-400' : 'text-rose-500 font-bold'}">المخزون: ${p.stock} قطعة</p>
-                        </div>
-                        <div class="flex items-center justify-between pt-3 border-t mt-2">
-                            <div class="font-black text-rose-600 text-xs">${p.price} EGP</div>
-                            <button onclick="addToCart('${p.id}')" ${p.stock <= 0 ? 'disabled' : ''} class="${p.stock > 0 ? 'bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white' : 'bg-slate-100 text-slate-300'} px-3 py-1.5 rounded-xl font-bold text-xs transition-all">
-                                ${p.stock > 0 ? '+ إضافة' : 'نفذت'}
-                            </button>
-                        </div>
-                    </div>
-                `;
-            });
+        function renderAll() {
+            renderPOSProducts();
+            renderPOSCart();
+            renderInventoryView();
+            renderDashboard();
         }
 
         function renderPOSProducts() {
@@ -496,11 +370,33 @@
                         <p class="font-bold line-clamp-1">${p.name}</p>
                         <div class="flex justify-between items-center mt-1">
                             <span class="font-black text-rose-600">${p.price} EGP</span>
-                            <span class="text-[9px] ${p.stock > 0 ? 'bg-slate-200 text-slate-700' : 'bg-rose-100 text-rose-600'} px-1.5 py-0.5 rounded-md font-bold">متبقي: ${p.stock}</span>
+                            <span class="text-[9px] ${p.stock > 0 ? 'bg-slate-200 text-slate-700' : 'bg-rose-100 text-rose-600'} px-1.5 py-0.5 rounded-md font-bold">المخزون: ${p.stock}</span>
                         </div>
                     </div>
                 `;
             });
+        }
+
+        function addToPOS(id) {
+            const p = state.products.find(x => x.id === id);
+            if (!p || p.stock <= 0) return alert('عذراً، هذا المنتج نفذ من المخزون بالمحل!');
+            
+            const item = state.posCart.find(x => x.id === id);
+            if (item) {
+                if (item.qty + 1 > p.stock) return alert('الكمية المطلوبة أكبر من المتبقي بالمخزن!');
+                item.qty++;
+            } else {
+                state.posCart.push({ ...p, qty: 1 });
+            }
+            renderPOSCart();
+        }
+
+        function removeFromPOS(idx) { state.posCart.splice(idx, 1); renderPOSCart(); }
+        function clearPOSCart() { 
+            state.posCart = []; 
+            document.getElementById('cust-name').value = '';
+            document.getElementById('cust-phone').value = '';
+            renderPOSCart(); 
         }
 
         function renderPOSCart() {
@@ -509,7 +405,7 @@
             let total = 0;
 
             if (state.posCart.length === 0) {
-                container.innerHTML = '<p class="text-center text-slate-400 py-3">لم يتم اختيار أي أصناف بعد</p>';
+                container.innerHTML = '<p class="text-center text-slate-400 py-3">لم يتم اختيار أصناف للفاتورة بعد</p>';
             } else {
                 state.posCart.forEach((i, idx) => {
                     total += i.price * i.qty;
@@ -529,19 +425,33 @@
             document.getElementById('pos-grand-total').innerText = total;
         }
 
+        function renderInventoryView() {
+            const tbody = document.getElementById('inventory-view-body');
+            tbody.innerHTML = '';
+            state.products.forEach(p => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="p-3 font-bold text-slate-800">${p.name}</td>
+                        <td class="p-3 text-slate-500">${p.category}</td>
+                        <td class="p-3 font-black text-rose-600">${p.price} EGP</td>
+                        <td class="p-3 font-bold ${p.stock <= 3 ? 'text-rose-600' : 'text-slate-700'}">${p.stock} قطعة</td>
+                        <td class="p-3 text-left"><span class="${p.stock > 3 ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'} text-[10px] px-2.5 py-1 rounded-full font-bold">${p.stock > 3 ? 'متوفر' : 'منخفض'}</span></td>
+                    </tr>`;
+            });
+        }
+
         function renderDashboard() {
             document.getElementById('dash-total-revenue').innerText = state.orders.reduce((a, b) => a + b.total, 0);
             document.getElementById('dash-total-orders').innerText = state.orders.length;
             
-            const tbody = document.getElementById('inventory-table-body');
+            const tbody = document.getElementById('admin-inventory-table');
             tbody.innerHTML = '';
             state.products.forEach(p => {
                 tbody.innerHTML += `
                     <tr>
                         <td class="p-2.5 font-bold text-slate-800">${p.name}</td>
-                        <td class="p-2.5 text-slate-500">${p.category}</td>
                         <td class="p-2.5 font-black text-rose-600">${p.price} EGP</td>
-                        <td class="p-2.5 font-bold ${p.stock <= 3 ? 'text-rose-600 font-black' : 'text-slate-700'}">${p.stock} قطعة</td>
+                        <td class="p-2.5 font-bold">${p.stock} قطعة</td>
                         <td class="p-2.5 text-left"><button onclick="deleteProd('${p.id}')" class="text-rose-500 font-bold hover:underline">حذف</button></td>
                     </tr>`;
             });
@@ -561,32 +471,41 @@
             });
         }
 
-        function addToCart(id) {
-            const p = state.products.find(x => x.id === id);
-            if (!p || p.stock <= 0) return alert('المنتج نفذ من المخزون!');
-            const item = state.cart.find(x => x.id === id);
-            if (item) item.qty++; else state.cart.push({ ...p, qty: 1 });
-            document.getElementById('cart-badge').innerText = state.cart.reduce((a, b) => a + b.qty, 0);
-        }
+        function checkoutPOS() {
+            if (state.posCart.length === 0) return alert('برجاء اختيار منتجات للفاتورة أولاً!');
+            
+            const custName = document.getElementById('cust-name').value.trim() || 'عميل نقدي';
+            const custPhone = document.getElementById('cust-phone').value.trim() || 'بدون رقم';
+            const total = parseFloat(document.getElementById('pos-grand-total').innerText);
+            const orderId = 'ORD-' + Math.floor(1000 + Math.random() * 9000);
+            const dateStr = new Date().toLocaleString('ar-EG');
 
-        function openCart() {
-            const container = document.getElementById('cart-items-container');
-            container.innerHTML = '';
-            let total = 0;
-            if (state.cart.length === 0) {
-                container.innerHTML = '<p class="text-center text-slate-400 py-6">السلة فارغة حالياً</p>';
-            } else {
-                state.cart.forEach((i, idx) => {
-                    total += i.price * i.qty;
-                    container.innerHTML += `<div class="flex justify-between items-center text-sm font-bold border-b pb-2"><span>${i.name} (×${i.qty})</span><div class="flex items-center space-x-2 space-x-reverse"><span class="text-rose-600">${i.price * i.qty} EGP</span><button onclick="removeCartItem(${idx})" class="text-rose-500 text-xs">✕</button></div></div>`;
-                });
-            }
-            document.getElementById('cart-total-price').innerText = total;
-            document.getElementById('cart-modal').classList.remove('hidden');
-        }
+            // خصم الكميات من المخزون تلقائياً
+            state.posCart.forEach(item => {
+                const prod = state.products.find(p => p.id === item.id);
+                if (prod) {
+                    prod.stock = Math.max(0, prod.stock - item.qty);
+                }
+            });
+            saveProducts();
 
-        function closeCart() { document.getElementById('cart-modal').classList.add('hidden'); }
-        function removeCartItem(idx) { state.cart.splice(idx, 1); openCart(); document.getElementById('cart-badge').innerText = state.cart.reduce((a, b) => a + b.qty, 0); }
+            const newOrder = { 
+                id: orderId, 
+                date: dateStr, 
+                total: total, 
+                customerName: custName,
+                customerPhone: custPhone,
+                items: state.posCart.map(i => `${i.name} (×${i.qty})`)
+            };
+            state.orders.unshift(newOrder);
+            saveOrders();
+
+            // طباعة فاتورة PDF
+            generateReceiptPDF(state.posCart, custName, custPhone, total, orderId, dateStr);
+
+            clearPOSCart();
+            renderAll();
+        }
 
         function generateReceiptPDF(items, custName, custPhone, total, orderId, dateStr) {
             document.getElementById('rec-id').innerText = orderId;
@@ -609,115 +528,6 @@
             window.print();
         }
 
-        function checkoutOnlineOrder() {
-            if (state.cart.length === 0) return alert('السلة فارغة!');
-            
-            const custName = document.getElementById('online-cust-name').value.trim() || 'عميل أونلاين';
-            const custPhone = document.getElementById('online-cust-phone').value.trim() || 'بدون رقم';
-            const total = parseFloat(document.getElementById('cart-total-price').innerText);
-            const orderId = 'ORD-' + Math.floor(1000 + Math.random() * 9000);
-            const dateStr = new Date().toLocaleString('ar-EG');
-            
-            state.cart.forEach(item => {
-                const prod = state.products.find(p => p.id === item.id);
-                if (prod) prod.stock = Math.max(0, prod.stock - item.qty);
-            });
-            saveProducts();
-
-            const newOrder = { 
-                id: orderId, 
-                date: dateStr, 
-                total, 
-                customerName: custName,
-                customerPhone: custPhone,
-                items: state.cart.map(i => `${i.name} (×${i.qty})`),
-                type: 'أونلاين' 
-            };
-            state.orders.unshift(newOrder);
-            saveOrders();
-
-            generateReceiptPDF(state.cart, custName, custPhone, total, orderId, dateStr);
-            
-            state.cart = [];
-            document.getElementById('online-cust-name').value = '';
-            document.getElementById('online-cust-phone').value = '';
-            document.getElementById('cart-badge').innerText = '0';
-            closeCart();
-            renderAll();
-        }
-
-        function addToPOS(id) {
-            const p = state.products.find(x => x.id === id);
-            if (!p || p.stock <= 0) return alert('هذا المنتج نفذ من المخزون!');
-            
-            const item = state.posCart.find(x => x.id === id);
-            if (item) {
-                if (item.qty + 1 > p.stock) return alert('عذراً، الكمية المطلوبة تتجاوز المتبقي بالمخزن!');
-                item.qty++;
-            } else {
-                state.posCart.push({ ...p, qty: 1 });
-            }
-            renderPOSCart();
-        }
-
-        function removeFromPOS(idx) { state.posCart.splice(idx, 1); renderPOSCart(); }
-        function clearPOSCart() { 
-            state.posCart = []; 
-            document.getElementById('cust-name').value = '';
-            document.getElementById('cust-phone').value = '';
-            renderPOSCart(); 
-        }
-
-        function checkoutPOS() {
-            if (state.posCart.length === 0) return alert('برجاء اختيار منتجات للفاتورة أولاً!');
-            
-            const custName = document.getElementById('cust-name').value.trim() || 'عميل نقدي';
-            const custPhone = document.getElementById('cust-phone').value.trim() || 'بدون رقم';
-            const total = parseFloat(document.getElementById('pos-grand-total').innerText);
-            const orderId = 'POS-' + Math.floor(1000 + Math.random() * 9000);
-            const dateStr = new Date().toLocaleString('ar-EG');
-
-            state.posCart.forEach(item => {
-                const prod = state.products.find(p => p.id === item.id);
-                if (prod) {
-                    prod.stock = Math.max(0, prod.stock - item.qty);
-                }
-            });
-            saveProducts();
-
-            const newOrder = { 
-                id: orderId, 
-                date: dateStr, 
-                total: total, 
-                customerName: custName,
-                customerPhone: custPhone,
-                items: state.posCart.map(i => `${i.name} (×${i.qty})`),
-                type: 'كاشير' 
-            };
-            state.orders.unshift(newOrder);
-            saveOrders();
-
-            generateReceiptPDF(state.posCart, custName, custPhone, total, orderId, dateStr);
-
-            clearPOSCart();
-            renderAll();
-        }
-
-        function updatePackagingCost() {
-            const b = parseInt(document.getElementById('box-type').value);
-            const w = parseInt(document.getElementById('wrap-type').value);
-            document.getElementById('packaging-total-price').innerText = b + w;
-            return b + w;
-        }
-
-        function addPackagingToCart() {
-            const cost = updatePackagingCost();
-            const bName = document.getElementById('box-type').selectedOptions[0].dataset.name;
-            const msg = document.getElementById('gift-message').value;
-            state.cart.push({ id: 'pack-' + Date.now(), name: `تغليف مخصص (${bName})`, price: cost, qty: 1, note: msg });
-            document.getElementById('cart-badge').innerText = state.cart.reduce((a, b) => a + b.qty, 0);
-        }
-
         function requestAdminAccess() {
             document.getElementById('admin-pin-input').value = '';
             document.getElementById('admin-pin-modal').classList.remove('hidden');
@@ -733,7 +543,7 @@
                 closePinModal();
                 switchTab('admin');
             } else {
-                alert('كلمة المرور غير صحيحة!');
+                alert('كلمة المرور غير صحيحة! كلمة المرور الخاصة بك هي 2580[span_1](start_span)[span_1](end_span)');
             }
         }
 
@@ -751,7 +561,7 @@
             saveProducts();
             toggleNewProductModal();
             renderAll();
-            alert('تم إضافة المنتج بنجاح للمخزون!');
+            alert('تم إضافة المنتج بنجاح للمخزن!');
         }
 
         function deleteProd(id) {
@@ -763,28 +573,18 @@
         }
 
         function switchTab(tab) {
-            ['tab-store', 'tab-customizer', 'tab-pos', 'tab-admin'].forEach(t => document.getElementById(t).classList.add('hidden'));
-            document.getElementById('tab-' + tab).classList.remove('hidden');
-            
-            ['store', 'customizer', 'pos', 'admin'].forEach(t => {
-                const btn = document.getElementById('mob-nav-' + t);
+            ['pos', 'inventory', 'admin'].forEach(t => {
+                const el = document.getElementById('tab-' + t);
+                if (el) el.classList.add('hidden');
+                const btn = document.getElementById('nav-' + t);
                 if (btn) { btn.classList.remove('text-rose-600'); btn.classList.add('text-slate-400'); }
             });
             
-            const navId = tab === 'admin' ? 'mob-nav-admin' : 'mob-nav-' + tab;
-            const activeBtn = document.getElementById(navId);
+            const targetTab = document.getElementById('tab-' + tab);
+            if (targetTab) targetTab.classList.remove('hidden');
+            
+            const activeBtn = document.getElementById('nav-' + tab);
             if (activeBtn) { activeBtn.classList.remove('text-slate-400'); activeBtn.classList.add('text-rose-600'); }
-        }
-
-        function filterCategory(cat) {
-            state.selectedCategory = cat;
-            document.querySelectorAll('.cat-btn').forEach(btn => {
-                btn.classList.remove('bg-rose-600', 'text-white');
-                btn.classList.add('bg-white', 'text-slate-600');
-            });
-            event.target.classList.remove('bg-white', 'text-slate-600');
-            event.target.classList.add('bg-rose-600', 'text-white');
-            renderStorefront();
         }
 
         document.addEventListener('DOMContentLoaded', initApp);
