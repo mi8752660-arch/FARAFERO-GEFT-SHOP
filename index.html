@@ -3,11 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FARAFERO STORE - نظام إدارة المحل والمخزون</title>
+    <title>FARAFERO STORE - نظام إدارة المحل والمخزون السحابي</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
     <script>
         tailwind.config = {
@@ -56,7 +60,7 @@
 
             <div class="flex items-center space-x-2 space-x-reverse bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
                 <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                <span class="text-[11px] font-bold text-emerald-700">النظام متصل وحفظ فوري</span>
+                <span class="text-[11px] font-bold text-emerald-700">متصل سحابياً (مزامنة فورية)</span>
             </div>
         </div>
     </header>
@@ -188,7 +192,7 @@
             <div class="flex justify-between items-center bg-rose-50 border border-rose-200 p-4 rounded-2xl">
                 <div class="flex items-center space-x-2 space-x-reverse">
                     <i class="fa-solid fa-shield-halved text-rose-600 text-lg"></i>
-                    <span class="text-xs font-bold text-rose-900">أنت الآن في لوحة التحكم الإدارية</span>
+                    <span class="text-xs font-bold text-rose-900">أنت الآن في لوحة التحكم الإدارية السحابية</span>
                 </div>
                 <button onclick="switchTab('pos')" class="text-xs font-bold bg-white text-rose-600 border border-rose-300 px-3 py-1.5 rounded-xl shadow-sm">العودة للحسابات</button>
             </div>
@@ -426,11 +430,27 @@
     </div>
 
 
-    <!-- SCRIPT ENGINE -->
+    <!-- SCRIPT ENGINE (FIREBASE CLOUD SYNC) -->
     <script>
-        const STORAGE_KEY_PRODS = 'farafero_shop_products_system_v13';
-        const STORAGE_KEY_ORDERS = 'farafero_shop_orders_system_v13';
+        // إعدادات الـ Firebase الخاصة بك
+        const firebaseConfig = {
+          apiKey: "AIzaSyAuP10QxT-N1gEo7nW6Zc9I1Nzg9ehdD6E",
+          authDomain: "farafero-store-99e0d.firebaseapp.com",
+          projectId: "farafero-store-99e0d",
+          storageBucket: "farafero-store-99e0d.firebasestorage.app",
+          messagingSenderId: "47711607235",
+          appId: "1:47711607235:web:6cc25baa82eebcf6460576",
+          measurementId: "G-Q736FT0ZH5"
+        };
+
+        // تهيئة Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+
         const ADMIN_PIN = "2580";
+        let state = { products: [], orders: [], posCart: [], currentActiveModalOrder: null };
 
         const defaultProducts = [
             { id: "p1", code: "G-001", name: "دبدوب أحمر كبير", category: "ملابس وهدايا", cost: 250, price: 350, stock: 20, image: "https://images.unsplash.com/photo-1582293041079-7814c2f12063?w=500&q=80" },
@@ -439,43 +459,32 @@
             { id: "p4", code: "G-004", name: "عطر فرافيرو الملكي الفاخر", category: "عطور", cost: 450, price: 650, stock: 12, image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=500&q=80" }
         ];
 
-        let state = { products: [], orders: [], posCart: [], currentActiveModalOrder: null };
-
         function initApp() {
-            loadData();
-            // مزامنة تلقائية فورية بين التبويبات أو المتصفحات
-            window.addEventListener('storage', (e) => {
-                if (e.key && e.key.includes('farafero')) {
-                    loadData();
+            // استماع سحابي فوري للمنتجات
+            db.collection("products").onSnapshot((snapshot) => {
+                if (snapshot.empty) {
+                    defaultProducts.forEach(p => {
+                        db.collection("products").doc(p.id).set(p);
+                    });
+                } else {
+                    state.products = [];
+                    snapshot.forEach((doc) => {
+                        state.products.push({ id: doc.id, ...doc.data() });
+                    });
                     renderAll();
                 }
             });
-            setInterval(loadData, 1500); // تحديث دوري سريع
-            switchTab('pos');
-        }
 
-        function loadData() {
-            try {
-                const p = localStorage.getItem(STORAGE_KEY_PRODS);
-                const o = localStorage.getItem(STORAGE_KEY_ORDERS);
-                state.products = p ? JSON.parse(p) : defaultProducts;
-                state.orders = o ? JSON.parse(o) : [];
-                if (!p) localStorage.setItem(STORAGE_KEY_PRODS, JSON.stringify(defaultProducts));
-            } catch (err) {
-                state.products = defaultProducts;
+            // استماع سحابي فوري للفواتير والطلبات
+            db.collection("orders").orderBy("date", "desc").onSnapshot((snapshot) => {
                 state.orders = [];
-            }
-            renderAll();
-        }
+                snapshot.forEach((doc) => {
+                    state.orders.push({ firebaseId: doc.id, ...doc.data() });
+                });
+                renderAll();
+            });
 
-        function saveData() {
-            try {
-                localStorage.setItem(STORAGE_KEY_PRODS, JSON.stringify(state.products));
-                localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(state.orders));
-            } catch (err) {
-                console.error(err);
-            }
-            renderAll();
+            switchTab('pos');
         }
 
         function renderAll() {
@@ -544,7 +553,6 @@
         }
 
         function addToPOS(id) {
-            loadData();
             const p = state.products.find(x => x.id === id);
             if (!p || p.stock <= 0) return alert('عذراً، هذه الهدية نفذت من المخزون بالمحل!');
             
@@ -657,7 +665,7 @@
                 state.orders.forEach(o => {
                     const isCancelled = o.status === 'cancelled';
                     ordersList.innerHTML += `
-                        <div onclick="openOrderDetails('${o.id}')" class="bg-slate-50 hover:bg-rose-50 border p-3 rounded-2xl text-xs space-y-1 cursor-pointer transition-all shadow-sm ${isCancelled ? 'opacity-60 border-amber-300 bg-amber-50/30' : ''}">
+                        <div onclick="openOrderDetails('${o.firebaseId}')" class="bg-slate-50 hover:bg-rose-50 border p-3 rounded-2xl text-xs space-y-1 cursor-pointer transition-all shadow-sm ${isCancelled ? 'opacity-60 border-amber-300 bg-amber-50/30' : ''}">
                             <div class="flex justify-between items-center">
                                 <b class="text-slate-900">#${o.id} ${isCancelled ? '<span class="text-amber-600 text-[10px]">(ملغية)</span>' : ''}</b>
                                 <span class="font-black ${isCancelled ? 'text-slate-400 line-through' : 'text-rose-600'}">${o.total} EGP</span>
@@ -669,9 +677,8 @@
             }
         }
 
-        function openOrderDetails(orderId) {
-            loadData();
-            const order = state.orders.find(o => o.id === orderId);
+        function openOrderDetails(firebaseId) {
+            const order = state.orders.find(o => o.firebaseId === firebaseId);
             if (!order) return;
             state.currentActiveModalOrder = order;
 
@@ -707,18 +714,22 @@
         }
 
         function cancelCurrentOrder() {
-            loadData();
-            const o = state.orders.find(x => x.id === state.currentActiveModalOrder.id);
+            const o = state.currentActiveModalOrder;
             if (!o || o.status === 'cancelled') return;
 
-            if (confirm(`هل أنت متأكد من إلغاء الفاتورة #${o.id}؟ سيتم إرجاع الكميات للمخزن.`)) {
+            if (confirm(`هل أنت متأكد من إلغاء الفاتورة #${o.id}؟ سيتم إرجاع الكميات للمخزن السحابي.`)) {
                 o.status = 'cancelled';
+
                 o.detailedItems.forEach(item => {
                     const prod = state.products.find(p => p.id === item.id);
-                    if (prod) prod.stock += item.qty;
+                    if (prod) {
+                        const newStock = prod.stock + item.qty;
+                        db.collection("products").doc(prod.id).update({ stock: newStock });
+                    }
                 });
 
-                saveData();
+                db.collection("orders").doc(o.firebaseId).update({ status: 'cancelled' });
+
                 closeOrderModal();
                 alert('تم إلغاء الفاتورة وإرجاع الكميات بنجاح.');
             }
@@ -735,16 +746,14 @@
         }
 
         function increaseStock(id) {
-            loadData();
             const p = state.products.find(x => x.id === id);
             if (p) {
-                p.stock++;
-                saveData();
+                const newStock = p.stock + 1;
+                db.collection("products").doc(id).update({ stock: newStock });
             }
         }
 
         function checkoutPOS() {
-            loadData();
             if (state.posCart.length === 0) return alert('برجاء اختيار هدايا للفاتورة أولاً!');
             
             const custName = document.getElementById('cust-name').value.trim() || 'عميل نقدي';
@@ -756,7 +765,8 @@
             state.posCart.forEach(item => {
                 const prod = state.products.find(p => p.id === item.id);
                 if (prod) {
-                    prod.stock = Math.max(0, prod.stock - item.qty);
+                    const newStock = Math.max(0, prod.stock - item.qty);
+                    db.collection("products").doc(prod.id).update({ stock: newStock });
                 }
             });
 
@@ -770,8 +780,7 @@
                 detailedItems: JSON.parse(JSON.stringify(state.posCart))
             };
 
-            state.orders.unshift(newOrder);
-            saveData();
+            db.collection("orders").add(newOrder);
 
             generateReceiptPDF(state.posCart, custName, custPhone, total, orderId, dateStr);
             clearPOSCart();
@@ -813,7 +822,7 @@
                 closePinModal();
                 switchTab('admin');
             } else {
-                alert('كلمة المرور غير صحيحة! كلمة المرور هي 2580[span_1](start_span)[span_1](end_span)');
+                alert('كلمة المرور غير صحيحة! كلمة المرور هي 2580');
             }
         }
 
@@ -830,7 +839,6 @@
         }
 
         function openEditProductModal(id) {
-            loadData();
             const p = state.products.find(x => x.id === id);
             if (!p) return;
             document.getElementById('modal-title').innerText = 'تعديل بيانات ومواصفات الهدية';
@@ -850,7 +858,6 @@
         }
 
         function saveProductData() {
-            loadData();
             const editId = document.getElementById('edit-prod-id').value;
             const code = document.getElementById('prod-code').value.trim();
             const name = document.getElementById('prod-name').value.trim();
@@ -862,63 +869,38 @@
 
             if (!name || isNaN(price)) return alert('برجاء إدخال اسم الهدية وسعر البيع بشكل صحيح!');
 
+            const prodData = { code, name, cost, price, stock, category, image };
+
             if (editId) {
-                const p = state.products.find(x => x.id === editId);
-                if (p) {
-                    p.code = code;
-                    p.name = name;
-                    p.cost = cost;
-                    p.price = price;
-                    p.stock = stock;
-                    p.category = category;
-                    p.image = image;
-                }
-                alert('تم تعديل بيانات الهدية بنجاح!');
+                db.collection("products").doc(editId).update(prodData);
+                alert('تم تعديل بيانات الهدية سحابياً بنجاح!');
             } else {
-                const newProd = {
-                    id: 'p' + Date.now(),
-                    code,
-                    name,
-                    cost,
-                    price,
-                    stock,
-                    category,
-                    image
-                };
-                state.products.push(newProd);
-                alert('تم إضافة الهدية الجديدة بنجاح!');
+                const newId = 'p' + Date.now();
+                db.collection("products").doc(newId).set(prodData);
+                alert('تم إضافة الهدية الجديدة سحابياً بنجاح!');
             }
 
-            saveData();
             closeProductModal();
         }
 
         function deleteProd(id) {
-            loadData();
-            if (confirm('هل أنت متأكد من حذف هذه الهدية نهائياً؟')) {
-                state.products = state.products.filter(x => x.id !== id);
-                saveData();
+            if (confirm('هل أنت متأكد من حذف هذه الهدية نهائياً من السحابة؟')) {
+                db.collection("products").doc(id).delete();
             }
         }
 
         function switchTab(tab) {
             ['pos', 'catalog', 'inventory', 'admin'].forEach(t => {
-                const el = document.getElementById('tab-' + t);
-                if(el) el.classList.add('hidden');
+                document.getElementById('tab-' + t).classList.add('hidden');
                 const btn = document.getElementById('nav-' + t);
-                if(btn) {
-                    btn.classList.remove('text-rose-600');
-                    btn.classList.add('text-slate-400');
-                }
+                btn.classList.remove('text-rose-600');
+                btn.classList.add('text-slate-400');
             });
             
-            const targetTab = document.getElementById('tab-' + tab);
-            if(targetTab) targetTab.classList.remove('hidden');
+            document.getElementById('tab-' + tab).classList.remove('hidden');
             const activeBtn = document.getElementById('nav-' + tab);
-            if(activeBtn) {
-                activeBtn.classList.remove('text-slate-400');
-                activeBtn.classList.add('text-rose-600');
-            }
+            activeBtn.classList.remove('text-slate-400');
+            activeBtn.classList.add('text-rose-600');
         }
 
         document.addEventListener('DOMContentLoaded', initApp);
