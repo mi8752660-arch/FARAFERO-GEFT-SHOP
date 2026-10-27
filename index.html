@@ -236,7 +236,7 @@
             <div class="flex justify-between items-center bg-rose-50 border border-rose-200 p-4 rounded-2xl">
                 <div class="flex items-center space-x-2 space-x-reverse">
                     <i class="fa-solid fa-shield-halved text-rose-600 text-lg"></i>
-                    <span class="text-xs font-bold text-rose-900">أنت في لوحة الإدارة المحمية (كلمة المرور: 2580)</span>
+                    <span class="text-xs font-bold text-rose-900">أنت في لوحة الإدارة المحمية</span>
                 </div>
                 <button onclick="switchTab('store')" class="text-xs font-bold bg-white text-rose-600 border border-rose-300 px-3 py-1.5 rounded-xl shadow-sm">قفل لوحة الإدارة</button>
             </div>
@@ -325,7 +325,7 @@
         </div>
     </div>
 
-    <!-- ADMIN PIN CODE MODAL -->
+    <!-- ADMIN PIN CODE MODAL (CLEANED) -->
     <div id="admin-pin-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl w-full max-w-xs p-6 shadow-2xl space-y-4 text-center">
             <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto text-xl shadow-inner">
@@ -333,7 +333,7 @@
             </div>
             <div>
                 <h3 class="font-black text-base text-slate-900">لوحة تحكم المدير</h3>
-                <p class="text-[11px] text-slate-400 mt-1">أدخل كلمة المرور (2580)</p>
+                <p class="text-[11px] text-slate-400 mt-1">أدخل كلمة المرور للمتابعة</p>
             </div>
             <input type="password" id="admin-pin-input" placeholder="كلمة المرور..." class="w-full border border-slate-200 bg-slate-50 p-3 rounded-xl text-center text-sm font-bold focus:outline-none focus:border-rose-500">
             <div class="flex space-x-2 space-x-reverse pt-1">
@@ -417,9 +417,9 @@
 
     <!-- SCRIPT ENGINE -->
     <script>
-        const STORAGE_KEY_PRODS = 'farafero_shop_products_v8';
-        const STORAGE_KEY_ORDERS = 'farafero_shop_orders_v8';
-        const ADMIN_PIN = "2580"; // كلمة المرور الجديدة
+        const STORAGE_KEY_PRODS = 'farafero_shop_products_v9';
+        const STORAGE_KEY_ORDERS = 'farafero_shop_orders_v9';
+        const ADMIN_PIN = "2580"; // كلمة المرور السرية
 
         const defaultProducts = [
             { id: "p1", name: "دبدوب أحمر كبير", category: "ألعاب", price: 350, stock: 15, image: "https://images.unsplash.com/photo-1582293041079-7814c2f12063?w=500&q=80" },
@@ -733,7 +733,7 @@
                 closePinModal();
                 switchTab('admin');
             } else {
-                alert('كلمة المرور غير صحيحة! كلمة المرور الخاصة بك هي 2580');
+                alert('كلمة المرور غير صحيحة!');
             }
         }
 
