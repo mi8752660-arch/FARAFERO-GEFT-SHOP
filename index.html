@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FARAFERO GIFT SHOP - نظام الكاشير وطباعة فواتير PDF</title>
+    <title>FARAFERO GIFT SHOP - نظام الكاشير وإدارة المخزون المحمي</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
@@ -28,20 +28,13 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cf5d78; border-radius: 4px; }
         
-        /* PRINT / PDF STYLES */
         @media print {
             body * { visibility: hidden !important; }
             #printable-receipt, #printable-receipt * { visibility: visible !important; }
             #printable-receipt { 
-                position: absolute !important; 
-                left: 0 !important; 
-                top: 0 !important; 
-                width: 100% !important; 
-                direction: rtl !important; 
-                font-family: 'Cairo', sans-serif !important; 
-                display: block !important;
-                background-color: white !important;
-                padding: 20px !important;
+                position: absolute !important; left: 0 !important; top: 0 !important; width: 100% !important; 
+                direction: rtl !important; font-family: 'Cairo', sans-serif !important; display: block !important;
+                background-color: white !important; padding: 20px !important;
             }
         }
     </style>
@@ -63,7 +56,7 @@
                 </div>
                 <div class="hidden sm:flex items-center space-x-1.5 space-x-reverse bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
                     <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                    <span class="text-[11px] font-bold text-emerald-700">طباعة الفواتير PDF نشطة</span>
+                    <span class="text-[11px] font-bold text-emerald-700">نظام حماية الإدارة نشط</span>
                 </div>
             </div>
 
@@ -88,8 +81,8 @@
         <button onclick="switchTab('pos')" id="mob-nav-pos" class="text-xs font-bold text-slate-400 flex flex-col items-center">
             <i class="fa-solid fa-cash-register text-lg mb-1"></i> الكاشير
         </button>
-        <button onclick="switchTab('admin')" id="mob-nav-admin" class="text-xs font-bold text-slate-400 flex flex-col items-center">
-            <i class="fa-solid fa-chart-line text-lg mb-1"></i> الإدارة
+        <button onclick="requestAdminAccess()" id="mob-nav-admin" class="text-xs font-bold text-slate-400 flex flex-col items-center">
+            <i class="fa-solid fa-lock text-lg mb-1"></i> الإدارة
         </button>
     </div>
 
@@ -238,8 +231,16 @@
             </div>
         </div>
 
-        <!-- TAB 4: ADMIN -->
+        <!-- TAB 4: ADMIN (PROTECTED) -->
         <div id="tab-admin" class="hidden space-y-6">
+            <div class="flex justify-between items-center bg-rose-50 border border-rose-200 p-4 rounded-2xl">
+                <div class="flex items-center space-x-2 space-x-reverse">
+                    <i class="fa-solid fa-shield-halved text-rose-600 text-lg"></i>
+                    <span class="text-xs font-bold text-rose-900">أنت في لوحة الإدارة المحمية (خاص بالمدير فقط)</span>
+                </div>
+                <button onclick="switchTab('store')" class="text-xs font-bold bg-white text-rose-600 border border-rose-300 px-3 py-1.5 rounded-xl shadow-sm">قفل لوحة الإدارة</button>
+            </div>
+
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div class="bg-white rounded-3xl p-6 border shadow-sm">
                     <p class="text-xs font-bold text-slate-400">إجمالي المبيعات</p>
@@ -252,7 +253,7 @@
                 <div class="bg-white rounded-3xl p-6 border shadow-sm">
                     <p class="text-xs font-bold text-slate-400">حالة النظام</p>
                     <h4 class="text-sm font-black text-emerald-600 mt-1 flex items-center">
-                        <span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping ml-1"></span> خصم تلقائي من المخزن
+                        <span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping ml-1"></span> حماية بكلمة سر نشطة
                     </h4>
                 </div>
             </div>
@@ -302,7 +303,6 @@
                     <button onclick="closeCart()" class="w-8 h-8 rounded-full bg-slate-100 font-bold">✕</button>
                 </div>
 
-                <!-- Customer Details Inputs for Online Cart -->
                 <div class="space-y-3 bg-slate-50 p-3 rounded-2xl border border-slate-100">
                     <h4 class="text-xs font-bold text-slate-700">بيانات العميل لتأكيد الطلب:</h4>
                     <div>
@@ -321,6 +321,24 @@
                     <span class="text-blush-600"><span id="cart-total-price">0</span> EGP</span>
                 </div>
                 <button onclick="checkoutOnlineOrder()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-black py-4 rounded-2xl shadow-lg">تأكيد الطلب وحفظ الفاتورة PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN PIN CODE MODAL -->
+    <div id="admin-pin-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl w-full max-w-xs p-6 shadow-2xl space-y-4 text-center">
+            <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto text-xl shadow-inner">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <div>
+                <h3 class="font-black text-base text-slate-900">لوحة تحكم المدير</h3>
+                <p class="text-[11px] text-slate-400 mt-1">أدخل كلمة المرور السرية للوصول (الافتراضية: 1234)</p>
+            </div>
+            <input type="password" id="admin-pin-input" placeholder="كلمة المرور..." class="w-full border border-slate-200 bg-slate-50 p-3 rounded-xl text-center text-sm font-bold focus:outline-none focus:border-rose-500">
+            <div class="flex space-x-2 space-x-reverse pt-1">
+                <button onclick="closePinModal()" class="w-1/2 bg-slate-100 py-2.5 rounded-xl text-xs font-bold text-slate-600">إلغاء</button>
+                <button onclick="verifyAdminPin()" class="w-1/2 bg-rose-600 text-white py-2.5 rounded-xl text-xs font-bold shadow-md">دخول</button>
             </div>
         </div>
     </div>
@@ -352,17 +370,14 @@
         </div>
     </div>
 
-    <!-- HIGH-QUALITY PRINTABLE / PDF RECEIPT TEMPLATE -->
+    <!-- PRINTABLE RECEIPT -->
     <div id="printable-receipt" class="hidden max-w-xl mx-auto p-8 bg-white border border-slate-200 rounded-2xl text-xs space-y-4">
-        
-        <!-- Header & Brand Logo -->
         <div class="text-center space-y-2 border-b border-slate-200 pb-4">
             <div class="w-12 h-12 bg-rose-600 rounded-2xl text-white font-black text-xl flex items-center justify-center mx-auto shadow-md">F</div>
             <h1 class="text-2xl font-black text-slate-900 tracking-wider">FARAFERO GIFT SHOP</h1>
             <p class="text-xs font-bold text-rose-600">فاتورة مبيعات وإثبات شراء رسمية</p>
         </div>
 
-        <!-- Customer & Order Meta Information -->
         <div class="grid grid-cols-2 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200 text-slate-700 text-[11px]">
             <div class="space-y-1">
                 <p><b>رقم الفاتورة:</b> <span id="rec-id" class="font-bold text-slate-900"></span></p>
@@ -374,7 +389,6 @@
             </div>
         </div>
 
-        <!-- Product Table Breakdown -->
         <div class="space-y-2 pt-2">
             <h3 class="font-black text-slate-900 text-xs border-b pb-1">تفاصيل المنتجات والبضاعة:</h3>
             <table class="w-full text-right text-xs">
@@ -389,13 +403,11 @@
             </table>
         </div>
 
-        <!-- Grand Total Section -->
         <div class="border-t-2 border-rose-600 pt-3 flex justify-between items-center text-base font-black text-slate-900">
             <span>الإجمالي الكلي النهائي:</span>
             <span class="text-rose-600 text-xl"><span id="rec-grand-total">0</span> EGP</span>
         </div>
 
-        <!-- Footer Note -->
         <div class="text-center pt-6 border-t border-slate-100 text-[10px] text-slate-400 space-y-1 font-bold">
             <p>شكراً لتسوقكم من FARAFERO GIFT SHOP! ❤️</p>
             <p>لأي استفسار يسعدنا تواصلكم دائماً</p>
@@ -405,8 +417,9 @@
 
     <!-- SCRIPT ENGINE -->
     <script>
-        const STORAGE_KEY_PRODS = 'farafero_shop_products_v6';
-        const STORAGE_KEY_ORDERS = 'farafero_shop_orders_v6';
+        const STORAGE_KEY_PRODS = 'farafero_shop_products_v7';
+        const STORAGE_KEY_ORDERS = 'farafero_shop_orders_v7';
+        const ADMIN_PIN = "1234"; // تقدر تغير الباسورد ده لرقم سري خاص بك
 
         const defaultProducts = [
             { id: "p1", name: "دبدوب أحمر كبير", category: "ألعاب", price: 350, stock: 15, image: "https://images.unsplash.com/photo-1582293041079-7814c2f12063?w=500&q=80" },
@@ -548,13 +561,13 @@
             });
         }
 
+        // ADD TO CART WITHOUT ALERT POPUP (SILENT ADD)
         function addToCart(id) {
             const p = state.products.find(x => x.id === id);
             if (!p || p.stock <= 0) return alert('المنتج نفذ من المخزون!');
             const item = state.cart.find(x => x.id === id);
             if (item) item.qty++; else state.cart.push({ ...p, qty: 1 });
             document.getElementById('cart-badge').innerText = state.cart.reduce((a, b) => a + b.qty, 0);
-            alert('تم إضافة المنتج للسلة بنجاح!');
         }
 
         function openCart() {
@@ -704,7 +717,26 @@
             const msg = document.getElementById('gift-message').value;
             state.cart.push({ id: 'pack-' + Date.now(), name: `تغليف مخصص (${bName})`, price: cost, qty: 1, note: msg });
             document.getElementById('cart-badge').innerText = state.cart.reduce((a, b) => a + b.qty, 0);
-            alert('تم إضافة التغليف المخصص للسلة بنجاح!');
+        }
+
+        // ADMIN PIN PROTECTION FUNCTIONS
+        function requestAdminAccess() {
+            document.getElementById('admin-pin-input').value = '';
+            document.getElementById('admin-pin-modal').classList.remove('hidden');
+        }
+
+        function closePinModal() {
+            document.getElementById('admin-pin-modal').classList.add('hidden');
+        }
+
+        function verifyAdminPin() {
+            const enteredPin = document.getElementById('admin-pin-input').value.trim();
+            if (enteredPin === ADMIN_PIN) {
+                closePinModal();
+                switchTab('admin');
+            } else {
+                alert('كلمة المرور غير صحيحة! هذه اللوحة مخصصة للمدير فقط.');
+            }
         }
 
         function toggleNewProductModal() { document.getElementById('add-product-modal').classList.toggle('hidden'); }
@@ -721,7 +753,7 @@
             saveProducts();
             toggleNewProductModal();
             renderAll();
-            alert('تم إضافة المنتج وحفظه بنجاح!');
+            alert('تم إضافة المنتج بنجاح للمخزون!');
         }
 
         function deleteProd(id) {
@@ -740,7 +772,10 @@
                 const btn = document.getElementById('mob-nav-' + t);
                 if (btn) { btn.classList.remove('text-rose-600'); btn.classList.add('text-slate-400'); }
             });
-            const activeBtn = document.getElementById('mob-nav-' + tab);
+            
+            // Highlight active nav
+            const navId = tab === 'admin' ? 'mob-nav-admin' : 'mob-nav-' + tab;
+            const activeBtn = document.getElementById(navId);
             if (activeBtn) { activeBtn.classList.remove('text-slate-400'); activeBtn.classList.add('text-rose-600'); }
         }
 
