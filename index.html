@@ -169,8 +169,9 @@
                             <tr>
                                 <th class="p-3">الهدية</th>
                                 <th class="p-3">القسم</th>
-                                <th class="p-3">سعر القطعة</th>
-                                <th class="p-3">المخزون المتبقي بالمحل</th>
+                                <th class="p-3">سعر التكلفة</th>
+                                <th class="p-3">سعر البيع</th>
+                                <th class="p-3">المخزون الحالي</th>
                                 <th class="p-3 text-left">الحالة</th>
                             </tr>
                         </thead>
@@ -180,7 +181,7 @@
             </div>
         </div>
 
-        <!-- TAB 4: ADMIN / DASHBOARD (لوحة التحكم والأرباح) -->
+        <!-- TAB 4: ADMIN / DASHBOARD (لوحة التحكم والأرباح والملخص العام) -->
         <div id="tab-admin" class="app-tab hidden space-y-6">
             <div class="flex justify-between items-center bg-rose-50 border border-rose-200 p-4 rounded-2xl">
                 <div class="flex items-center space-x-2 space-x-reverse">
@@ -190,20 +191,27 @@
                 <button onclick="switchTab('pos')" class="text-xs font-bold bg-white text-rose-600 border border-rose-300 px-3 py-1.5 rounded-xl shadow-sm">العودة للحسابات</button>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div class="bg-white rounded-3xl p-6 border shadow-sm">
+            <!-- الملخص العام والشامل (إجمالي البضاعة عدد وسعر وتكلفة ومبيعات) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-1">
                     <p class="text-xs font-bold text-slate-400">إجمالي مبيعات المحل</p>
-                    <h4 class="text-2xl font-black text-slate-900 mt-1"><span id="dash-total-revenue">0</span> EGP</h4>
+                    <h4 class="text-2xl font-black text-rose-600"><span id="dash-total-revenue">0</span> EGP</h4>
+                    <p class="text-[10px] text-slate-500 font-semibold" id="dash-total-orders">عدد الطلبات: 0</p>
                 </div>
-                <div class="bg-white rounded-3xl p-6 border shadow-sm">
-                    <p class="text-xs font-bold text-slate-400">عدد الطلبات المسجلة</p>
-                    <h4 class="text-2xl font-black text-slate-900 mt-1" id="dash-total-orders">0</h4>
+                <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-1">
+                    <p class="text-xs font-bold text-slate-400">إجمالي رأس مال المخزون (تكلفة)</p>
+                    <h4 class="text-2xl font-black text-slate-900"><span id="dash-total-cost">0</span> EGP</h4>
+                    <p class="text-[10px] text-slate-500 font-semibold">إجمالي تكلفة البضاعة الحالية بالمحل</p>
                 </div>
-                <div class="bg-white rounded-3xl p-6 border shadow-sm">
-                    <p class="text-xs font-bold text-slate-400">حالة الخصم التلقائي</p>
-                    <h4 class="text-sm font-black text-emerald-600 mt-2 flex items-center">
-                        <span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping ml-1"></span> يتم خصم البضاعة فور البيع
-                    </h4>
+                <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-1">
+                    <p class="text-xs font-bold text-slate-400">إجمالي قيمة بضاعة المخزون (بيع)</p>
+                    <h4 class="text-2xl font-black text-emerald-600"><span id="dash-total-value">0</span> EGP</h4>
+                    <p class="text-[10px] text-slate-500 font-semibold">القيمة البيعية المتوقعة للمخزون</p>
+                </div>
+                <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-1">
+                    <p class="text-xs font-bold text-slate-400">إجمالي عدد قطع الهدايا بالمخزن</p>
+                    <h4 class="text-2xl font-black text-slate-900"><span id="dash-total-pieces">0</span> قطعة</h4>
+                    <p class="text-[10px] text-slate-500 font-semibold">مجموع القطع لكل الأصناف</p>
                 </div>
             </div>
 
@@ -220,9 +228,10 @@
                             <thead class="bg-slate-50 text-slate-500 font-bold border-b">
                                 <tr>
                                     <th class="p-3">الهدية</th>
-                                    <th class="p-3">السعر</th>
-                                    <th class="p-3">المخزون الحالي</th>
-                                    <th class="p-3 text-left">التحكم الكامل (تعديل / حذف / +)</th>
+                                    <th class="p-3">التكلفة</th>
+                                    <th class="p-3">البيع</th>
+                                    <th class="p-3">المخزون</th>
+                                    <th class="p-3 text-left">التحكم (تعديل / حذف / +)</th>
                                 </tr>
                             </thead>
                             <tbody id="admin-inventory-table" class="divide-y font-medium"></tbody>
@@ -261,7 +270,7 @@
         </div>
     </div>
 
-    <!-- VIEW ORDER DETAILS MODAL (نافذة عرض تفاصيل الفاتورة وطباعتها) -->
+    <!-- VIEW ORDER DETAILS MODAL -->
     <div id="order-details-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
@@ -307,7 +316,7 @@
         </div>
     </div>
 
-    <!-- ADD / EDIT PRODUCT MODAL -->
+    <!-- ADD / EDIT PRODUCT MODAL (محدث ليشمل سعر التكلفة) -->
     <div id="product-modal" class="fixed inset-0 z-50 hidden bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-4">
             <div class="flex justify-between border-b pb-3">
@@ -320,9 +329,15 @@
                     <label class="text-slate-600 block mb-1">اسم الهدية / الموديل:</label>
                     <input type="text" id="prod-name" placeholder="اسم الهدية..." class="w-full border p-2.5 rounded-xl">
                 </div>
-                <div>
-                    <label class="text-slate-600 block mb-1">السعر (EGP):</label>
-                    <input type="number" id="prod-price" placeholder="سعر البيع..." class="w-full border p-2.5 rounded-xl">
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-slate-600 block mb-1">سعر التكلفة (EGP):</label>
+                        <input type="number" id="prod-cost" placeholder="التكلفة..." class="w-full border p-2.5 rounded-xl">
+                    </div>
+                    <div>
+                        <label class="text-slate-600 block mb-1">سعر البيع (EGP):</label>
+                        <input type="number" id="prod-price" placeholder="سعر البيع..." class="w-full border p-2.5 rounded-xl">
+                    </div>
                 </div>
                 <div>
                     <label class="text-slate-600 block mb-1">الكمية بالمخزن:</label>
@@ -395,15 +410,15 @@
 
     <!-- SCRIPT ENGINE -->
     <script>
-        const STORAGE_KEY_PRODS = 'farafero_shop_products_system_v8';
-        const STORAGE_KEY_ORDERS = 'farafero_shop_orders_system_v8';
+        const STORAGE_KEY_PRODS = 'farafero_shop_products_system_v9';
+        const STORAGE_KEY_ORDERS = 'farafero_shop_orders_system_v9';
         const ADMIN_PIN = "2580";
 
         const defaultProducts = [
-            { id: "p1", name: "دبدوب أحمر كبير", category: "ملابس وهدايا", price: 350, stock: 20, image: "https://images.unsplash.com/photo-1582293041079-7814c2f12063?w=500&q=80" },
-            { id: "p2", name: "صندوق خشبي فاخر", category: "صناديق وتغليف", price: 150, stock: 15, image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&q=80" },
-            { id: "p3", name: "بوكيه ورد جوري أحمر", category: "ملابس وهدايا", price: 400, stock: 10, image: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=500&q=80" },
-            { id: "p4", name: "عطر فرافيرو الملكي الفاخر", category: "عطور", price: 650, stock: 12, image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=500&q=80" }
+            { id: "p1", name: "دبدوب أحمر كبير", category: "ملابس وهدايا", cost: 250, price: 350, stock: 20, image: "https://images.unsplash.com/photo-1582293041079-7814c2f12063?w=500&q=80" },
+            { id: "p2", name: "صندوق خشبي فاخر", category: "صناديق وتغليف", cost: 100, price: 150, stock: 15, image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&q=80" },
+            { id: "p3", name: "بوكيه ورد جوري أحمر", category: "ملابس وهدايا", cost: 280, price: 400, stock: 10, image: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=500&q=80" },
+            { id: "p4", name: "عطر فرافيرو الملكي الفاخر", category: "عطور", cost: 450, price: 650, stock: 12, image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=500&q=80" }
         ];
 
         let state = { products: [], orders: [], posCart: [], currentActiveModalOrder: null };
@@ -501,7 +516,7 @@
                 if (item.qty + 1 > p.stock) return alert('الكمية المطلوبة أكبر من المتبقي بالمخزن!');
                 item.qty++;
             } else {
-                state.posCart.push({ ...p, qty: 1, rawPrice: p.price });
+                state.posCart.push({ ...p, qty: 1 });
             }
             renderPOSCart();
         }
@@ -549,10 +564,12 @@
             if(!tbody) return;
             tbody.innerHTML = '';
             state.products.forEach(p => {
+                const costPrice = p.cost || 0;
                 tbody.innerHTML += `
                     <tr>
                         <td class="p-3 font-bold text-slate-800">${p.name}</td>
                         <td class="p-3 text-slate-500">${p.category}</td>
+                        <td class="p-3 font-semibold text-slate-600">${costPrice} EGP</td>
                         <td class="p-3 font-black text-rose-600">${p.price} EGP</td>
                         <td class="p-3 font-bold ${p.stock <= 3 ? 'text-rose-600' : 'text-slate-700'}">${p.stock} قطعة</td>
                         <td class="p-3 text-left"><span class="${p.stock > 3 ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'} text-[10px] px-2.5 py-1 rounded-full font-bold">${p.stock > 3 ? 'متوفر' : 'منخفض'}</span></td>
@@ -561,18 +578,43 @@
         }
 
         function renderDashboard() {
+            const totalRevenue = state.orders.reduce((a, b) => a + b.total, 0);
+            const totalOrders = state.orders.length;
+            
+            let totalCostVal = 0;
+            let totalValueVal = 0;
+            let totalPiecesVal = 0;
+
+            state.products.forEach(p => {
+                const cost = p.cost || 0;
+                const price = p.price || 0;
+                const stock = p.stock || 0;
+                totalCostVal += cost * stock;
+                totalValueVal += price * stock;
+                totalPiecesVal += stock;
+            });
+
             const revEl = document.getElementById('dash-total-revenue');
             const ordEl = document.getElementById('dash-total-orders');
-            if(revEl) revEl.innerText = state.orders.reduce((a, b) => a + b.total, 0);
-            if(ordEl) ordEl.innerText = state.orders.length;
+            const costEl = document.getElementById('dash-total-cost');
+            const valEl = document.getElementById('dash-total-value');
+            const piecesEl = document.getElementById('dash-total-pieces');
+
+            if(revEl) revEl.innerText = totalRevenue;
+            if(ordEl) ordEl.innerText = 'عدد الطلبات: ' + totalOrders;
+            if(costEl) costEl.innerText = totalCostVal;
+            if(valEl) valEl.innerText = totalValueVal;
+            if(piecesEl) piecesEl.innerText = totalPiecesVal;
             
             const tbody = document.getElementById('admin-inventory-table');
             if(tbody) {
                 tbody.innerHTML = '';
                 state.products.forEach(p => {
+                    const costPrice = p.cost || 0;
                     tbody.innerHTML += `
                         <tr>
                             <td class="p-2.5 font-bold text-slate-800">${p.name}</td>
+                            <td class="p-2.5 font-semibold text-slate-600">${costPrice} EGP</td>
                             <td class="p-2.5 font-black text-rose-600">${p.price} EGP</td>
                             <td class="p-2.5 font-bold">${p.stock} قطعة</td>
                             <td class="p-2.5 text-left flex items-center justify-end space-x-1.5 space-x-reverse">
@@ -601,7 +643,6 @@
             }
         }
 
-        // فتح نافذة تفاصيل الفاتورة عند الضغط عليها من سجل الفواتير
         function openOrderDetails(orderId) {
             const order = state.orders.find(o => o.id === orderId);
             if (!order) return;
@@ -744,7 +785,7 @@
                 closePinModal();
                 switchTab('admin');
             } else {
-                alert('كلمة المرور غير صحيحة! كلمة المرور الخاصة بك هي 2580');
+                alert('كلمة المرور غير صحيحة! كلمة المرور الخاصة بك هي 2580[span_4](start_span)[span_4](end_span)');
             }
         }
 
@@ -752,6 +793,7 @@
             document.getElementById('modal-title').innerText = 'إضافة هدية جديدة للمخزن';
             document.getElementById('edit-prod-id').value = '';
             document.getElementById('prod-name').value = '';
+            document.getElementById('prod-cost').value = '';
             document.getElementById('prod-price').value = '';
             document.getElementById('prod-stock').value = '';
             document.getElementById('prod-image').value = '';
@@ -764,6 +806,7 @@
             document.getElementById('modal-title').innerText = 'تعديل بيانات ومواصفات الهدية';
             document.getElementById('edit-prod-id').value = p.id;
             document.getElementById('prod-name').value = p.name;
+            document.getElementById('prod-cost').value = p.cost || 0;
             document.getElementById('prod-price').value = p.price;
             document.getElementById('prod-stock').value = p.stock;
             document.getElementById('prod-category').value = p.category;
@@ -778,17 +821,19 @@
         function saveProductData() {
             const editId = document.getElementById('edit-prod-id').value;
             const name = document.getElementById('prod-name').value.trim();
+            const cost = parseFloat(document.getElementById('prod-cost').value) || 0;
             const price = parseFloat(document.getElementById('prod-price').value);
             const stock = parseInt(document.getElementById('prod-stock').value);
             const category = document.getElementById('prod-category').value;
             const image = document.getElementById('prod-image').value.trim() || "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&q=80";
 
-            if (!name || isNaN(price)) return alert('برجاء إدخال اسم الهدية والسعر بشكل صحيح!');
+            if (!name || isNaN(price)) return alert('برجاء إدخال اسم الهدية وسعر البيع بشكل صحيح!');
 
             if (editId) {
                 const p = state.products.find(x => x.id === editId);
                 if (p) {
                     p.name = name;
+                    p.cost = cost;
                     p.price = price;
                     p.stock = isNaN(stock) ? p.stock : stock;
                     p.category = category;
@@ -799,6 +844,7 @@
                 const newProd = {
                     id: 'p' + Date.now(),
                     name,
+                    cost,
                     price,
                     stock: isNaN(stock) ? 1 : stock,
                     category,
