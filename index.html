@@ -134,7 +134,7 @@
             </div>
         </div>
 
-        <!-- TAB 2: CATALOG (عرض الهدايا - للاطلاع فقط بدون أي تعديل) -->
+        <!-- TAB 2: CATALOG (عرض الهدايا) -->
         <div id="tab-catalog" class="app-tab hidden space-y-6">
             <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-4">
                 <div class="flex items-center justify-between border-b pb-3">
@@ -230,10 +230,11 @@
                     </div>
                 </div>
 
+                <!-- سجل الفواتير الصادرة -->
                 <div class="lg:col-span-4 bg-white rounded-3xl p-6 border shadow-sm space-y-4">
                     <div class="border-b pb-3">
                         <h3 class="text-lg font-black text-slate-900">سجل الفواتير الصادرة</h3>
-                        <p class="text-xs text-slate-500">أرشيف كامل لكل مبيعات العملاء</p>
+                        <p class="text-xs text-slate-500">اضغط على أي فاتورة لاستعراضها وطباعتها PDF</p>
                     </div>
                     <div id="recent-orders-list" class="space-y-3 max-h-[350px] overflow-y-auto custom-scrollbar"></div>
                 </div>
@@ -256,6 +257,52 @@
             <div class="flex space-x-2 space-x-reverse pt-1">
                 <button onclick="closePinModal()" class="w-1/2 bg-slate-100 py-2.5 rounded-xl text-xs font-bold text-slate-600">إلغاء</button>
                 <button onclick="verifyAdminPin()" class="w-1/2 bg-rose-600 text-white py-2.5 rounded-xl text-xs font-bold shadow-md">دخول</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW ORDER DETAILS MODAL (نافذة عرض تفاصيل الفاتورة وطباعتها) -->
+    <div id="order-details-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-black text-lg text-slate-900 flex items-center">
+                    <i class="fa-solid fa-file-invoice text-rose-600 ml-2"></i>
+                    تفاصيل الفاتورة <span id="view-ord-id" class="mr-1 text-rose-600"></span>
+                </h3>
+                <button onclick="closeOrderModal()" class="w-8 h-8 rounded-full bg-slate-100 font-bold text-slate-500">✕</button>
+            </div>
+
+            <div class="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-100 text-xs">
+                <div class="flex justify-between">
+                    <span class="text-slate-500 font-bold">اسم العميل:</span>
+                    <span id="view-ord-cust-name" class="font-black text-slate-900"></span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-500 font-bold">رقم الهاتف:</span>
+                    <span id="view-ord-cust-phone" class="font-bold text-slate-800"></span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-500 font-bold">تاريخ الإصدار:</span>
+                    <span id="view-ord-date" class="font-semibold text-slate-600"></span>
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <h4 class="font-black text-xs text-slate-800">الأصناف والمنتجات:</h4>
+                <div id="view-ord-items" class="bg-slate-50/50 rounded-2xl border p-3 divide-y text-xs max-h-[160px] overflow-y-auto custom-scrollbar"></div>
+            </div>
+
+            <div class="flex justify-between items-center border-t pt-3 font-black text-base">
+                <span>الإجمالي الكلي:</span>
+                <span class="text-rose-600 text-lg"><span id="view-ord-total">0</span> EGP</span>
+            </div>
+
+            <div class="flex space-x-2 space-x-reverse pt-2">
+                <button onclick="closeOrderModal()" class="w-1/2 bg-slate-100 py-3 rounded-xl font-bold text-xs text-slate-600">إغلاق</button>
+                <button onclick="printCurrentModalOrder()" class="w-1/2 bg-rose-600 hover:bg-rose-700 text-white py-3 rounded-xl font-bold text-xs shadow-md flex items-center justify-center space-x-1.5 space-x-reverse">
+                    <i class="fa-solid fa-print"></i>
+                    <span>طباعة / حفظ PDF</span>
+                </button>
             </div>
         </div>
     </div>
@@ -348,8 +395,8 @@
 
     <!-- SCRIPT ENGINE -->
     <script>
-        const STORAGE_KEY_PRODS = 'farafero_shop_products_system_v7';
-        const STORAGE_KEY_ORDERS = 'farafero_shop_orders_system_v7';
+        const STORAGE_KEY_PRODS = 'farafero_shop_products_system_v8';
+        const STORAGE_KEY_ORDERS = 'farafero_shop_orders_system_v8';
         const ADMIN_PIN = "2580";
 
         const defaultProducts = [
@@ -359,7 +406,7 @@
             { id: "p4", name: "عطر فرافيرو الملكي الفاخر", category: "عطور", price: 650, stock: 12, image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=500&q=80" }
         ];
 
-        let state = { products: [], orders: [], posCart: [] };
+        let state = { products: [], orders: [], posCart: [], currentActiveModalOrder: null };
 
         function initApp() {
             const savedProds = localStorage.getItem(STORAGE_KEY_PRODS);
@@ -454,7 +501,7 @@
                 if (item.qty + 1 > p.stock) return alert('الكمية المطلوبة أكبر من المتبقي بالمخزن!');
                 item.qty++;
             } else {
-                state.posCart.push({ ...p, qty: 1 });
+                state.posCart.push({ ...p, qty: 1, rawPrice: p.price });
             }
             renderPOSCart();
         }
@@ -540,18 +587,65 @@
             const ordersList = document.getElementById('recent-orders-list');
             if(ordersList) {
                 ordersList.innerHTML = '';
-                state.orders.slice(0, 8).forEach(o => {
+                state.orders.forEach(o => {
                     ordersList.innerHTML += `
-                        <div class="bg-slate-50 border p-2.5 rounded-2xl text-xs space-y-1">
+                        <div onclick="openOrderDetails('${o.id}')" class="bg-slate-50 hover:bg-rose-50 border p-3 rounded-2xl text-xs space-y-1 cursor-pointer transition-all shadow-sm">
                             <div class="flex justify-between items-center">
-                                <b>#${o.id}</b>
+                                <b class="text-slate-900">#${o.id}</b>
                                 <span class="font-black text-rose-600">${o.total} EGP</span>
                             </div>
-                            <p class="text-slate-600 text-[11px]">العميل: ${o.customerName} (${o.customerPhone})</p>
+                            <p class="text-slate-600 text-[11px] font-semibold">العميل: ${o.customerName} (${o.customerPhone})</p>
                             <p class="text-slate-400 text-[10px]">${o.date}</p>
                         </div>`;
                 });
             }
+        }
+
+        // فتح نافذة تفاصيل الفاتورة عند الضغط عليها من سجل الفواتير
+        function openOrderDetails(orderId) {
+            const order = state.orders.find(o => o.id === orderId);
+            if (!order) return;
+            state.currentActiveModalOrder = order;
+
+            document.getElementById('view-ord-id').innerText = '#' + order.id;
+            document.getElementById('view-ord-cust-name').innerText = order.customerName;
+            document.getElementById('view-ord-cust-phone').innerText = order.customerPhone;
+            document.getElementById('view-ord-date').innerText = order.date;
+            document.getElementById('view-ord-total').innerText = order.total;
+
+            const itemsContainer = document.getElementById('view-ord-items');
+            itemsContainer.innerHTML = '';
+            if (Array.isArray(order.detailedItems)) {
+                order.detailedItems.forEach(item => {
+                    itemsContainer.innerHTML += `
+                        <div class="flex justify-between items-center py-1.5">
+                            <span class="font-bold text-slate-800">${item.name} × ${item.qty}</span>
+                            <span class="font-black text-rose-600">${item.price * item.qty} EGP</span>
+                        </div>
+                    `;
+                });
+            } else if (Array.isArray(order.items)) {
+                order.items.forEach(itemName => {
+                    itemsContainer.innerHTML += `
+                        <div class="py-1 flex justify-between">
+                            <span class="font-bold text-slate-800">${itemName}</span>
+                        </div>
+                    `;
+                });
+            }
+
+            document.getElementById('order-details-modal').classList.remove('hidden');
+        }
+
+        function closeOrderModal() {
+            document.getElementById('order-details-modal').classList.add('hidden');
+        }
+
+        function printCurrentModalOrder() {
+            if (!state.currentActiveModalOrder) return;
+            const o = state.currentActiveModalOrder;
+            const itemsToPrint = o.detailedItems || o.items.map(i => ({ name: i, qty: 1, price: 0 }));
+            generateReceiptPDF(itemsToPrint, o.customerName, o.customerPhone, o.total, o.id, o.date);
         }
 
         function increaseStock(id) {
@@ -590,7 +684,8 @@
                 total: total, 
                 customerName: custName,
                 customerPhone: custPhone,
-                items: state.posCart.map(i => `${i.name} (×${i.qty})`)
+                items: state.posCart.map(i => `${i.name} (×${i.qty})`),
+                detailedItems: JSON.parse(JSON.stringify(state.posCart))
             };
             state.orders.unshift(newOrder);
             saveOrders();
@@ -649,7 +744,7 @@
                 closePinModal();
                 switchTab('admin');
             } else {
-                alert('كلمة المرور غير صحيحة! كلمة المرور الخاصة بك هي 2580[span_0](start_span)[span_0](end_span)');
+                alert('كلمة المرور غير صحيحة! كلمة المرور الخاصة بك هي 2580');
             }
         }
 
