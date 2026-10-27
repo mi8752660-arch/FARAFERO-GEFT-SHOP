@@ -90,7 +90,7 @@
                         </h3>
                         <span class="text-xs font-bold bg-slate-100 px-3 py-1 rounded-xl">اضغط لإضافة صنف</span>
                     </div>
-                    <input type="text" id="pos-search" oninput="renderPOSProducts()" placeholder="ابحث عن هدية بالاسم..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-rose-500">
+                    <input type="text" id="pos-search" oninput="renderPOSProducts()" placeholder="ابحث عن هدية أو كود..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-rose-500">
                     <div id="pos-product-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[480px] overflow-y-auto custom-scrollbar p-1"></div>
                 </div>
 
@@ -140,12 +140,12 @@
                 <div class="flex items-center justify-between border-b pb-3">
                     <div>
                         <h3 class="text-xl font-black text-slate-900">عرض الهدايا والمواصفات</h3>
-                        <p class="text-xs text-slate-500 mt-1">عرض شامل لكل الهدايا بالصور، الأسعار، والأعداد (للاطلاع فقط - بدون تعديل)</p>
+                        <p class="text-xs text-slate-500 mt-1">عرض شامل لكل الهدايا بالصور، الأكواد، الأسعار، والأعداد (للاطلاع فقط)</p>
                     </div>
                     <span class="bg-blush-50 text-blush-600 text-xs font-bold px-3 py-1.5 rounded-xl border border-blush-200">عرض فقط (Read-Only)</span>
                 </div>
                 
-                <input type="text" id="catalog-search" oninput="renderCatalogDashboard()" placeholder="ابحث في الهدايا المعروضة..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-rose-500">
+                <input type="text" id="catalog-search" oninput="renderCatalogDashboard()" placeholder="ابحث في الهدايا أو الأكواد..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-rose-500">
 
                 <div id="catalog-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-h-[600px] overflow-y-auto custom-scrollbar p-1"></div>
             </div>
@@ -157,7 +157,7 @@
                 <div class="flex justify-between items-center border-b pb-3">
                     <div>
                         <h3 class="text-xl font-black text-slate-900">متابعة حركة المخزون والكميات</h3>
-                        <p class="text-xs text-slate-500 mt-1">عرض جميع الأصناف والكميات المتاحة في المحل</p>
+                        <p class="text-xs text-slate-500 mt-1">عرض جميع الأصناف والأكواد والكميات المتاحة في المحل</p>
                     </div>
                     <button onclick="requestAdminAccess()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md">
                         <i class="fa-solid fa-lock ml-1"></i> لوحة الإدارة الكاملة
@@ -167,11 +167,13 @@
                     <table class="w-full text-right text-xs">
                         <thead class="bg-slate-50 text-slate-500 font-bold border-b">
                             <tr>
+                                <th class="p-3">الصورة</th>
+                                <th class="p-3">الكود</th>
                                 <th class="p-3">الهدية</th>
                                 <th class="p-3">القسم</th>
-                                <th class="p-3">سعر التكلفة</th>
-                                <th class="p-3">سعر البيع</th>
-                                <th class="p-3">المخزون الحالي</th>
+                                <th class="p-3">التكلفة</th>
+                                <th class="p-3">البيع</th>
+                                <th class="p-3">المخزون</th>
                                 <th class="p-3 text-left">الحالة</th>
                             </tr>
                         </thead>
@@ -191,7 +193,7 @@
                 <button onclick="switchTab('pos')" class="text-xs font-bold bg-white text-rose-600 border border-rose-300 px-3 py-1.5 rounded-xl shadow-sm">العودة للحسابات</button>
             </div>
 
-            <!-- الملخص العام والشامل (إجمالي البضاعة عدد وسعر وتكلفة ومبيعات) -->
+            <!-- الملخص العام والشامل -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-1">
                     <p class="text-xs font-bold text-slate-400">إجمالي مبيعات المحل</p>
@@ -227,11 +229,13 @@
                         <table class="w-full text-right text-xs">
                             <thead class="bg-slate-50 text-slate-500 font-bold border-b">
                                 <tr>
+                                    <th class="p-3">صورة</th>
+                                    <th class="p-3">الكود</th>
                                     <th class="p-3">الهدية</th>
                                     <th class="p-3">التكلفة</th>
                                     <th class="p-3">البيع</th>
                                     <th class="p-3">المخزون</th>
-                                    <th class="p-3 text-left">التحكم (تعديل / حذف / +)</th>
+                                    <th class="p-3 text-left">التحكم</th>
                                 </tr>
                             </thead>
                             <tbody id="admin-inventory-table" class="divide-y font-medium"></tbody>
@@ -316,7 +320,7 @@
         </div>
     </div>
 
-    <!-- ADD / EDIT PRODUCT MODAL (محدث ليشمل سعر التكلفة) -->
+    <!-- ADD / EDIT PRODUCT MODAL (محدث ليشمل خانة الكود والصورة) -->
     <div id="product-modal" class="fixed inset-0 z-50 hidden bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-4">
             <div class="flex justify-between border-b pb-3">
@@ -325,6 +329,10 @@
             </div>
             <input type="hidden" id="edit-prod-id">
             <div class="space-y-3 text-xs font-bold">
+                <div>
+                    <label class="text-slate-600 block mb-1">كود الهدية (مثال: G-001):</label>
+                    <input type="text" id="prod-code" placeholder="أدخل الكود..." class="w-full border p-2.5 rounded-xl">
+                </div>
                 <div>
                     <label class="text-slate-600 block mb-1">اسم الهدية / الموديل:</label>
                     <input type="text" id="prod-name" placeholder="اسم الهدية..." class="w-full border p-2.5 rounded-xl">
@@ -410,15 +418,15 @@
 
     <!-- SCRIPT ENGINE -->
     <script>
-        const STORAGE_KEY_PRODS = 'farafero_shop_products_system_v9';
-        const STORAGE_KEY_ORDERS = 'farafero_shop_orders_system_v9';
+        const STORAGE_KEY_PRODS = 'farafero_shop_products_system_v10';
+        const STORAGE_KEY_ORDERS = 'farafero_shop_orders_system_v10';
         const ADMIN_PIN = "2580";
 
         const defaultProducts = [
-            { id: "p1", name: "دبدوب أحمر كبير", category: "ملابس وهدايا", cost: 250, price: 350, stock: 20, image: "https://images.unsplash.com/photo-1582293041079-7814c2f12063?w=500&q=80" },
-            { id: "p2", name: "صندوق خشبي فاخر", category: "صناديق وتغليف", cost: 100, price: 150, stock: 15, image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&q=80" },
-            { id: "p3", name: "بوكيه ورد جوري أحمر", category: "ملابس وهدايا", cost: 280, price: 400, stock: 10, image: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=500&q=80" },
-            { id: "p4", name: "عطر فرافيرو الملكي الفاخر", category: "عطور", cost: 450, price: 650, stock: 12, image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=500&q=80" }
+            { id: "p1", code: "G-001", name: "دبدوب أحمر كبير", category: "ملابس وهدايا", cost: 250, price: 350, stock: 20, image: "https://images.unsplash.com/photo-1582293041079-7814c2f12063?w=500&q=80" },
+            { id: "p2", code: "G-002", name: "صندوق خشبي فاخر", category: "صناديق وتغليف", cost: 100, price: 150, stock: 15, image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&q=80" },
+            { id: "p3", code: "G-003", name: "بوكيه ورد جوري أحمر", category: "ملابس وهدايا", cost: 280, price: 400, stock: 10, image: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=500&q=80" },
+            { id: "p4", code: "G-004", name: "عطر فرافيرو الملكي الفاخر", category: "عطور", cost: 450, price: 650, stock: 12, image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=500&q=80" }
         ];
 
         let state = { products: [], orders: [], posCart: [], currentActiveModalOrder: null };
@@ -461,10 +469,16 @@
             const search = searchInput ? searchInput.value.toLowerCase() : '';
             grid.innerHTML = '';
 
-            state.products.filter(p => p.name.toLowerCase().includes(search)).forEach(p => {
+            state.products.filter(p => p.name.toLowerCase().includes(search) || (p.code && p.code.toLowerCase().includes(search))).forEach(p => {
                 grid.innerHTML += `
                     <div onclick="addToPOS('${p.id}')" class="bg-slate-50 hover:bg-rose-50 border p-2.5 rounded-2xl cursor-pointer text-xs space-y-1 transition-all flex flex-col justify-between">
-                        <p class="font-bold line-clamp-1">${p.name}</p>
+                        <div class="flex items-center space-x-2 space-x-reverse">
+                            <img src="${p.image}" class="w-8 h-8 rounded-xl object-cover">
+                            <div>
+                                <p class="text-[9px] text-rose-600 font-bold">${p.code || 'بدون كود'}</p>
+                                <p class="font-bold line-clamp-1">${p.name}</p>
+                            </div>
+                        </div>
                         <div class="flex justify-between items-center mt-1">
                             <span class="font-black text-rose-600">${p.price} EGP</span>
                             <span class="text-[9px] ${p.stock > 0 ? 'bg-slate-200 text-slate-700' : 'bg-rose-100 text-rose-600'} px-1.5 py-0.5 rounded-md font-bold">المخزون: ${p.stock}</span>
@@ -481,12 +495,13 @@
             const search = searchInput ? searchInput.value.toLowerCase() : '';
             grid.innerHTML = '';
 
-            state.products.filter(p => p.name.toLowerCase().includes(search)).forEach(p => {
+            state.products.filter(p => p.name.toLowerCase().includes(search) || (p.code && p.code.toLowerCase().includes(search))).forEach(p => {
                 grid.innerHTML += `
                     <div class="bg-white rounded-3xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between space-y-3">
                         <div class="h-40 rounded-2xl overflow-hidden bg-slate-100 relative">
                             <img src="${p.image}" class="w-full h-full object-cover">
                             <span class="absolute top-2 right-2 bg-white/90 text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm">${p.category}</span>
+                            <span class="absolute bottom-2 right-2 bg-rose-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-lg">${p.code || 'بدون كود'}</span>
                         </div>
                         <div class="space-y-1">
                             <h4 class="font-black text-slate-900 text-sm line-clamp-1">${p.name}</h4>
@@ -567,6 +582,8 @@
                 const costPrice = p.cost || 0;
                 tbody.innerHTML += `
                     <tr>
+                        <td class="p-3"><img src="${p.image}" class="w-9 h-9 rounded-xl object-cover shadow-sm"></td>
+                        <td class="p-3 font-bold text-rose-600">${p.code || '-'}</td>
                         <td class="p-3 font-bold text-slate-800">${p.name}</td>
                         <td class="p-3 text-slate-500">${p.category}</td>
                         <td class="p-3 font-semibold text-slate-600">${costPrice} EGP</td>
@@ -613,6 +630,8 @@
                     const costPrice = p.cost || 0;
                     tbody.innerHTML += `
                         <tr>
+                            <td class="p-2.5"><img src="${p.image}" class="w-8 h-8 rounded-lg object-cover"></td>
+                            <td class="p-2.5 font-bold text-rose-600">${p.code || '-'}</td>
                             <td class="p-2.5 font-bold text-slate-800">${p.name}</td>
                             <td class="p-2.5 font-semibold text-slate-600">${costPrice} EGP</td>
                             <td class="p-2.5 font-black text-rose-600">${p.price} EGP</td>
@@ -785,13 +804,14 @@
                 closePinModal();
                 switchTab('admin');
             } else {
-                alert('كلمة المرور غير صحيحة! كلمة المرور الخاصة بك هي 2580[span_4](start_span)[span_4](end_span)');
+                alert('كلمة المرور غير صحيحة! كلمة المرور الخاصة بك هي 2580');
             }
         }
 
         function openAddProductModal() {
             document.getElementById('modal-title').innerText = 'إضافة هدية جديدة للمخزن';
             document.getElementById('edit-prod-id').value = '';
+            document.getElementById('prod-code').value = '';
             document.getElementById('prod-name').value = '';
             document.getElementById('prod-cost').value = '';
             document.getElementById('prod-price').value = '';
@@ -805,6 +825,7 @@
             if (!p) return;
             document.getElementById('modal-title').innerText = 'تعديل بيانات ومواصفات الهدية';
             document.getElementById('edit-prod-id').value = p.id;
+            document.getElementById('prod-code').value = p.code || '';
             document.getElementById('prod-name').value = p.name;
             document.getElementById('prod-cost').value = p.cost || 0;
             document.getElementById('prod-price').value = p.price;
@@ -820,6 +841,7 @@
 
         function saveProductData() {
             const editId = document.getElementById('edit-prod-id').value;
+            const code = document.getElementById('prod-code').value.trim();
             const name = document.getElementById('prod-name').value.trim();
             const cost = parseFloat(document.getElementById('prod-cost').value) || 0;
             const price = parseFloat(document.getElementById('prod-price').value);
@@ -832,6 +854,7 @@
             if (editId) {
                 const p = state.products.find(x => x.id === editId);
                 if (p) {
+                    p.code = code;
                     p.name = name;
                     p.cost = cost;
                     p.price = price;
@@ -843,6 +866,7 @@
             } else {
                 const newProd = {
                     id: 'p' + Date.now(),
+                    code,
                     name,
                     cost,
                     price,
