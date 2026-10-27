@@ -129,10 +129,10 @@
                 <div class="flex items-center space-x-2 space-x-reverse overflow-x-auto pb-2 custom-scrollbar">
                     <button onclick="filterCategory('All')" class="cat-btn active bg-rose-600 text-white px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap shadow-sm transition-all">الكل</button>
                     <button onclick="filterCategory('ألعاب')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap shadow-sm transition-all">ألعاب</button>
-                    <button onclick="filterCategory('صناديق')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap shadow-sm transition-all">صناديق</button>
-                    <button onclick="filterCategory('هدايا')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap shadow-sm transition-all">هدايا</button>
-                    <button onclick="filterCategory('إكسسوارات')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap shadow-sm transition-all">إكسسوارات</button>
-                    <button onclick="filterCategory('عطور')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap shadow-sm transition-all">عطور</button>
+                    <button onclick="filterCategory('صناديق')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition-all">صناديق</button>
+                    <button onclick="filterCategory('هدايا')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition-all">هدايا</button>
+                    <button onclick="filterCategory('إكسسوارات')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition-all">إكسسوارات</button>
+                    <button onclick="filterCategory('عطور')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition-all">عطور</button>
                 </div>
             </div>
 
@@ -344,9 +344,8 @@
     </div>
 
 
-    <!-- SCRIPT & REALTIME ENGINE -->
+    <!-- SCRIPT & REALTIME ENGINE (FIXED STABLE SYNC) -->
     <script>
-        // Shared Public Firebase Endpoint for Instant Cross-Device Sync
         const firebaseConfig = { 
             databaseURL: "https://farafero-shop-default-rtdb.firebaseio.com/" 
         };
@@ -376,36 +375,53 @@
 
         function initApp() {
             if (isCloudAvailable && db) {
+                // Check if products exist in cloud first, if not set defaults, then listen
+                db.ref('products').once('value').then((snapshot) => {
+                    if (!snapshot.exists()) {
+                        db.ref('products').set(defaultProducts);
+                    }
+                });
+
+                // Realtime Listener for Products
                 db.ref('products').on('value', (snapshot) => {
                     const data = snapshot.val();
                     if (data) {
                         state.products = Object.values(data);
+                        localStorage.setItem('farafero_prods_backup', JSON.stringify(state.products));
                     } else {
                         state.products = defaultProducts;
-                        db.ref('products').set(defaultProducts);
                     }
                     renderAll();
                 });
+
+                // Realtime Listener for Orders
                 db.ref('orders').on('value', (snapshot) => {
                     const data = snapshot.val();
                     state.orders = data ? Object.values(data).reverse() : [];
                     renderDashboard();
                 });
             } else {
-                state.products = JSON.parse(localStorage.getItem('farafero_prods')) || defaultProducts;
+                state.products = JSON.parse(localStorage.getItem('farafero_prods_backup')) || defaultProducts;
                 state.orders = JSON.parse(localStorage.getItem('farafero_orders')) || [];
                 renderAll();
             }
         }
 
         function syncProducts() {
-            if (isCloudAvailable && db) db.ref('products').set(state.products);
-            else localStorage.setItem('farafero_prods', JSON.stringify(state.products));
+            if (isCloudAvailable && db) {
+                // Convert array to object map or set directly
+                db.ref('products').set(state.products);
+            }
+            localStorage.setItem('farafero_prods_backup', JSON.stringify(state.products));
         }
 
         function syncOrder(order) {
-            if (isCloudAvailable && db) db.ref('orders/' + order.id).set(order);
-            else { state.orders.unshift(order); localStorage.setItem('farafero_orders', JSON.stringify(state.orders)); renderDashboard(); }
+            if (isCloudAvailable && db) {
+                db.ref('orders/' + order.id).set(order);
+            }
+            state.orders.unshift(order);
+            localStorage.setItem('farafero_orders', JSON.stringify(state.orders));
+            renderDashboard();
         }
 
         function renderAll() { renderStorefront(); renderPOSProducts(); renderDashboard(); }
@@ -579,11 +595,12 @@
             const category = document.getElementById('new-prod-category').value;
             const image = document.getElementById('new-prod-image').value || "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&q=80";
             if (!name || !price) return alert('برجاء إدخال البيانات الأساسية!');
+            
             state.products.push({ id: 'p' + Date.now(), name, price, stock: stock || 1, category, image });
             syncProducts();
             toggleNewProductModal();
             renderAll();
-            alert('تم إضافة المنتج بنجاح!');
+            alert('تم إضافة المنتج بنجاح وتثبيته سحابياً!');
         }
 
         function deleteProd(id) {
