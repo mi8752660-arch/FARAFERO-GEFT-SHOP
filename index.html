@@ -4,29 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FARAFERO GIFT SHOP - Curated Elegance & POS</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        blush: {
-                            50: '#fdf2f4',
-                            100: '#fbe7eb',
-                            500: '#e07a93',
-                            600: '#cf5d78',
-                            700: '#b0455f',
-                        },
-                        rosegold: {
-                            500: '#b76e79',
-                            600: '#9e5863',
-                        }
+                        blush: { 50: '#fdf2f4', 100: '#fbe7eb', 500: '#e07a93', 600: '#cf5d78', 700: '#b0455f' },
+                        rosegold: { 500: '#b76e79', 600: '#9e5863' }
                     }
                 }
             }
         }
     </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cf5d78; border-radius: 4px; }
+        @media print {
+            body * { visibility: hidden; }
+            #printable-receipt, #printable-receipt * { visibility: visible; }
+            #printable-receipt { position: absolute; left: 0; top: 0; width: 100%; }
+        }
+    </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col">
 
@@ -84,14 +93,13 @@
     <!-- MAIN APP CONTAINER -->
     <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
 
-        <!-- ==================== 1. STOREFRONT TAB ==================== -->
+        <!-- ==================== TAB 1: STOREFRONT & CUSTOMIZER ==================== -->
         <div id="tab-store" class="space-y-12">
             <!-- Hero Banner & Customizer Section -->
             <section class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 <div class="lg:col-span-5 space-y-6">
                     <div class="inline-flex items-center space-x-2 bg-blush-100 text-blush-700 px-4 py-1.5 rounded-full text-xs font-bold tracking-wide">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i>
-                        <span>Custom Packaging & Express Delivery</span>
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> <span>Custom Packaging & Express Delivery</span>
                     </div>
                     <h2 class="text-4xl sm:text-5xl font-black text-slate-900 leading-tight">
                         Craft Memories Wrapped in <span class="text-blush-600">Perfection</span> ✨
@@ -101,7 +109,6 @@
                     </p>
                     <div class="flex flex-wrap gap-4 pt-2">
                         <a href="#customizer-section" class="bg-blush-600 hover:bg-blush-700 text-white font-bold px-6 py-3.5 rounded-2xl shadow-lg shadow-blush-500/20 transition-all flex items-center space-x-2">
-                            <i class="fa-solid fa-gift"></i>
                             <span>Build Custom Packaging</span>
                         </a>
                         <a href="#products-section" class="bg-white hover:bg-slate-100 text-slate-700 font-bold px-6 py-3.5 rounded-2xl border border-slate-200 transition-all">
@@ -113,20 +120,20 @@
                 <!-- Interactive Gift Box Builder Studio -->
                 <div id="customizer-section" class="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-8 shadow-xl shadow-slate-200/60 border border-blush-100 space-y-6">
                     <div class="flex items-center justify-between border-b border-slate-100 pb-4">
-                        <div>
-                            <h3 class="text-lg font-black text-slate-900 flex items-center space-x-2">
-                                <i class="fa-solid fa-box-open text-blush-600"></i>
-                                <span>Interactive Gift Packaging Builder</span>
-                            </h3>
-                            <p class="text-xs text-slate-500">Personalize box style, wrapping sheet, decorative ribbons, and printed greeting cards</p>
-                        </div>
+                        <h3 class="text-lg font-black text-slate-900 flex items-center space-x-2">
+                            <i class="fa-solid fa-box-open text-blush-600"></i>
+                            <span>Interactive Gift Packaging Builder</span>
+                        </h3>
+                        <p class="text-xs text-slate-500">Personalize box style, wrapping sheet, decorative ribbons, and printed greeting cards</p>
                         <span class="text-xs font-extrabold bg-blush-50 text-blush-600 px-3 py-1.5 rounded-xl border border-blush-200">Custom Gift Studio</span>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <!-- Box Type -->
                         <div class="space-y-1.5">
-                            <label class="text-xs font-bold text-slate-700 flex items-center"><i class="fa-solid fa-box mr-1.5 text-blush-500"></i> Box Style</label>
+                            <label class="text-xs font-bold text-slate-700 flex items-center">
+                                <i class="fa-solid fa-box mr-1.5 text-blush-500"></i> Box Style
+                            </label>
                             <select id="box-type" onchange="updatePackagingCost()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-semibold focus:outline-none focus:border-blush-500">
                                 <option value="0" data-name="Standard Cardboard Box">Standard Cardboard Box (Free)</option>
                                 <option value="150" data-name="Engraved Wooden Box">Engraved Wooden Box (+150 EGP)</option>
@@ -137,7 +144,9 @@
 
                         <!-- Wrapping Sheet -->
                         <div class="space-y-1.5">
-                            <label class="text-xs font-bold text-slate-700 flex items-center"><i class="fa-solid fa-scroll mr-1.5 text-blush-500"></i> Wrapping Paper</label>
+                            <label class="text-xs font-bold text-slate-700 flex items-center">
+                                <i class="fa-solid fa-scroll mr-1.5 text-blush-500"></i> Wrapping Paper
+                            </label>
                             <select id="wrap-type" onchange="updatePackagingCost()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-semibold focus:outline-none focus:border-blush-500">
                                 <option value="0" data-name="Transparent Clear Wrap">Transparent Clear Wrap (Free)</option>
                                 <option value="60" data-name="Gold Marble Foil Paper">Gold Marble Foil Paper (+60 EGP)</option>
@@ -148,7 +157,9 @@
 
                         <!-- Ribbon Style -->
                         <div class="space-y-1.5">
-                            <label class="text-xs font-bold text-slate-700 flex items-center"><i class="fa-solid fa-ribbon mr-1.5 text-blush-500"></i> Ribbon & Bow</label>
+                            <label class="text-xs font-bold text-slate-700 flex items-center">
+                                <i class="fa-solid fa-ribbon mr-1.5 text-blush-500"></i> Ribbon & Bow
+                            </label>
                             <select id="ribbon-type" onchange="updatePackagingCost()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-semibold focus:outline-none focus:border-blush-500">
                                 <option value="0" data-name="No Ribbon">No Ribbon (Free)</option>
                                 <option value="30" data-name="Red Satin Ribbon">Red Satin Ribbon (+30 EGP)</option>
@@ -159,7 +170,9 @@
 
                         <!-- Greeting Card -->
                         <div class="space-y-1.5">
-                            <label class="text-xs font-bold text-slate-700 flex items-center"><i class="fa-solid fa-note-sticky mr-1.5 text-blush-500"></i> Greeting Card</label>
+                            <label class="text-xs font-bold text-slate-700 flex items-center">
+                                <i class="fa-solid fa-note-sticky mr-1.5 text-blush-500"></i> Greeting Card
+                            </label>
                             <select id="card-type" onchange="updatePackagingCost()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-semibold focus:outline-none focus:border-blush-500">
                                 <option value="0" data-name="No Greeting Card">No Greeting Card (Free)</option>
                                 <option value="50" data-name="3D Laser Pop-up Card">3D Laser Pop-up Card (+50 EGP)</option>
@@ -170,7 +183,9 @@
 
                     <!-- Custom Note Area -->
                     <div class="space-y-1.5">
-                        <label class="text-xs font-bold text-slate-700 flex items-center"><i class="fa-solid fa-pen-nib mr-1.5 text-blush-500"></i> Greeting Card Message</label>
+                        <label class="text-xs font-bold text-slate-700 flex items-center">
+                            <i class="fa-solid fa-pen-nib mr-1.5 text-blush-500"></i> Greeting Card Message
+                        </label>
                         <textarea id="gift-message" rows="2" placeholder="Write your heartfelt message to the recipient here..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-medium focus:outline-none focus:border-blush-500"></textarea>
                     </div>
 
@@ -178,216 +193,212 @@
                     <div class="bg-blush-50/80 rounded-2xl p-4 flex items-center justify-between border border-blush-200">
                         <div>
                             <span class="text-xs font-bold text-slate-500">Total Custom Packaging Cost:</span>
-                            <div id="packaging-total-display" class="text-lg font-black text-blush-700">0 EGP</div>
+                            <div class="text-xl font-black text-blush-700"><span id="packaging-total-price">0</span> EGP</div>
                         </div>
-                        <button onclick="addCustomPackagingToCart()" class="bg-slate-900 hover:bg-blush-600 text-white font-bold px-5 py-3 rounded-xl text-sm shadow-md transition-all flex items-center space-x-2">
-                            <i class="fa-solid fa-circle-plus"></i>
-                            <span>Save & Add Packaging</span>
+                        <button onclick="addPackagingToCart()" class="bg-blush-600 hover:bg-blush-700 text-white font-bold px-5 py-2.5 rounded-xl text-sm transition-all shadow-md">
+                            <i class="fa-solid fa-plus mr-1"></i> Attach Packaging to Order
                         </button>
                     </div>
                 </div>
             </section>
 
-            <!-- Store Products Section -->
-            <section id="products-section" class="space-y-6 pt-6 border-t border-slate-200">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <!-- Product Catalog Section -->
+            <section id="products-section" class="space-y-6">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
-                        <h3 class="text-2xl font-black text-slate-900">Explore Featured Gift Items</h3>
-                        <p class="text-sm text-slate-500">Select gifts to pair with your custom packaging</p>
+                        <h3 class="text-2xl font-black text-slate-900">Curated Gift Collection</h3>
+                        <p class="text-xs text-slate-500">Explore handpicked gifts for birthdays, anniversaries, corporate events, and special occasions</p>
                     </div>
-                    <!-- Categories Filter -->
-                    <div id="category-filters" class="flex flex-wrap gap-2">
-                        <button onclick="filterProducts('all')" class="cat-btn px-4 py-2 rounded-xl text-xs font-bold bg-blush-600 text-white shadow-sm transition-all">All Items</button>
-                        <button onclick="filterProducts('Flowers')" class="cat-btn px-4 py-2 rounded-xl text-xs font-bold bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 transition-all">Flowers</button>
-                        <button onclick="filterProducts('Perfumes')" class="cat-btn px-4 py-2 rounded-xl text-xs font-bold bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 transition-all">Perfumes</button>
-                        <button onclick="filterProducts('Chocolates')" class="cat-btn px-4 py-2 rounded-xl text-xs font-bold bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 transition-all">Chocolates</button>
-                        <button onclick="filterProducts('Accessories')" class="cat-btn px-4 py-2 rounded-xl text-xs font-bold bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 transition-all">Accessories</button>
+
+                    <!-- Filters & Category Tabs -->
+                    <div class="flex items-center space-x-2 overflow-x-auto pb-2 custom-scrollbar">
+                        <button onclick="filterCategory('All')" class="cat-btn active bg-slate-900 text-white px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all">All Items</button>
+                        <button onclick="filterCategory('Boxes')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all">Gift Boxes</button>
+                        <button onclick="filterCategory('Flowers')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all">Flowers & Bouquets</button>
+                        <button onclick="filterCategory('Perfumes')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all">Perfumes & Scents</button>
+                        <button onclick="filterCategory('Accessories')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all">Jewelry & Watches</button>
+                        <button onclick="filterCategory('Chocolates')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all">Chocolates & Sweets</button>
                     </div>
                 </div>
 
-                <!-- Products Grid -->
-                <div id="store-products-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    <!-- Dynamic Products Rendered Here -->
+                <!-- Product Grid -->
+                <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <!-- Dynamic Product Cards Injected Here -->
                 </div>
             </section>
         </div>
 
-        <!-- ==================== 2. POS CASHIER TAB ==================== -->
-        <div id="tab-pos" class="space-y-8 hidden">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h2 class="text-2xl font-black text-slate-900 flex items-center space-x-2">
-                        <i class="fa-solid fa-cash-register text-blush-600"></i>
-                        <span>POS Cashier Terminal</span>
-                    </h2>
-                    <p class="text-sm text-slate-500">Quick in-store bill generation & instant receipts</p>
-                </div>
-                <div class="bg-emerald-50 text-emerald-700 px-4 py-2 rounded-xl text-xs font-bold border border-emerald-200 flex items-center space-x-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span>Terminal Active</span>
-                </div>
-            </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                <!-- Catalog Selector -->
-                <div class="lg:col-span-7 bg-white rounded-3xl p-6 shadow-xl border border-slate-200 space-y-4">
-                    <div class="relative">
-                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-400"></i>
-                        <input type="text" id="pos-search" oninput="renderPosProducts()" placeholder="Search catalog items for POS..." class="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-11 pr-4 py-3 text-sm font-semibold focus:outline-none focus:border-blush-500">
-                    </div>
-                    <div id="pos-products-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-4 max-h-[500px] overflow-y-auto pr-2">
-                        <!-- POS Items -->
-                    </div>
-                </div>
-
-                <!-- Active Bill / Receipt Ticket -->
-                <div class="lg:col-span-5 bg-white rounded-3xl p-6 shadow-xl border border-slate-200 flex flex-col justify-between space-y-6">
-                    <div class="space-y-4">
-                        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                            <h3 class="text-lg font-black text-slate-900 flex items-center space-x-2">
-                                <i class="fa-solid fa-receipt text-blush-600"></i>
-                                <span>Current Sale Order</span>
+        <!-- ==================== TAB 2: POINT OF SALE (POS) ==================== -->
+        <div id="tab-pos" class="hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Left Column: POS Item Selection -->
+                <div class="lg:col-span-7 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+                        <div>
+                            <h3 class="text-xl font-black text-slate-900 flex items-center">
+                                <i class="fa-solid fa-cash-register text-blush-600 mr-2"></i> POS Quick Register
                             </h3>
-                            <button onclick="clearPosCart()" class="text-xs font-bold text-rose-600 hover:bg-rose-50 px-3 py-1.5 rounded-xl transition-all">Clear Order</button>
+                            <p class="text-xs text-slate-500">In-Store checkout system for staff & fast cashiers</p>
                         </div>
-                        <div id="pos-cart-items" class="space-y-3 max-h-[240px] overflow-y-auto pr-2">
-                            <p class="text-slate-400 text-sm text-center py-8 font-medium">No items added to current bill yet.</p>
+                        <input type="text" id="pos-search" oninput="renderPOSProducts()" placeholder="Search product name or ID..." class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm font-medium focus:outline-none focus:border-blush-500 w-full sm:w-64">
+                    </div>
+
+                    <!-- POS Grid -->
+                    <div id="pos-product-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-4 max-h-[550px] overflow-y-auto custom-scrollbar p-1">
+                        <!-- POS Cards injected here -->
+                    </div>
+                </div>
+
+                <!-- Right Column: Active Terminal Cart -->
+                <div class="lg:col-span-5 bg-white rounded-3xl p-6 border border-slate-200 shadow-lg flex flex-col justify-between space-y-6">
+                    <div>
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                            <h4 class="font-black text-slate-900 flex items-center">
+                                <i class="fa-solid fa-receipt text-blush-600 mr-2"></i> Current Register Bill
+                            </h4>
+                            <button onclick="clearPOSCart()" class="text-xs text-rose-500 hover:text-rose-700 font-bold">Clear All</button>
+                        </div>
+
+                        <!-- POS Cart Items Table -->
+                        <div id="pos-cart-items" class="divide-y divide-slate-100 max-h-[300px] overflow-y-auto custom-scrollbar my-4">
+                            <!-- Items inserted dynamically -->
                         </div>
                     </div>
 
-                    <div class="space-y-3 pt-4 border-t border-slate-100">
-                        <div class="flex justify-between text-sm font-semibold text-slate-600">
-                            <span>Subtotal:</span>
-                            <span id="pos-subtotal">0.00 EGP</span>
+                    <div class="space-y-4 pt-4 border-t border-slate-100">
+                        <!-- Discount input -->
+                        <div class="flex items-center justify-between space-x-2">
+                            <span class="text-xs font-bold text-slate-600">Discount (EGP):</span>
+                            <input type="number" id="pos-discount" value="0" oninput="renderPOSCart()" class="w-24 bg-slate-50 border border-slate-200 rounded-lg text-center px-2 py-1 text-sm font-bold">
                         </div>
-                        <div class="flex justify-between text-sm font-semibold text-slate-600">
-                            <span>VAT (14%):</span>
-                            <span id="pos-vat">0.00 EGP</span>
+
+                        <!-- Payment Method -->
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-slate-600">Payment Method:</label>
+                            <div class="grid grid-cols-3 gap-2">
+                                <button onclick="setPaymentMethod('Cash')" id="pay-cash" class="pay-btn border border-blush-500 bg-blush-50 text-blush-700 py-2 rounded-xl text-xs font-bold">Cash</button>
+                                <button onclick="setPaymentMethod('Visa/Card')" id="pay-card" class="pay-btn border border-slate-200 text-slate-600 py-2 rounded-xl text-xs font-bold">Card</button>
+                                <button onclick="setPaymentMethod('InstaPay')" id="pay-insta" class="pay-btn border border-slate-200 text-slate-600 py-2 rounded-xl text-xs font-bold">InstaPay</button>
+                            </div>
                         </div>
-                        <div class="flex justify-between text-lg font-black text-slate-900 pt-2 border-t border-slate-200">
-                            <span>Grand Total:</span>
-                            <span id="pos-total" class="text-blush-600">0.00 EGP</span>
+
+                        <!-- Totals Breakdown -->
+                        <div class="bg-slate-50 rounded-2xl p-4 space-y-2">
+                            <div class="flex justify-between text-xs text-slate-500 font-semibold">
+                                <span>Subtotal:</span>
+                                <span><span id="pos-subtotal">0</span> EGP</span>
+                            </div>
+                            <div class="flex justify-between text-xs text-slate-500 font-semibold">
+                                <span>Discount:</span>
+                                <span class="text-rose-500">-<span id="pos-discount-val">0</span> EGP</span>
+                            </div>
+                            <div class="flex justify-between text-base font-black text-slate-900 pt-2 border-t border-slate-200">
+                                <span>Grand Total:</span>
+                                <span class="text-blush-600"><span id="pos-grand-total">0</span> EGP</span>
+                            </div>
                         </div>
-                        <button onclick="checkoutPosOrder()" class="w-full bg-blush-600 hover:bg-blush-700 text-white font-bold py-4 rounded-2xl shadow-lg shadow-blush-500/20 transition-all flex items-center justify-center space-x-2 text-base">
+
+                        <button onclick="checkoutPOS()" class="w-full bg-blush-600 hover:bg-blush-700 text-white font-black py-4 rounded-2xl shadow-lg shadow-blush-500/20 text-center transition-all flex items-center justify-center space-x-2">
                             <i class="fa-solid fa-print"></i>
-                            <span>Complete Sale & Print Receipt</span>
+                            <span>Complete Order & Print Receipt</span>
                         </button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- ==================== 3. ADMIN DASHBOARD TAB ==================== -->
-        <div id="tab-admin" class="space-y-8 hidden">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                    <h2 class="text-2xl font-black text-slate-900 flex items-center space-x-2">
-                        <i class="fa-solid fa-chart-line text-blush-600"></i>
-                        <span>Admin Analytics & Store Operations</span>
-                    </h2>
-                    <p class="text-sm text-slate-500">Track overall sales, inventory counts, and manage customer orders</p>
-                </div>
-                <button onclick="openAddProductModal()" class="bg-blush-600 hover:bg-blush-700 text-white font-bold px-5 py-3 rounded-2xl shadow-md transition-all flex items-center space-x-2 text-sm">
-                    <i class="fa-solid fa-plus"></i>
-                    <span>Add New Product</span>
-                </button>
-            </div>
 
+        <!-- ==================== TAB 3: ADMIN DASHBOARD & INVENTORY ==================== -->
+        <div id="tab-admin" class="hidden space-y-8">
             <!-- Analytics Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="bg-white rounded-3xl p-6 shadow-xl border border-slate-200 flex items-center space-x-4">
-                    <div class="w-14 h-14 bg-blush-50 text-blush-600 rounded-2xl flex items-center justify-center text-2xl font-bold">
-                        <i class="fa-solid fa-wallet"></i>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-blush-100 text-blush-600 rounded-2xl flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-coins"></i>
                     </div>
                     <div>
                         <p class="text-xs font-bold text-slate-400">Total Sales Revenue</p>
-                        <h4 id="stat-revenue" class="text-2xl font-black text-slate-900">0.00 EGP</h4>
+                        <h4 class="text-2xl font-black text-slate-900"><span id="dash-total-revenue">0</span> EGP</h4>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-3xl p-6 shadow-xl border border-slate-200 flex items-center space-x-4">
-                    <div class="w-14 h-14 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center text-2xl font-bold">
-                        <i class="fa-solid fa-bag-shopping"></i>
+                <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-cart-check"></i>
                     </div>
                     <div>
                         <p class="text-xs font-bold text-slate-400">Total Orders Processed</p>
-                        <h4 id="stat-orders" class="text-2xl font-black text-slate-900">0</h4>
+                        <h4 class="text-2xl font-black text-slate-900" id="dash-total-orders">0</h4>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-3xl p-6 shadow-xl border border-slate-200 flex items-center space-x-4">
-                    <div class="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-2xl font-bold">
-                        <i class="fa-solid fa-star"></i>
+                <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-boxes-stacked"></i>
                     </div>
                     <div>
-                        <p class="text-xs font-bold text-slate-400">Top Selling Item</p>
-                        <h4 id="stat-top-item" class="text-lg font-black text-slate-900 truncate max-w-[150px]">-</h4>
+                        <p class="text-xs font-bold text-slate-400">Total Products in Catalog</p>
+                        <h4 class="text-2xl font-black text-slate-900" id="dash-total-products">0</h4>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-3xl p-6 shadow-xl border border-slate-200 flex items-center space-x-4">
-                    <div class="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center text-2xl font-bold">
-                        <i class="fa-solid fa-triangle-exclamation"></i>
+                <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-signal"></i>
                     </div>
                     <div>
-                        <p class="text-xs font-bold text-slate-400">Low Stock Alert (≤ 3)</p>
-                        <h4 id="stat-low-stock" class="text-2xl font-black text-slate-900">0</h4>
+                        <p class="text-xs font-bold text-slate-400">Live Sync Status</p>
+                        <h4 class="text-sm font-black text-emerald-600 flex items-center mt-1">
+                            <span class="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping mr-2"></span> Connected
+                        </h4>
                     </div>
                 </div>
             </div>
 
-            <!-- Orders Management Table -->
-            <div class="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden space-y-4">
-                <div class="p-6 border-b border-slate-100 flex items-center justify-between">
-                    <div>
-                        <h3 class="text-lg font-black text-slate-900">Customer Orders Management</h3>
-                        <p class="text-xs text-slate-500">Track and update fulfillment status for store orders</p>
+            <!-- Management Sections Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Product Catalog Management -->
+                <div class="lg:col-span-7 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-6">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                        <div>
+                            <h3 class="text-lg font-black text-slate-900">Manage Catalog & Inventory</h3>
+                            <p class="text-xs text-slate-500">Add new items or modify stock levels across branches</p>
+                        </div>
+                        <button onclick="toggleNewProductModal()" class="bg-blush-600 hover:bg-blush-700 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center space-x-1 shadow-md">
+                            <i class="fa-solid fa-plus"></i> <span>Add New Item</span>
+                        </button>
                     </div>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50 text-slate-400 text-xs font-bold uppercase tracking-wider border-b border-slate-200">
-                                <th class="py-4 px-6">Order ID</th>
-                                <th class="py-4 px-6">Recipient</th>
-                                <th class="py-4 px-6">Items</th>
-                                <th class="py-4 px-6">Delivery Time</th>
-                                <th class="py-4 px-6">Total (EGP)</th>
-                                <th class="py-4 px-6">Status</th>
-                                <th class="py-4 px-6 text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="admin-orders-table" class="divide-y divide-slate-100 text-sm font-semibold text-slate-700">
-                            <!-- Orders Rendered Here -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
 
-            <!-- Product Inventory Management Table -->
-            <div class="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden space-y-4">
-                <div class="p-6 border-b border-slate-100 flex items-center justify-between">
-                    <div>
-                        <h3 class="text-lg font-black text-slate-900">Manage Store Catalog & Inventory</h3>
-                        <p class="text-xs text-slate-500">Update stock levels or delete items</p>
+                    <!-- Inventory Table -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-50 text-slate-500 uppercase font-bold border-b border-slate-100">
+                                <tr>
+                                    <th class="p-3">Product Name</th>
+                                    <th class="p-3">Category</th>
+                                    <th class="p-3">Price</th>
+                                    <th class="p-3">Stock</th>
+                                    <th class="p-3 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventory-table-body" class="divide-y divide-slate-100 font-medium">
+                                <!-- Dynamic Rows -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50 text-slate-400 text-xs font-bold uppercase tracking-wider border-b border-slate-200">
-                                <th class="py-4 px-6">Image</th>
-                                <th class="py-4 px-6">Product Name</th>
-                                <th class="py-4 px-6">Category</th>
-                                <th class="py-4 px-6">Price</th>
-                                <th class="py-4 px-6">Stock</th>
-                                <th class="py-4 px-6 text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="admin-products-table" class="divide-y divide-slate-100 text-sm font-semibold text-slate-700">
-                            <!-- Products Rendered Here -->
-                        </tbody>
-                    </table>
+
+                <!-- Recent Live Orders Stream -->
+                <div class="lg:col-span-5 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-6">
+                    <div class="border-b border-slate-100 pb-4">
+                        <h3 class="text-lg font-black text-slate-900">Recent Sales & Orders</h3>
+                        <p class="text-xs text-slate-500">Real-time order feed synced across terminals</p>
+                    </div>
+
+                    <div id="recent-orders-list" class="space-y-3 max-h-[450px] overflow-y-auto custom-scrollbar">
+                        <!-- Order feed injected dynamically -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -395,239 +406,236 @@
     </main>
 
     <!-- FOOTER -->
-    <footer class="bg-white border-t border-slate-200 py-8 mt-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-2">
-            <p class="text-sm font-bold text-slate-800">FARAFERO GIFT SHOP © 2026</p>
-            <p class="text-xs text-slate-500 font-medium">All prices listed in Egyptian Pounds (EGP). Fully customizable gift store platform.</p>
+    <footer class="bg-white border-t border-slate-200 py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
+            <p class="text-xs font-bold text-slate-700">FARAFERO GIFT SHOP &copy; 2026. All Rights Reserved.</p>
+            <p class="text-[11px] text-slate-400">Powered by Real-Time Cloud Engine | Currency: Egyptian Pound (EGP)</p>
         </div>
     </footer>
 
-    <!-- ==================== SHOPPING CART DRAWER ==================== -->
-    <div id="cart-drawer" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden flex justify-end transition-all">
+    <!-- SHOPPING BAG SIDEBAR MODAL -->
+    <div id="cart-modal" class="fixed inset-0 z-50 hidden bg-slate-900/40 backdrop-blur-sm flex justify-end">
         <div class="bg-white w-full max-w-md h-full shadow-2xl flex flex-col justify-between p-6 overflow-y-auto">
             <div class="space-y-6">
                 <div class="flex items-center justify-between border-b border-slate-100 pb-4">
-                    <div class="flex items-center space-x-2">
-                        <i class="fa-solid fa-bag-shopping text-blush-600 text-xl"></i>
-                        <h3 class="text-xl font-black text-slate-900">Your Shopping Bag</h3>
-                    </div>
-                    <button onclick="closeCart()" class="w-9 h-9 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full flex items-center justify-center font-bold">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
+                    <h3 class="text-xl font-black text-slate-900 flex items-center">
+                        <i class="fa-solid fa-bag-shopping text-blush-600 mr-2"></i> Your Shopping Bag
+                    </h3>
+                    <button onclick="closeCart()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 font-bold hover:bg-slate-200 flex items-center justify-center">✕</button>
                 </div>
 
-                <div id="cart-items-container" class="space-y-4 divide-y divide-slate-100 max-h-[350px] overflow-y-auto pr-2">
-                    <!-- Cart items -->
+                <div id="cart-items-container" class="space-y-4">
+                    <!-- Dynamic cart list -->
                 </div>
             </div>
 
-            <!-- Checkout Details Form -->
-            <div class="space-y-4 pt-6 border-t border-slate-200">
-                <h4 class="text-sm font-black text-slate-900">Recipient Details & Schedule</h4>
-                <div class="grid grid-cols-2 gap-3">
-                    <input type="text" id="recipient-name" placeholder="Recipient Name" class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-semibold focus:outline-none focus:border-blush-500">
-                    <input type="text" id="recipient-phone" placeholder="Phone Number" class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-semibold focus:outline-none focus:border-blush-500">
+            <div class="space-y-4 pt-6 border-t border-slate-100">
+                <div class="flex justify-between items-center text-lg font-black text-slate-900">
+                    <span>Total Order Amount:</span>
+                    <span class="text-blush-600"><span id="cart-total-price">0</span> EGP</span>
                 </div>
-                <input type="text" id="recipient-address" placeholder="Delivery Address in Egypt" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-semibold focus:outline-none focus:border-blush-500">
-                
-                <div class="grid grid-cols-2 gap-3">
-                    <input type="date" id="delivery-date" class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-semibold focus:outline-none focus:border-blush-500">
-                    <input type="time" id="delivery-time" class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-semibold focus:outline-none focus:border-blush-500">
-                </div>
-
-                <div class="bg-slate-50 p-4 rounded-2xl space-y-2 border border-slate-200">
-                    <div class="flex justify-between text-xs font-semibold text-slate-600">
-                        <span>Subtotal & Packaging:</span>
-                        <span id="cart-subtotal-display">0 EGP</span>
-                    </div>
-                    <div class="flex justify-between text-xs font-semibold text-slate-600">
-                        <span>Express Delivery:</span>
-                        <span>50 EGP</span>
-                    </div>
-                    <div class="flex justify-between text-base font-black text-slate-900 pt-2 border-t border-slate-200">
-                        <span>Grand Total:</span>
-                        <span id="cart-total-display" class="text-blush-600">0 EGP</span>
-                    </div>
-                </div>
-
-                <button onclick="submitStoreOrder()" class="w-full bg-blush-600 hover:bg-blush-700 text-white font-bold py-4 rounded-2xl shadow-lg shadow-blush-500/20 transition-all flex items-center justify-center space-x-2 text-sm">
-                    <i class="fa-solid fa-paper-plane"></i>
-                    <span>Confirm & Place Order</span>
+                <button onclick="checkoutOnlineOrder()" class="w-full bg-blush-600 hover:bg-blush-700 text-white font-black py-4 rounded-2xl shadow-lg shadow-blush-500/20 text-center transition-all">
+                    Proceed to Online Checkout
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- ==================== ADD PRODUCT MODAL ==================== -->
-    <div id="product-modal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-lg rounded-3xl p-6 shadow-2xl space-y-6">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+    <!-- ADD PRODUCT MODAL -->
+    <div id="add-product-modal" class="fixed inset-0 z-50 hidden bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-6">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <h3 class="text-lg font-black text-slate-900">Add New Product</h3>
-                <button onclick="closeAddProductModal()" class="w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center font-bold">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
+                <button onclick="toggleNewProductModal()" class="text-slate-400 hover:text-slate-600">✕</button>
             </div>
+
             <div class="space-y-4">
                 <div>
-                    <label class="text-xs font-bold text-slate-700">Product Name</label>
-                    <input type="text" id="new-prod-name" placeholder="e.g. Luxury Rose Bouquet" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-semibold mt-1">
+                    <label class="text-xs font-bold text-slate-600">Product Name</label>
+                    <input type="text" id="new-prod-name" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm font-medium mt-1">
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="text-xs font-bold text-slate-700">Category</label>
-                        <select id="new-prod-cat" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-semibold mt-1">
-                            <option value="Flowers">Flowers</option>
-                            <option value="Perfumes">Perfumes</option>
-                            <option value="Chocolates">Chocolates</option>
-                            <option value="Accessories">Accessories</option>
-                        </select>
+                        <label class="text-xs font-bold text-slate-600">Price (EGP)</label>
+                        <input type="number" id="new-prod-price" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm font-medium mt-1">
                     </div>
                     <div>
-                        <label class="text-xs font-bold text-slate-700">Price (EGP)</label>
-                        <input type="number" id="new-prod-price" placeholder="450" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-semibold mt-1">
+                        <label class="text-xs font-bold text-slate-600">Stock Qty</label>
+                        <input type="number" id="new-prod-stock" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm font-medium mt-1">
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="text-xs font-bold text-slate-700">Stock Quantity</label>
-                        <input type="number" id="new-prod-stock" placeholder="10" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-semibold mt-1">
-                    </div>
-                    <div>
-                        <label class="text-xs font-bold text-slate-700">Image URL</label>
-                        <input type="text" id="new-prod-img" placeholder="https://images.unsplash.com/..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-semibold mt-1">
-                    </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-600">Category</label>
+                    <select id="new-prod-category" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm font-medium mt-1">
+                        <option value="Boxes">Gift Boxes</option>
+                        <option value="Flowers">Flowers & Bouquets</option>
+                        <option value="Perfumes">Perfumes & Scents</option>
+                        <option value="Accessories">Jewelry & Watches</option>
+                        <option value="Chocolates">Chocolates & Sweets</option>
+                    </select>
                 </div>
-                <button onclick="saveNewProduct()" class="w-full bg-blush-600 hover:bg-blush-700 text-white font-bold py-3.5 rounded-2xl shadow-md transition-all mt-2">Save Product</button>
+                <div>
+                    <label class="text-xs font-bold text-slate-600">Image URL</label>
+                    <input type="text" id="new-prod-image" placeholder="https://..." class="w-full border border-slate-200 rounded-xl p-2.5 text-sm font-medium mt-1">
+                </div>
+            </div>
+
+            <div class="flex space-x-3 pt-4">
+                <button onclick="toggleNewProductModal()" class="w-1/2 bg-slate-100 text-slate-600 font-bold py-3 rounded-xl">Cancel</button>
+                <button onclick="addNewProduct()" class="w-1/2 bg-blush-600 text-white font-bold py-3 rounded-xl shadow-md">Save Item</button>
             </div>
         </div>
     </div>
 
-    <!-- ==================== RECEIPT PRINT MODAL ==================== -->
-    <div id="receipt-modal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-3xl p-6 shadow-2xl space-y-6">
-            <div class="text-center space-y-1">
-                <div class="w-12 h-12 bg-blush-100 text-blush-600 rounded-2xl mx-auto flex items-center justify-center text-xl font-bold">
-                    <i class="fa-solid fa-gift"></i>
-                </div>
-                <h3 class="text-xl font-black text-slate-900">FARAFERO GIFT SHOP</h3>
-                <p class="text-xs text-slate-400">Official Sales & Order Receipt</p>
-            </div>
-            
-            <div id="receipt-details-content" class="space-y-3 bg-slate-50 p-4 rounded-2xl text-xs font-medium text-slate-700 max-h-[250px] overflow-y-auto">
-                <!-- Receipt breakdown -->
-            </div>
-
-            <div class="flex space-x-3">
-                <button onclick="window.print()" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-2xl transition-all">Print Receipt</button>
-                <button onclick="closeReceiptModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3.5 rounded-2xl transition-all">Close</button>
-            </div>
+    <!-- PRINTABLE RECEIPT TEMPLATE -->
+    <div id="printable-receipt" class="hidden p-8 font-mono text-xs space-y-4">
+        <div class="text-center">
+            <h2 class="text-xl font-bold">FARAFERO GIFT SHOP</h2>
+            <p>Cairo / Alexandria, Egypt</p>
+            <p>Tel: +20 100 000 0000</p>
+            <p>==============================</p>
+        </div>
+        <div id="receipt-date-time"></div>
+        <p>==============================</p>
+        <div id="receipt-items-list" class="space-y-1"></div>
+        <p>==============================</p>
+        <div class="flex justify-between font-bold text-sm">
+            <span>TOTAL PAID:</span>
+            <span id="receipt-grand-total">0 EGP</span>
+        </div>
+        <div class="text-center pt-4">
+            <p>Thank you for choosing FARAFERO!</p>
+            <p>Crafting Memories wrapped in Elegance</p>
         </div>
     </div>
 
-    <!-- TOAST NOTIFICATION -->
-    <div id="toast" class="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center space-x-3 transform translate-y-20 opacity-0 transition-all duration-300">
-        <i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
-        <span id="toast-msg" class="text-xs font-bold">Notification message</span>
-    </div>
 
-    <!-- APPLICATION SCRIPT -->
+    <!-- JAVASCRIPT & CLOUD SYNC ENGINE -->
     <script>
-        // Default Store Products Data
-        let products = JSON.parse(localStorage.getItem('farafero_products')) || [
-            { id: 1, name: 'Red Luxury Roses Bouquet', category: 'Flowers', price: 650, stock: 8, image: 'https://images.unsplash.com/photo-1561181286-d3fee7d55364?w=500&auto=format&fit=crop&q=60' },
-            { id: 2, name: 'Royal Amber Perfume Set', category: 'Perfumes', price: 1200, stock: 5, image: 'https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=500&auto=format&fit=crop&q=60' },
-            { id: 3, name: 'Belgian Artisanal Chocolate Box', category: 'Chocolates', price: 450, stock: 12, image: 'https://images.unsplash.com/photo-1549007994-cb92caebd54b?w=500&auto=format&fit=crop&q=60' },
-            { id: 4, name: 'Gold Heart Pendant Necklace', category: 'Accessories', price: 950, stock: 4, image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500&auto=format&fit=crop&q=60' },
-            { id: 5, name: 'Pink Peony Flower Box', category: 'Flowers', price: 780, stock: 6, image: 'https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=500&auto=format&fit=crop&q=60' },
-            { id: 6, name: 'Vanilla Musk Fragrance', category: 'Perfumes', price: 850, stock: 10, image: 'https://images.unsplash.com/photo-1594035910387-fea47794261f?w=500&auto=format&fit=crop&q=60' }
+        // -------------------------------------------------------------
+        // 1. FIREBASE REAL-TIME CLOUD INITIALIZATION
+        // -------------------------------------------------------------
+        const firebaseConfig = {
+            databaseURL: "https://farafero-gift-shop-default-rtdb.firebaseio.com/"
+        };
+        
+        let db = null;
+        let isCloudAvailable = false;
+
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.database();
+            isCloudAvailable = true;
+        } catch (e) {
+            console.warn("Firebase initialized in Local Fallback mode.");
+        }
+
+        // -------------------------------------------------------------
+        // 2. INITIAL SEED DATA
+        // -------------------------------------------------------------
+        const defaultProducts = [
+            { id: "p1", name: "Royal Velvet Rose Box", category: "Boxes", price: 450, stock: 15, image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&q=80" },
+            { id: "p2", name: "Luxury Golden Teddy & Sweets", category: "Chocolates", price: 620, stock: 8, image: "https://images.unsplash.com/photo-1582293041079-7814c2f12063?w=500&q=80" },
+            { id: "p3", name: "Elegance Crystal Perfume Set", category: "Perfumes", price: 890, stock: 10, image: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=500&q=80" },
+            { id: "p4", name: "Fresh Red Tulip Bouquet", category: "Flowers", price: 380, stock: 20, image: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=500&q=80" },
+            { id: "p5", name: "Custom Engraved Silver Watch", category: "Accessories", price: 1250, stock: 5, image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=500&q=80" },
+            { id: "p6", name: "Belgian Artisan Chocolate Tray", category: "Chocolates", price: 540, stock: 12, image: "https://images.unsplash.com/photo-1548848221-0c2e497ed557?w=500&q=80" }
         ];
 
-        let cart = JSON.parse(localStorage.getItem('farafero_cart')) || [];
-        let posCart = [];
-        let orders = JSON.parse(localStorage.getItem('farafero_orders')) || [
-            { id: 'ORD-9821', recipient: 'Amina Khaled', phone: '01012345678', items: 'Red Luxury Roses Bouquet + Wooden Box', deliveryTime: '2026-10-28 14:00', total: 800, status: 'Processing' },
-            { id: 'ORD-9822', recipient: 'Tarek Mahmoud', phone: '01234567890', items: 'Belgian Artisanal Chocolate Box', deliveryTime: '2026-10-29 18:30', total: 500, status: 'Delivered' }
-        ];
+        let state = {
+            products: [],
+            orders: [],
+            cart: [],
+            posCart: [],
+            selectedCategory: 'All',
+            paymentMethod: 'Cash'
+        };
 
-        function saveData() {
-            localStorage.setItem('farafero_products', JSON.stringify(products));
-            localStorage.setItem('farafero_cart', JSON.stringify(cart));
-            localStorage.setItem('farafero_orders', JSON.stringify(orders));
-        }
+        // -------------------------------------------------------------
+        // 3. CORE STATE & REALTIME LISTENERS
+        // -------------------------------------------------------------
+        function initApp() {
+            if (isCloudAvailable && db) {
+                // Listen to Realtime Product Database
+                db.ref('products').on('value', (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        state.products = Object.values(data);
+                    } else {
+                        state.products = defaultProducts;
+                        db.ref('products').set(defaultProducts);
+                    }
+                    renderAll();
+                });
 
-        // Tab Switching
-        function switchTab(tabId) {
-            ['store', 'pos', 'admin'].forEach(t => {
-                document.getElementById('tab-' + t).classList.add('hidden');
-                if(document.getElementById('nav-' + t)) {
-                    document.getElementById('nav-' + t).className = "px-5 py-2.5 rounded-xl font-bold text-sm transition-all text-slate-600 hover:text-blush-600";
-                }
-                if(document.getElementById('mob-nav-' + t)) {
-                    document.getElementById('mob-nav-' + t).className = "text-xs font-bold text-slate-500 flex flex-col items-center";
-                }
-            });
-
-            document.getElementById('tab-' + tabId).classList.remove('hidden');
-            if(document.getElementById('nav-' + tabId)) {
-                document.getElementById('nav-' + tabId).className = "px-5 py-2.5 rounded-xl font-bold text-sm transition-all bg-white text-blush-600 shadow-sm";
+                // Listen to Realtime Orders Stream
+                db.ref('orders').on('value', (snapshot) => {
+                    const data = snapshot.val();
+                    state.orders = data ? Object.values(data).reverse() : [];
+                    renderDashboard();
+                });
+            } else {
+                // LocalStorage Fallback
+                const localProds = localStorage.getItem('farafero_prods');
+                state.products = localProds ? JSON.parse(localProds) : defaultProducts;
+                const localOrders = localStorage.getItem('farafero_orders');
+                state.orders = localOrders ? JSON.parse(localOrders) : [];
+                renderAll();
             }
-            if(document.getElementById('mob-nav-' + tabId)) {
-                document.getElementById('mob-nav-' + tabId).className = "text-xs font-bold text-blush-600 flex flex-col items-center";
+        }
+
+        function syncProductsToCloud() {
+            if (isCloudAvailable && db) {
+                db.ref('products').set(state.products);
+            } else {
+                localStorage.setItem('farafero_prods', JSON.stringify(state.products));
             }
-
-            if(tabId === 'pos') renderPosProducts();
-            if(tabId === 'admin') renderAdminDashboard();
         }
 
-        // Toast Notification
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            document.getElementById('toast-msg').innerText = msg;
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 3000);
+        function syncOrderToCloud(newOrder) {
+            if (isCloudAvailable && db) {
+                db.ref('orders/' + newOrder.id).set(newOrder);
+            } else {
+                state.orders.unshift(newOrder);
+                localStorage.setItem('farafero_orders', JSON.stringify(state.orders));
+                renderDashboard();
+            }
         }
 
-        // Packaging Total Calculator
-        function updatePackagingCost() {
-            const box = parseInt(document.getElementById('box-type').value);
-            const wrap = parseInt(document.getElementById('wrap-type').value);
-            const ribbon = parseInt(document.getElementById('ribbon-type').value);
-            const card = parseInt(document.getElementById('card-type').value);
-            const total = box + wrap + ribbon + card;
-            document.getElementById('packaging-total-display').innerText = total + ' EGP';
-            return total;
+        // -------------------------------------------------------------
+        // 4. UI RENDERERS
+        // -------------------------------------------------------------
+        function renderAll() {
+            renderStorefront();
+            renderPOSProducts();
+            renderDashboard();
         }
 
-        // Render Store Products
-        function renderStoreProducts(filterCat = 'all') {
-            const grid = document.getElementById('store-products-grid');
+        function renderStorefront() {
+            const grid = document.getElementById('product-grid');
             grid.innerHTML = '';
-            
-            const filtered = filterCat === 'all' ? products : products.filter(p => p.category === filterCat);
-            
-            if(filtered.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 font-medium">No items found in this category.</div>`;
-                return;
-            }
+
+            const filtered = state.selectedCategory === 'All' 
+                ? state.products 
+                : state.products.filter(p => p.category === state.selectedCategory);
 
             filtered.forEach(p => {
                 grid.innerHTML += `
-                    <div class="bg-white rounded-3xl p-4 shadow-xl border border-slate-200 flex flex-col justify-between space-y-4 hover:border-blush-300 transition-all">
-                        <div class="relative h-48 rounded-2xl overflow-hidden bg-slate-100">
-                            <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover">
-                            <span class="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-3 py-1 rounded-xl text-xs font-extrabold text-blush-700 shadow-sm">${p.category}</span>
+                    <div class="bg-white rounded-3xl p-4 border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group">
+                        <div class="space-y-3">
+                            <div class="h-48 rounded-2xl overflow-hidden relative bg-slate-100">
+                                <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                <span class="absolute top-3 left-3 bg-white/90 backdrop-blur-md text-slate-800 text-[10px] font-black px-2.5 py-1 rounded-full border border-slate-200">${p.category}</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-sm line-clamp-1">${p.name}</h4>
+                                <p class="text-xs text-slate-400 mt-0.5">In Stock: ${p.stock} units</p>
+                            </div>
                         </div>
-                        <div class="space-y-1">
-                            <h4 class="font-black text-slate-900 line-clamp-1">${p.name}</h4>
-                            <p class="text-xs font-bold text-slate-400">Stock: ${p.stock} units</p>
-                        </div>
-                        <div class="flex items-center justify-between pt-2 border-t border-slate-100">
-                            <span class="text-lg font-black text-blush-600">${p.price} EGP</span>
-                            <button onclick="addToCart(${p.id})" class="bg-blush-50 hover:bg-blush-600 text-blush-700 hover:text-white px-4 py-2.5 rounded-xl font-bold text-xs transition-all flex items-center space-x-1.5">
-                                <i class="fa-solid fa-cart-plus"></i>
-                                <span>Add</span>
+                        <div class="flex items-center justify-between pt-4 border-t border-slate-50 mt-3">
+                            <div class="font-black text-blush-600 text-base">${p.price} <span class="text-xs text-slate-400 font-semibold">EGP</span></div>
+                            <button onclick="addToCart('${p.id}')" class="bg-blush-50 hover:bg-blush-600 text-blush-600 hover:text-white w-9 h-9 rounded-xl flex items-center justify-center transition-all">
+                                <i class="fa-solid fa-plus"></i>
                             </button>
                         </div>
                     </div>
@@ -635,351 +643,348 @@
             });
         }
 
-        function filterProducts(cat) {
-            document.querySelectorAll('.cat-btn').forEach(b => {
-                b.className = "cat-btn px-4 py-2 rounded-xl text-xs font-bold bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 transition-all";
+        function renderPOSProducts() {
+            const grid = document.getElementById('pos-product-grid');
+            const search = document.getElementById('pos-search').value.toLowerCase();
+            grid.innerHTML = '';
+
+            state.products.filter(p => p.name.toLowerCase().includes(search)).forEach(p => {
+                grid.innerHTML += `
+                    <div onclick="addToPOSCart('${p.id}')" class="bg-slate-50 hover:bg-blush-50 border border-slate-200 hover:border-blush-300 rounded-2xl p-3 cursor-pointer transition-all space-y-1">
+                        <p class="font-bold text-xs text-slate-800 line-clamp-1">${p.name}</p>
+                        <p class="text-xs font-black text-blush-600">${p.price} EGP</p>
+                        <span class="text-[10px] text-slate-400">Stock: ${p.stock}</span>
+                    </div>
+                `;
             });
-            event.target.className = "cat-btn px-4 py-2 rounded-xl text-xs font-bold bg-blush-600 text-white shadow-sm transition-all";
-            renderStoreProducts(cat);
         }
 
-        // Cart Actions
-        function addToCart(productId) {
-            const prod = products.find(p => p.id === productId);
-            if(!prod || prod.stock <= 0) {
-                showToast('Product out of stock!');
-                return;
-            }
-            const existing = cart.find(item => item.id === productId && !item.isCustom);
-            if(existing) {
-                existing.qty++;
-            } else {
-                cart.push({ ...prod, qty: 1, isCustom: false });
-            }
-            updateCartBadge();
-            saveData();
-            showToast('Added ' + prod.name + ' to bag');
+        function renderPOSCart() {
+            const container = document.getElementById('pos-cart-items');
+            container.innerHTML = '';
+
+            let subtotal = 0;
+            state.posCart.forEach((item, index) => {
+                subtotal += item.price * item.qty;
+                container.innerHTML += `
+                    <div class="flex items-center justify-between py-2 text-xs">
+                        <div class="flex-grow pr-2">
+                            <p class="font-bold text-slate-800">${item.name}</p>
+                            <p class="text-slate-400">${item.price} EGP x ${item.qty}</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="font-black text-slate-900">${item.price * item.qty} EGP</span>
+                            <button onclick="removeFromPOSCart(${index})" class="text-rose-500 hover:text-rose-700 ml-2">✕</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            const discount = parseFloat(document.getElementById('pos-discount').value) || 0;
+            const grandTotal = Math.max(0, subtotal - discount);
+
+            document.getElementById('pos-subtotal').innerText = subtotal;
+            document.getElementById('pos-discount-val').innerText = discount;
+            document.getElementById('pos-grand-total').innerText = grandTotal;
         }
 
-        function addCustomPackagingToCostData() {}
-        function addCustomPackagingToCart() {
-            const boxSelect = document.getElementById('box-type');
-            const wrapSelect = document.getElementById('wrap-type');
-            const ribbonSelect = document.getElementById('ribbon-type');
-            const cardSelect = document.getElementById('card-type');
-            const message = document.getElementById('gift-message').value;
+        function renderDashboard() {
+            // Stats Calculations
+            const totalRevenue = state.orders.reduce((acc, o) => acc + o.total, 0);
+            document.getElementById('dash-total-revenue').innerText = totalRevenue;
+            document.getElementById('dash-total-orders').innerText = state.orders.length;
+            document.getElementById('dash-total-products').innerText = state.products.length;
 
-            const boxCost = parseInt(boxSelect.value);
-            const wrapCost = parseInt(wrapSelect.value);
-            const ribbonCost = parseInt(ribbonSelect.value);
-            const cardCost = parseInt(cardSelect.value);
-            const totalCost = boxCost + wrapCost + ribbonCost + cardCost;
+            // Render Inventory Table
+            const tbody = document.getElementById('inventory-table-body');
+            tbody.innerHTML = '';
+            state.products.forEach(p => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="p-3 font-bold text-slate-800">${p.name}</td>
+                        <td class="p-3 text-slate-500">${p.category}</td>
+                        <td class="p-3 font-black text-blush-600">${p.price} EGP</td>
+                        <td class="p-3 font-bold">${p.stock}</td>
+                        <td class="p-3 text-right">
+                            <button onclick="deleteProduct('${p.id}')" class="text-rose-500 hover:text-rose-700 font-bold text-xs">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            });
 
-            const customItem = {
-                id: 'custom-' + Date.now(),
-                name: `Custom Box: ${boxSelect.options[boxSelect.selectedIndex].text.split('(')[0]}`,
-                category: 'Packaging',
-                price: totalCost > 0 ? totalCost : 50, // Minimum base custom fee if all free
+            // Render Orders Stream
+            const ordersList = document.getElementById('recent-orders-list');
+            ordersList.innerHTML = '';
+            state.orders.slice(0, 10).forEach(o => {
+                ordersList.innerHTML += `
+                    <div class="bg-slate-50 border border-slate-100 rounded-2xl p-3 text-xs flex justify-between items-center">
+                        <div>
+                            <p class="font-black text-slate-800">Order #${o.id}</p>
+                            <p class="text-slate-400">${o.date} - <span class="text-blush-600 font-bold">${o.type}</span></p>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-black text-slate-900">${o.total} EGP</p>
+                            <span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold">Paid (${o.payment})</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // -------------------------------------------------------------
+        // 5. PACKAGING CUSTOMIZER & CART LOGIC
+        // -------------------------------------------------------------
+        function updatePackagingCost() {
+            const b = parseInt(document.getElementById('box-type').value);
+            const w = parseInt(document.getElementById('wrap-type').value);
+            const r = parseInt(document.getElementById('ribbon-type').value);
+            const c = parseInt(document.getElementById('card-type').value);
+            const total = b + w + r + c;
+            document.getElementById('packaging-total-price').innerText = total;
+            return total;
+        }
+
+        function addPackagingToCart() {
+            const cost = updatePackagingCost();
+            const bName = document.getElementById('box-type').selectedOptions[0].dataset.name;
+            const msg = document.getElementById('gift-message').value;
+
+            const customPackItem = {
+                id: 'pack-' + Date.now(),
+                name: `Custom Packaging Bundle (${bName})`,
+                price: cost,
                 qty: 1,
-                isCustom: true,
-                details: `Box: ${boxSelect.options[boxSelect.selectedIndex].text}, Wrap: ${wrapSelect.options[wrapSelect.selectedIndex].text}, Ribbon: ${ribbonSelect.options[ribbonSelect.selectedIndex].text}, Card: ${cardSelect.options[cardSelect.selectedIndex].text}. Note: "${message}"`
+                note: msg
             };
 
-            cart.push(customItem);
+            state.cart.push(customPackItem);
             updateCartBadge();
-            saveData();
-            showToast('Custom packaging added to bag!');
+            alert('Custom packaging successfully added to your shopping bag!');
+        }
+
+        function addToCart(prodId) {
+            const prod = state.products.find(p => p.id === prodId);
+            if (!prod || prod.stock <= 0) return alert('Out of stock!');
+
+            const existing = state.cart.find(c => c.id === prodId);
+            if (existing) {
+                existing.qty++;
+            } else {
+                state.cart.push({ id: prod.id, name: prod.name, price: prod.price, qty: 1 });
+            }
+            updateCartBadge();
         }
 
         function updateCartBadge() {
-            const count = cart.reduce((sum, item) => sum + item.qty, 0);
+            const count = state.cart.reduce((acc, i) => acc + i.qty, 0);
             document.getElementById('cart-badge').innerText = count;
         }
 
         function openCart() {
+            const modal = document.getElementById('cart-modal');
             const container = document.getElementById('cart-items-container');
             container.innerHTML = '';
-            
-            if(cart.length === 0) {
-                container.innerHTML = `<p class="text-slate-400 text-sm text-center py-8 font-medium">Your shopping bag is empty.</p>`;
-            } else {
-                cart.forEach((item, index) => {
-                    container.innerHTML += `
-                        <div class="py-3 flex items-center justify-between">
-                            <div>
-                                <h5 class="font-black text-slate-900 text-sm">${item.name}</h5>
-                                ${item.details ? `<p class="text-xs text-slate-400 max-w-[200px] truncate">${item.details}</p>` : ''}
-                                <p class="text-xs font-bold text-blush-600">${item.price} EGP x ${item.qty}</p>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <button onclick="changeQty(${index}, 1)" class="w-7 h-7 bg-slate-100 rounded-lg font-bold text-xs">+</button>
-                                <span class="text-xs font-bold">${item.qty}</span>
-                                <button onclick="changeQty(${index}, -1)" class="w-7 h-7 bg-slate-100 rounded-lg font-bold text-xs">-</button>
-                            </div>
+            let total = 0;
+
+            state.cart.forEach((item, index) => {
+                total += item.price * item.qty;
+                container.innerHTML += `
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                        <div>
+                            <h4 class="font-bold text-sm text-slate-800">${item.name}</h4>
+                            <p class="text-xs text-blush-600 font-black">${item.price} EGP x ${item.qty}</p>
+                            ${item.note ? `<p class="text-[10px] text-slate-400 italic">"${item.note}"</p>` : ''}
                         </div>
-                    `;
-                });
-            }
+                        <button onclick="removeCartItem(${index})" class="text-rose-500 font-bold text-xs">Remove</button>
+                    </div>
+                `;
+            });
 
-            const subtotal = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
-            const grandTotal = subtotal + (cart.length > 0 ? 50 : 0);
-            document.getElementById('cart-subtotal-display').innerText = subtotal + ' EGP';
-            document.getElementById('cart-total-display').innerText = grandTotal + ' EGP';
-
-            document.getElementById('cart-drawer').classList.remove('hidden');
+            document.getElementById('cart-total-price').innerText = total;
+            modal.classList.remove('hidden');
         }
 
         function closeCart() {
-            document.getElementById('cart-drawer').classList.add('hidden');
+            document.getElementById('cart-modal').classList.add('hidden');
         }
 
-        function changeQty(index, delta) {
-            cart[index].qty += delta;
-            if(cart[index].qty <= 0) cart.splice(index, 1);
-            updateCartBadge();
+        function removeCartItem(index) {
+            state.cart.splice(index, 1);
             openCart();
-            saveData();
+            updateCartBadge();
         }
 
-        function submitStoreOrder() {
-            if(cart.length === 0) {
-                showToast('Bag is empty!');
-                return;
-            }
-            const name = document.getElementById('recipient-name').value;
-            const phone = document.getElementById('recipient-phone').value;
-            const address = document.getElementById('recipient-address').value;
-            const date = document.getElementById('delivery-date').value;
-            const time = document.getElementById('delivery-time').value;
-
-            if(!name || !phone || !address) {
-                showToast('Please fill in recipient details');
-                return;
-            }
-
-            const subtotal = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
-            const total = subtotal + 50;
+        function checkoutOnlineOrder() {
+            if (state.cart.length === 0) return alert('Your bag is empty!');
+            const total = parseFloat(document.getElementById('cart-total-price').innerText);
 
             const newOrder = {
                 id: 'ORD-' + Math.floor(1000 + Math.random() * 9000),
-                recipient: name,
-                phone: phone,
-                items: cart.map(i => i.qty + 'x ' + i.name).join(', '),
-                deliveryTime: `${date || 'Today'} ${time || 'ASAP'}`,
+                date: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                 total: total,
-                status: 'Processing'
+                type: 'Online Store',
+                payment: 'Visa/Card'
             };
 
-            orders.unshift(newOrder);
-            cart = [];
+            syncOrderToCloud(newOrder);
+            state.cart = [];
             updateCartBadge();
-            saveData();
             closeCart();
-            showToast('Order successfully confirmed!');
-            switchTab('admin');
+            alert('Order placed successfully! We will contact you for delivery.');
         }
 
-        // POS POS Logic
-        function renderPosProducts() {
-            const grid = document.getElementById('pos-products-grid');
-            grid.innerHTML = '';
-            const search = document.getElementById('pos-search').value.toLowerCase();
-            const filtered = products.filter(p => p.name.toLowerCase().includes(search));
+        // -------------------------------------------------------------
+        // 6. POS LOGIC
+        // -------------------------------------------------------------
+        function addToPOSCart(prodId) {
+            const prod = state.products.find(p => p.id === prodId);
+            if (!prod) return;
 
-            filtered.forEach(p => {
-                grid.innerHTML += `
-                    <div onclick="addToPosCart(${p.id})" class="bg-slate-50 hover:bg-blush-50 p-3 rounded-2xl border border-slate-200 cursor-pointer transition-all flex flex-col justify-between space-y-2">
-                        <img src="${p.image}" class="w-full h-24 object-cover rounded-xl">
-                        <div>
-                            <h5 class="text-xs font-black text-slate-900 truncate">${p.name}</h5>
-                            <p class="text-xs font-bold text-blush-600">${p.price} EGP</p>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        function addToPosCart(id) {
-            const prod = products.find(p => p.id === id);
-            const existing = posCart.find(i => i.id === id);
-            if(existing) existing.qty++;
-            else posCart.push({ ...prod, qty: 1 });
-            renderPosCart();
-        }
-
-        function renderPosCart() {
-            const container = document.getElementById('pos-cart-items');
-            container.innerHTML = '';
-            if(posCart.length === 0) {
-                container.innerHTML = `<p class="text-slate-400 text-sm text-center py-8 font-medium">No items added to current bill yet.</p>`;
-                document.getElementById('pos-subtotal').innerText = '0.00 EGP';
-                document.getElementById('pos-vat').innerText = '0.00 EGP';
-                document.getElementById('pos-total').innerText = '0.00 EGP';
-                return;
+            const existing = state.posCart.find(item => item.id === prodId);
+            if (existing) {
+                existing.qty++;
+            } else {
+                state.posCart.push({ id: prod.id, name: prod.name, price: prod.price, qty: 1 });
             }
+            renderPOSCart();
+        }
 
-            let subtotal = 0;
-            posCart.forEach((item, index) => {
-                subtotal += item.price * item.qty;
-                container.innerHTML += `
-                    <div class="flex items-center justify-between text-xs font-bold">
-                        <div>
-                            <p class="text-slate-900">${item.name}</p>
-                            <p class="text-blush-600">${item.price} EGP x ${item.qty}</p>
-                        </div>
-                        <button onclick="posCart.splice(${index},1); renderPosCart();" class="text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                `;
+        function removeFromPOSCart(index) {
+            state.posCart.splice(index, 1);
+            renderPOSCart();
+        }
+
+        function clearPOSCart() {
+            state.posCart = [];
+            renderPOSCart();
+        }
+
+        function setPaymentMethod(method) {
+            state.paymentMethod = method;
+            document.querySelectorAll('.pay-btn').forEach(btn => {
+                btn.classList.remove('border-blush-500', 'bg-blush-50', 'text-blush-700');
+                btn.classList.add('border-slate-200', 'text-slate-600');
             });
-
-            const vat = subtotal * 0.14;
-            const total = subtotal + vat;
-            document.getElementById('pos-subtotal').innerText = subtotal.toFixed(2) + ' EGP';
-            document.getElementById('pos-vat').innerText = vat.toFixed(2) + ' EGP';
-            document.getElementById('pos-total').innerText = total.toFixed(2) + ' EGP';
+            event.target.classList.add('border-blush-500', 'bg-blush-50', 'text-blush-700');
         }
 
-        function clearPosCart() {
-            posCart = [];
-            renderPosCart();
-        }
+        function checkoutPOS() {
+            if (state.posCart.length === 0) return alert('Register bill is empty!');
+            const grandTotal = parseFloat(document.getElementById('pos-grand-total').innerText);
 
-        function checkoutPosOrder() {
-            if(posCart.length === 0) {
-                showToast('Bill is empty!');
-                return;
-            }
-            const subtotal = posCart.reduce((sum, i) => sum + (i.price * i.qty), 0);
-            const total = subtotal * 1.14;
+            // Deduct Stock
+            state.posCart.forEach(item => {
+                const prod = state.products.find(p => p.id === item.id);
+                if (prod) prod.stock = Math.max(0, prod.stock - item.qty);
+            });
+            syncProductsToCloud();
 
+            // Record Order
             const newOrder = {
                 id: 'POS-' + Math.floor(1000 + Math.random() * 9000),
-                recipient: 'Walk-in POS Customer',
-                phone: 'N/A',
-                items: posCart.map(i => i.qty + 'x ' + i.name).join(', '),
-                deliveryTime: 'Immediate In-Store',
-                total: total.toFixed(2),
-                status: 'Completed'
+                date: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                total: grandTotal,
+                type: 'In-Store POS',
+                payment: state.paymentMethod
             };
-            orders.unshift(newOrder);
-            saveData();
+            syncOrderToCloud(newOrder);
 
-            // Show Receipt Modal
-            const receiptContent = document.getElementById('receipt-details-content');
-            receiptContent.innerHTML = `
-                <p><strong>Order ID:</strong> ${newOrder.id}</p>
-                <p><strong>Type:</strong> POS Cashier Sale</p>
-                <p><strong>Items:</strong> ${newOrder.items}</p>
-                <hr class="my-2 border-slate-200">
-                <p class="text-sm font-black text-slate-900">Grand Total: ${newOrder.total} EGP</p>
-            `;
-            document.getElementById('receipt-modal').classList.remove('hidden');
+            // Trigger Receipt Printing
+            printReceipt(newOrder, grandTotal);
 
-            posCart = [];
-            renderPosCart();
-            showToast('POS Sale completed successfully!');
+            clearPOSCart();
+            renderAll();
         }
 
-        function closeReceiptModal() {
-            document.getElementById('receipt-modal').classList.add('hidden');
-        }
+        function printReceipt(order, grandTotal) {
+            document.getElementById('receipt-date-time').innerText = `Date: ${new Date().toLocaleString()}`;
+            const listContainer = document.getElementById('receipt-items-list');
+            listContainer.innerHTML = '';
 
-        // Admin Dashboard Render
-        function renderAdminDashboard() {
-            const totalRevenue = orders.reduce((sum, o) => sum + parseFloat(o.total), 0);
-            document.getElementById('stat-revenue').innerText = totalRevenue.toFixed(2) + ' EGP';
-            document.getElementById('stat-orders').innerText = orders.length;
-            document.getElementById('stat-low-stock').innerText = products.filter(p => p.stock <= 3).length;
-            document.getElementById('stat-top-item').innerText = products[0] ? products[0].name : '-';
-
-            // Orders Table
-            const oTable = document.getElementById('admin-orders-table');
-            oTable.innerHTML = '';
-            orders.forEach((ord, idx) => {
-                oTable.innerHTML += `
-                    <tr class="hover:bg-slate-50 transition-all">
-                        <td class="py-4 px-6 font-bold text-slate-900">${ord.id}</td>
-                        <td class="py-4 px-6">${ord.recipient}</td>
-                        <td class="py-4 px-6 truncate max-w-[200px]">${ord.items}</td>
-                        <td class="py-4 px-6">${ord.deliveryTime}</td>
-                        <td class="py-4 px-6 font-black text-blush-600">${ord.total} EGP</td>
-                        <td class="py-4 px-6">
-                            <span class="px-3 py-1 rounded-full text-xs font-bold ${ord.status === 'Completed' || ord.status === 'Delivered' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}">${ord.status}</span>
-                        </td>
-                        <td class="py-4 px-6 text-center">
-                            <button onclick="toggleOrderStatus(${idx})" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-xl font-bold">Toggle Status</button>
-                        </td>
-                    </tr>
+            state.posCart.forEach(i => {
+                listContainer.innerHTML += `
+                    <div class="flex justify-between">
+                        <span>${i.name} x${i.qty}</span>
+                        <span>${i.price * i.qty} EGP</span>
+                    </div>
                 `;
             });
 
-            // Products Table
-            const pTable = document.getElementById('admin-products-table');
-            pTable.innerHTML = '';
-            products.forEach((prod, idx) => {
-                pTable.innerHTML += `
-                    <tr class="hover:bg-slate-50 transition-all">
-                        <td class="py-4 px-6"><img src="${prod.image}" class="w-12 h-12 object-cover rounded-xl"></td>
-                        <td class="py-4 px-6 font-bold text-slate-900">${prod.name}</td>
-                        <td class="py-4 px-6">${prod.category}</td>
-                        <td class="py-4 px-6 font-black text-blush-600">${prod.price} EGP</td>
-                        <td class="py-4 px-6">${prod.stock} units</td>
-                        <td class="py-4 px-6 text-center">
-                            <button onclick="deleteProduct(${idx})" class="text-xs bg-rose-50 hover:bg-rose-100 text-rose-600 px-3 py-1.5 rounded-xl font-bold"><i class="fa-solid fa-trash"></i></button>
-                        </td>
-                    </tr>
-                `;
-            });
+            document.getElementById('receipt-grand-total').innerText = `${grandTotal} EGP`;
+            window.print();
         }
 
-        function toggleOrderStatus(idx) {
-            orders[idx].status = orders[idx].status === 'Processing' ? 'Delivered' : 'Processing';
-            saveData();
-            renderAdminDashboard();
-            showToast('Order status updated');
+        // -------------------------------------------------------------
+        // 7. INVENTORY MANAGEMENT
+        // -------------------------------------------------------------
+        function toggleNewProductModal() {
+            const modal = document.getElementById('add-product-modal');
+            modal.classList.toggle('hidden');
         }
 
-        function deleteProduct(idx) {
-            products.splice(idx, 1);
-            saveData();
-            renderAdminDashboard();
-            renderStoreProducts();
-            showToast('Product removed');
-        }
-
-        function openAddProductModal() {
-            document.getElementById('product-modal').classList.remove('hidden');
-        }
-
-        function closeAddProductModal() {
-            document.getElementById('product-modal').classList.add('hidden');
-        }
-
-        function saveNewProduct() {
+        function addNewProduct() {
             const name = document.getElementById('new-prod-name').value;
-            const category = document.getElementById('new-prod-cat').value;
             const price = parseFloat(document.getElementById('new-prod-price').value);
             const stock = parseInt(document.getElementById('new-prod-stock').value);
-            const image = document.getElementById('new-prod-img').value || 'https://images.unsplash.com/photo-1549007994-cb92caebd54b?w=500&auto=format&fit=crop&q=60';
+            const category = document.getElementById('new-prod-category').value;
+            const image = document.getElementById('new-prod-image').value || "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&q=80";
 
-            if(!name || isNaN(price) || isNaN(stock)) {
-                showToast('Please fill all product details correctly');
-                return;
-            }
+            if (!name || !price || !stock) return alert('Please complete all fields!');
 
-            products.push({ id: Date.now(), name, category, price, stock, image });
-            saveData();
-            closeAddProductModal();
-            renderStoreProducts();
-            renderAdminDashboard();
-            showToast('New product added successfully!');
+            const newProd = {
+                id: 'p' + (state.products.length + 1) + '-' + Date.now(),
+                name,
+                category,
+                price,
+                stock,
+                image
+            };
+
+            state.products.push(newProd);
+            syncProductsToCloud();
+            toggleNewProductModal();
+            renderAll();
         }
 
-        // Initialize App on load
-        window.onload = function() {
-            renderStoreProducts();
-            updateCartBadge();
-        };
+        function deleteProduct(id) {
+            if (confirm('Are you sure you want to delete this product?')) {
+                state.products = state.products.filter(p => p.id !== id);
+                syncProductsToCloud();
+                renderAll();
+            }
+        }
+
+        // Navigation Tabs Switcher
+        function switchTab(tab) {
+            document.getElementById('tab-store').classList.add('hidden');
+            document.getElementById('tab-pos').classList.add('hidden');
+            document.getElementById('tab-admin').classList.add('hidden');
+
+            document.getElementById('tab-' + tab).classList.remove('hidden');
+
+            // Reset Nav styles
+            ['store', 'pos', 'admin'].forEach(t => {
+                const btn = document.getElementById('nav-' + t);
+                btn.className = "px-5 py-2.5 rounded-xl font-bold text-sm transition-all text-slate-600 hover:text-blush-600";
+            });
+
+            const activeBtn = document.getElementById('nav-' + tab);
+            activeBtn.className = "px-5 py-2.5 rounded-xl font-bold text-sm transition-all bg-white text-blush-600 shadow-sm";
+        }
+
+        function filterCategory(cat) {
+            state.selectedCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.classList.remove('bg-slate-900', 'text-white');
+                btn.classList.add('bg-white', 'text-slate-600');
+            });
+            event.target.classList.remove('bg-white', 'text-slate-600');
+            event.target.classList.add('bg-slate-900', 'text-white');
+            renderStorefront();
+        }
+
+        // Initialize App on DOM Ready
+        document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
 </html>
