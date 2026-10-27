@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FARAFERO GIFT SHOP - نظام الكاشير وإصدار الفواتير التلقائي</title>
+    <title>FARAFERO GIFT SHOP - نظام الكاشير وإصدار الفواتير الآلية</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
@@ -49,7 +49,6 @@
                         <p class="text-[10px] text-slate-500 font-bold tracking-widest uppercase">GIFT SHOP</p>
                     </div>
                 </div>
-                <!-- Connected Status Badge -->
                 <div class="hidden sm:flex items-center space-x-1.5 space-x-reverse bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
                     <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
                     <span class="text-[11px] font-bold text-emerald-700">نظام الفوترة الآلية نشط</span>
@@ -85,7 +84,7 @@
     <!-- MAIN APP CONTAINER -->
     <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full space-y-6">
 
-        <!-- ==================== TAB 1: STOREFRONT ==================== -->
+        <!-- TAB 1: STOREFRONT -->
         <div id="tab-store" class="space-y-6">
             <section class="bg-gradient-to-r from-rose-500 via-pink-500 to-blush-600 rounded-3xl p-6 sm:p-10 text-white shadow-xl relative overflow-hidden space-y-4">
                 <div class="absolute -left-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
@@ -127,7 +126,7 @@
             <div id="product-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"></div>
         </div>
 
-        <!-- ==================== TAB 2: CUSTOMIZER ==================== -->
+        <!-- TAB 2: CUSTOMIZER -->
         <div id="tab-customizer" class="hidden space-y-6">
             <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-blush-100 space-y-6">
                 <div class="flex items-center justify-between border-b border-slate-100 pb-4">
@@ -173,10 +172,9 @@
             </div>
         </div>
 
-        <!-- ==================== TAB 3: POS (الكاشير وإصدار الفواتير الآلية) ==================== -->
+        <!-- TAB 3: POS (الكاشير) -->
         <div id="tab-pos" class="hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <!-- Left: Products Catalog -->
                 <div class="lg:col-span-7 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
                     <div class="flex items-center justify-between border-b pb-3">
                         <h3 class="text-xl font-black text-slate-900 flex items-center">
@@ -188,7 +186,6 @@
                     <div id="pos-product-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[450px] overflow-y-auto custom-scrollbar p-1"></div>
                 </div>
 
-                <!-- Right: Customer Info & Auto-Invoice Section -->
                 <div class="lg:col-span-5 bg-white rounded-3xl p-6 border border-slate-200 shadow-lg flex flex-col justify-between space-y-4">
                     <div class="space-y-4">
                         <div class="flex items-center justify-between border-b pb-3">
@@ -198,7 +195,6 @@
                             <button onclick="clearPOSCart()" class="text-xs text-rose-500 font-bold hover:underline">تفريغ السلة</button>
                         </div>
 
-                        <!-- Customer Inputs -->
                         <div class="grid grid-cols-1 gap-3 bg-slate-50 p-3 rounded-2xl border border-slate-100">
                             <div>
                                 <label class="text-[11px] font-bold text-slate-600 mb-1 block">اسم العميل:</label>
@@ -210,7 +206,6 @@
                             </div>
                         </div>
 
-                        <!-- Selected Items Cart -->
                         <div class="space-y-1">
                             <span class="text-xs font-bold text-slate-700">الأصناف المختارة للفاتورة:</span>
                             <div id="pos-cart-items" class="divide-y max-h-[180px] overflow-y-auto my-1 text-xs bg-slate-50/50 p-2 rounded-xl border"></div>
@@ -231,7 +226,7 @@
             </div>
         </div>
 
-        <!-- ==================== TAB 4: ADMIN (الإدارة) ==================== -->
+        <!-- TAB 4: ADMIN -->
         <div id="tab-admin" class="hidden space-y-6">
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div class="bg-white rounded-3xl p-6 border shadow-sm">
@@ -286,14 +281,26 @@
 
     </main>
 
-    <!-- SHOPPING BAG MODAL -->
+    <!-- SHOPPING BAG MODAL (UPDATED WITH CUSTOMER INFO) -->
     <div id="cart-modal" class="fixed inset-0 z-50 hidden bg-slate-900/40 backdrop-blur-sm flex justify-start">
         <div class="bg-white w-full max-w-md h-full shadow-2xl flex flex-col justify-between p-6 overflow-y-auto">
             <div class="space-y-6">
                 <div class="flex items-center justify-between border-b pb-4">
-                    <h3 class="text-xl font-black">سلة المشتريات</h3>
+                    <h3 class="text-xl font-black">سلة المشتريات والطلبات</h3>
                     <button onclick="closeCart()" class="w-8 h-8 rounded-full bg-slate-100 font-bold">✕</button>
                 </div>
+
+                <!-- Customer Details Inputs for Online Cart -->
+                <div class="space-y-3 bg-slate-50 p-3 rounded-2xl border border-slate-100">
+                    <h4 class="text-xs font-bold text-slate-700">بيانات العميل لتأكيد الطلب:</h4>
+                    <div>
+                        <input type="text" id="online-cust-name" placeholder="اسم العميل..." class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-rose-500">
+                    </div>
+                    <div>
+                        <input type="tel" id="online-cust-phone" placeholder="رقم الهاتف..." class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-rose-500">
+                    </div>
+                </div>
+
                 <div id="cart-items-container" class="space-y-3"></div>
             </div>
             <div class="space-y-4 pt-4 border-t">
@@ -301,7 +308,7 @@
                     <span>الإجمالي:</span>
                     <span class="text-blush-600"><span id="cart-total-price">0</span> EGP</span>
                 </div>
-                <button onclick="checkoutOnlineOrder()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-black py-4 rounded-2xl shadow-lg">تأكيد الطلب الآن</button>
+                <button onclick="checkoutOnlineOrder()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-black py-4 rounded-2xl shadow-lg">تأكيد الطلب واستخراج الفاتورة</button>
             </div>
         </div>
     </div>
@@ -333,7 +340,7 @@
         </div>
     </div>
 
-    <!-- PRINTABLE PROFESSIONAL RECEIPT (HIDDEN NORMALLY, SHOWN ONLY ON PRINT) -->
+    <!-- PRINTABLE PROFESSIONAL RECEIPT -->
     <div id="printable-receipt" class="hidden p-6 text-xs space-y-3 border border-slate-300 rounded-xl bg-white">
         <div class="text-center space-y-1">
             <h2 class="text-xl font-black">FARAFERO GIFT SHOP</h2>
@@ -371,8 +378,8 @@
 
     <!-- SCRIPT ENGINE -->
     <script>
-        const STORAGE_KEY_PRODS = 'farafero_shop_products_v4';
-        const STORAGE_KEY_ORDERS = 'farafero_shop_orders_v4';
+        const STORAGE_KEY_PRODS = 'farafero_shop_products_v5';
+        const STORAGE_KEY_ORDERS = 'farafero_shop_orders_v5';
 
         const defaultProducts = [
             { id: "p1", name: "دبدوب أحمر كبير", category: "ألعاب", price: 350, stock: 15, image: "https://images.unsplash.com/photo-1582293041079-7814c2f12063?w=500&q=80" },
@@ -536,10 +543,14 @@
             const container = document.getElementById('cart-items-container');
             container.innerHTML = '';
             let total = 0;
-            state.cart.forEach((i, idx) => {
-                total += i.price * i.qty;
-                container.innerHTML += `<div class="flex justify-between items-center text-sm font-bold border-b pb-2"><span>${i.name} (×${i.qty})</span><div class="flex items-center space-x-2 space-x-reverse"><span class="text-rose-600">${i.price * i.qty} EGP</span><button onclick="removeCartItem(${idx})" class="text-rose-500 text-xs">✕</button></div></div>`;
-            });
+            if (state.cart.length === 0) {
+                container.innerHTML = '<p class="text-center text-slate-400 py-6">السلة فارغة حالياً</p>';
+            } else {
+                state.cart.forEach((i, idx) => {
+                    total += i.price * i.qty;
+                    container.innerHTML += `<div class="flex justify-between items-center text-sm font-bold border-b pb-2"><span>${i.name} (×${i.qty})</span><div class="flex items-center space-x-2 space-x-reverse"><span class="text-rose-600">${i.price * i.qty} EGP</span><button onclick="removeCartItem(${idx})" class="text-rose-500 text-xs">✕</button></div></div>`;
+                });
+            }
             document.getElementById('cart-total-price').innerText = total;
             document.getElementById('cart-modal').classList.remove('hidden');
         }
@@ -547,9 +558,15 @@
         function closeCart() { document.getElementById('cart-modal').classList.add('hidden'); }
         function removeCartItem(idx) { state.cart.splice(idx, 1); openCart(); document.getElementById('cart-badge').innerText = state.cart.reduce((a, b) => a + b.qty, 0); }
 
+        // ONLINE CART CHECKOUT WITH CUSTOMER DETAILS & AUTO INVOICE
         function checkoutOnlineOrder() {
             if (state.cart.length === 0) return alert('السلة فارغة!');
+            
+            const custName = document.getElementById('online-cust-name').value.trim() || 'عميل أونلاين';
+            const custPhone = document.getElementById('online-cust-phone').value.trim() || 'بدون رقم';
             const total = parseFloat(document.getElementById('cart-total-price').innerText);
+            const orderId = 'ORD-' + Math.floor(1000 + Math.random() * 9000);
+            const dateStr = new Date().toLocaleString('ar-EG');
             
             state.cart.forEach(item => {
                 const prod = state.products.find(p => p.id === item.id);
@@ -558,21 +575,43 @@
             saveProducts();
 
             const newOrder = { 
-                id: 'ORD-' + Math.floor(1000 + Math.random() * 9000), 
-                date: new Date().toLocaleString('ar-EG'), 
+                id: orderId, 
+                date: dateStr, 
                 total, 
-                customerName: 'طلب متجر أونلاين',
-                customerPhone: '---',
+                customerName: custName,
+                customerPhone: custPhone,
+                items: state.cart.map(i => `${i.name} (×${i.qty})`),
                 type: 'أونلاين' 
             };
             state.orders.unshift(newOrder);
             saveOrders();
+
+            // Populate printable receipt
+            document.getElementById('rec-id').innerText = orderId;
+            document.getElementById('rec-date').innerText = dateStr;
+            document.getElementById('rec-cust-name').innerText = custName;
+            document.getElementById('rec-cust-phone').innerText = custPhone;
+            
+            const listContainer = document.getElementById('rec-items-list');
+            listContainer.innerHTML = '';
+            state.cart.forEach(i => {
+                listContainer.innerHTML += `
+                    <div class="flex justify-between items-center py-0.5">
+                        <span>${i.name} (×${i.qty})</span>
+                        <b class="font-black">${i.price * i.qty} EGP</b>
+                    </div>
+                `;
+            });
+            document.getElementById('rec-grand-total').innerText = total;
+
+            window.print();
             
             state.cart = [];
+            document.getElementById('online-cust-name').value = '';
+            document.getElementById('online-cust-phone').value = '';
             document.getElementById('cart-badge').innerText = '0';
             closeCart();
             renderAll();
-            alert('تم تأكيد الطلب وخصمه أوتوماتيكياً من المخزون!');
         }
 
         function addToPOS(id) {
@@ -597,17 +636,15 @@
             renderPOSCart(); 
         }
 
-        // AUTO CHECKOUT & INVOICE GENERATION
         function checkoutPOS() {
             if (state.posCart.length === 0) return alert('برجاء اختيار منتجات للفاتورة أولاً!');
             
             const custName = document.getElementById('cust-name').value.trim() || 'عميل نقدي';
             const custPhone = document.getElementById('cust-phone').value.trim() || 'بدون رقم';
             const total = parseFloat(document.getElementById('pos-grand-total').innerText);
-            const orderId = 'INV-' + Math.floor(1000 + Math.random() * 9000);
+            const orderId = 'POS-' + Math.floor(1000 + Math.random() * 9000);
             const dateStr = new Date().toLocaleString('ar-EG');
 
-            // 1. DEDUCT STOCK AUTOMATICALLY
             state.posCart.forEach(item => {
                 const prod = state.products.find(p => p.id === item.id);
                 if (prod) {
@@ -616,7 +653,6 @@
             });
             saveProducts();
 
-            // 2. SAVE ORDER RECORD
             const newOrder = { 
                 id: orderId, 
                 date: dateStr, 
@@ -629,7 +665,6 @@
             state.orders.unshift(newOrder);
             saveOrders();
 
-            // 3. POPULATE PRINTABLE RECEIPT AUTOMATICALLY
             document.getElementById('rec-id').innerText = orderId;
             document.getElementById('rec-date').innerText = dateStr;
             document.getElementById('rec-cust-name').innerText = custName;
@@ -645,13 +680,10 @@
                     </div>
                 `;
             });
-
             document.getElementById('rec-grand-total').innerText = total;
 
-            // 4. TRIGGER PRINT AUTOMATICALLY
             window.print();
 
-            // 5. RESET & RE-RENDER
             clearPOSCart();
             renderAll();
         }
