@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FARAFERO - نظام إدارة المخزون والكاشير للمحل</title>
+    <title>FARAFERO - نظام إدارة المحل والمخزون</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
@@ -191,7 +191,7 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <!-- إدارة المنتجات والمخزون -->
+                <!-- إدارة المنتجات والمخزون مع زر الإضافة (+) -->
                 <div class="lg:col-span-8 bg-white rounded-3xl p-6 border shadow-sm space-y-4">
                     <div class="flex justify-between items-center border-b pb-3">
                         <h3 class="text-lg font-black text-slate-900">إدارة وتعديل المخزون والأسعار</h3>
@@ -206,7 +206,7 @@
                                     <th class="p-3">المنتج</th>
                                     <th class="p-3">السعر</th>
                                     <th class="p-3">المخزون الحالي</th>
-                                    <th class="p-3 text-left">إجراء</th>
+                                    <th class="p-3 text-left">إجراء وتكرار الموديل (+)</th>
                                 </tr>
                             </thead>
                             <tbody id="admin-inventory-table" class="divide-y font-medium"></tbody>
@@ -227,7 +227,7 @@
 
     </main>
 
-    <!-- ADMIN PIN CODE MODAL (محمية بالرمز 2580) -->
+    <!-- ADMIN PIN CODE MODAL -->
     <div id="admin-pin-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl w-full max-w-xs p-6 shadow-2xl space-y-4 text-center">
             <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto text-xl shadow-inner">
@@ -271,7 +271,7 @@
         </div>
     </div>
 
-    <!-- PRINTABLE RECEIPT TEMPLATE (للفتورة PDF) -->
+    <!-- PRINTABLE RECEIPT TEMPLATE -->
     <div id="printable-receipt" class="hidden max-w-xl mx-auto p-8 bg-white border border-slate-200 rounded-2xl text-xs space-y-4">
         <div class="text-center space-y-2 border-b border-slate-200 pb-4">
             <div class="w-12 h-12 bg-rose-600 rounded-2xl text-white font-black text-xl flex items-center justify-center mx-auto shadow-md">F</div>
@@ -317,8 +317,8 @@
 
     <!-- SCRIPT ENGINE -->
     <script>
-        const STORAGE_KEY_PRODS = 'farafero_shop_products_system_v1';
-        const STORAGE_KEY_ORDERS = 'farafero_shop_orders_system_v1';
+        const STORAGE_KEY_PRODS = 'farafero_shop_products_system_v2';
+        const STORAGE_KEY_ORDERS = 'farafero_shop_orders_system_v2';
         const ADMIN_PIN = "2580";
 
         const defaultProducts = [
@@ -452,7 +452,12 @@
                         <td class="p-2.5 font-bold text-slate-800">${p.name}</td>
                         <td class="p-2.5 font-black text-rose-600">${p.price} EGP</td>
                         <td class="p-2.5 font-bold">${p.stock} قطعة</td>
-                        <td class="p-2.5 text-left"><button onclick="deleteProd('${p.id}')" class="text-rose-500 font-bold hover:underline">حذف</button></td>
+                        <td class="p-2.5 text-left flex items-center justify-end space-x-2 space-x-reverse">
+                            <button onclick="addOneMore('${p.id}')" title="كرر الموديل (+1)" class="bg-emerald-50 hover:bg-emerald-600 text-emerald-600 hover:text-white px-2.5 py-1.5 rounded-xl font-bold text-xs transition-all shadow-sm">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                            <button onclick="deleteProd('${p.id}')" class="text-rose-500 font-bold hover:underline ml-2">حذف</button>
+                        </td>
                     </tr>`;
             });
 
@@ -469,6 +474,12 @@
                         <p class="text-slate-400 text-[10px]">${o.date}</p>
                     </div>`;
             });
+        }
+
+        // دالة تكرار الموديل أو إضافة قطعة منه فوراً للفاتورة بضغطة زر (+)
+        function addOneMore(id) {
+            addToPOS(id);
+            switchTab('pos'); // تحويلك فوراً لصفحة الكاشير لرؤية الفاتورة وهي بتتحدث
         }
 
         function checkoutPOS() {
@@ -538,12 +549,12 @@
         }
 
         function verifyAdminPin() {
-            const enteredPin = document.getElementById('admin-pin-input').value.trim();
+            const enteredPin = document.getElementById('admin-pin-input'].value.trim();
             if (enteredPin === ADMIN_PIN) {
                 closePinModal();
                 switchTab('admin');
             } else {
-                alert('كلمة المرور غير صحيحة! كلمة المرور الخاصة بك هي 2580[span_1](start_span)[span_1](end_span)');
+                alert('كلمة المرور غير صحيحة! كلمة المرور الخاصة بك هي 2580[span_0](start_span)[span_0](end_span)');
             }
         }
 
