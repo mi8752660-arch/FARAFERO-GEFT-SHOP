@@ -56,20 +56,20 @@
 
             <div class="flex items-center space-x-2 space-x-reverse bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
                 <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                <span class="text-[11px] font-bold text-emerald-700">حفظ تلقائي أونلاين نشط</span>
+                <span class="text-[11px] font-bold text-emerald-700">النظام متصل وحفظ فوري</span>
             </div>
         </div>
     </header>
 
-    <!-- NAVIGATION BAR -->
+    <!-- NAVIGATION BAR (شريط التنقل السفلي) -->
     <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-2 py-3 flex justify-around shadow-2xl z-50 max-w-xl mx-auto md:max-w-7xl">
-        <button onclick="switchTab('pos')" id="nav-pos" class="text-xs font-bold text-rose-600 flex flex-col items-center transition-all">
+        <button onclick="switchTab('pos')" id="nav-pos" class="nav-btn text-xs font-bold text-rose-600 flex flex-col items-center transition-all">
             <i class="fa-solid fa-cash-register text-lg mb-1"></i> كاشير المحل
         </button>
-        <button onclick="switchTab('inventory')" id="nav-inventory" class="text-xs font-bold text-slate-400 flex flex-col items-center transition-all">
+        <button onclick="switchTab('inventory')" id="nav-inventory" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center transition-all">
             <i class="fa-solid fa-boxes-stacked text-lg mb-1"></i> حركة المخزون
         </button>
-        <button onclick="requestAdminAccess()" id="nav-admin" class="text-xs font-bold text-slate-400 flex flex-col items-center transition-all">
+        <button onclick="requestAdminAccess()" id="nav-admin" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center transition-all">
             <i class="fa-solid fa-chart-line text-lg mb-1"></i> لوحة التحكم والأرباح
         </button>
     </div>
@@ -78,7 +78,7 @@
     <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full space-y-6">
 
         <!-- TAB 1: POS (كاشير المحل) -->
-        <div id="tab-pos" class="space-y-6">
+        <div id="tab-pos" class="app-tab space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <div class="lg:col-span-7 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
                     <div class="flex items-center justify-between border-b pb-3">
@@ -132,7 +132,7 @@
         </div>
 
         <!-- TAB 2: INVENTORY (حركة المخزون) -->
-        <div id="tab-inventory" class="hidden space-y-6">
+        <div id="tab-inventory" class="app-tab hidden space-y-6">
             <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-4">
                 <div class="flex justify-between items-center border-b pb-3">
                     <div>
@@ -161,7 +161,7 @@
         </div>
 
         <!-- TAB 3: ADMIN / DASHBOARD (لوحة التحكم والأرباح) -->
-        <div id="tab-admin" class="hidden space-y-6">
+        <div id="tab-admin" class="app-tab hidden space-y-6">
             <div class="flex justify-between items-center bg-rose-50 border border-rose-200 p-4 rounded-2xl">
                 <div class="flex items-center space-x-2 space-x-reverse">
                     <i class="fa-solid fa-shield-halved text-rose-600 text-lg"></i>
@@ -312,8 +312,8 @@
 
     <!-- SCRIPT ENGINE -->
     <script>
-        const STORAGE_KEY_PRODS = 'farafero_shop_products_system_v3';
-        const STORAGE_KEY_ORDERS = 'farafero_shop_orders_system_v3';
+        const STORAGE_KEY_PRODS = 'farafero_shop_products_system_v4';
+        const STORAGE_KEY_ORDERS = 'farafero_shop_orders_system_v4';
         const ADMIN_PIN = "2580";
 
         const defaultProducts = [
@@ -342,6 +342,7 @@
             }
 
             renderAll();
+            switchTab('pos'); // البدء دائماً في صفحة الكاشير
         }
 
         function saveProducts() { localStorage.setItem(STORAGE_KEY_PRODS, JSON.stringify(state.products)); }
@@ -356,7 +357,9 @@
 
         function renderPOSProducts() {
             const grid = document.getElementById('pos-product-grid');
-            const search = document.getElementById('pos-search').value.toLowerCase();
+            const searchInput = document.getElementById('pos-search');
+            if(!grid) return;
+            const search = searchInput ? searchInput.value.toLowerCase() : '';
             grid.innerHTML = '';
 
             state.products.filter(p => p.name.toLowerCase().includes(search)).forEach(p => {
@@ -389,13 +392,16 @@
         function removeFromPOS(idx) { state.posCart.splice(idx, 1); renderPOSCart(); }
         function clearPOSCart() { 
             state.posCart = []; 
-            document.getElementById('cust-name').value = '';
-            document.getElementById('cust-phone').value = '';
+            const nameEl = document.getElementById('cust-name');
+            const phoneEl = document.getElementById('cust-phone');
+            if(nameEl) nameEl.value = '';
+            if(phoneEl) phoneEl.value = '';
             renderPOSCart(); 
         }
 
         function renderPOSCart() {
             const container = document.getElementById('pos-cart-items');
+            if(!container) return;
             container.innerHTML = '';
             let total = 0;
 
@@ -417,11 +423,13 @@
                         </div>`;
                 });
             }
-            document.getElementById('pos-grand-total').innerText = total;
+            const totalEl = document.getElementById('pos-grand-total');
+            if(totalEl) totalEl.innerText = total;
         }
 
         function renderInventoryView() {
             const tbody = document.getElementById('inventory-view-body');
+            if(!tbody) return;
             tbody.innerHTML = '';
             state.products.forEach(p => {
                 tbody.innerHTML += `
@@ -436,42 +444,47 @@
         }
 
         function renderDashboard() {
-            document.getElementById('dash-total-revenue').innerText = state.orders.reduce((a, b) => a + b.total, 0);
-            document.getElementById('dash-total-orders').innerText = state.orders.length;
+            const revEl = document.getElementById('dash-total-revenue');
+            const ordEl = document.getElementById('dash-total-orders');
+            if(revEl) revEl.innerText = state.orders.reduce((a, b) => a + b.total, 0);
+            if(ordEl) ordEl.innerText = state.orders.length;
             
             const tbody = document.getElementById('admin-inventory-table');
-            tbody.innerHTML = '';
-            state.products.forEach(p => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td class="p-2.5 font-bold text-slate-800">${p.name}</td>
-                        <td class="p-2.5 font-black text-rose-600">${p.price} EGP</td>
-                        <td class="p-2.5 font-bold">${p.stock} قطعة</td>
-                        <td class="p-2.5 text-left flex items-center justify-end space-x-2 space-x-reverse">
-                            <button onclick="increaseStock('${p.id}')" title="زيادة المخزون (+1)" class="bg-emerald-50 hover:bg-emerald-600 text-emerald-600 hover:text-white border border-emerald-200 px-2.5 py-1 rounded-xl font-black text-xs transition-all shadow-sm">
-                                +
-                            </button>
-                            <button onclick="deleteProd('${p.id}')" class="text-rose-500 font-bold hover:underline ml-2">حذف</button>
-                        </td>
-                    </tr>`;
-            });
+            if(tbody) {
+                tbody.innerHTML = '';
+                state.products.forEach(p => {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td class="p-2.5 font-bold text-slate-800">${p.name}</td>
+                            <td class="p-2.5 font-black text-rose-600">${p.price} EGP</td>
+                            <td class="p-2.5 font-bold">${p.stock} قطعة</td>
+                            <td class="p-2.5 text-left flex items-center justify-end space-x-2 space-x-reverse">
+                                <button onclick="increaseStock('${p.id}')" title="زيادة المخزون (+1)" class="bg-emerald-50 hover:bg-emerald-600 text-emerald-600 hover:text-white border border-emerald-200 px-2.5 py-1 rounded-xl font-black text-xs transition-all shadow-sm">
+                                    +
+                                </button>
+                                <button onclick="deleteProd('${p.id}')" class="text-rose-500 font-bold hover:underline ml-2">حذف</button>
+                            </td>
+                        </tr>`;
+                });
+            }
 
             const ordersList = document.getElementById('recent-orders-list');
-            ordersList.innerHTML = '';
-            state.orders.slice(0, 8).forEach(o => {
-                ordersList.innerHTML += `
-                    <div class="bg-slate-50 border p-2.5 rounded-2xl text-xs space-y-1">
-                        <div class="flex justify-between items-center">
-                            <b>#${o.id}</b>
-                            <span class="font-black text-rose-600">${o.total} EGP</span>
-                        </div>
-                        <p class="text-slate-600 text-[11px]">العميل: ${o.customerName} (${o.customerPhone})</p>
-                        <p class="text-slate-400 text-[10px]">${o.date}</p>
-                    </div>`;
-            });
+            if(ordersList) {
+                ordersList.innerHTML = '';
+                state.orders.slice(0, 8).forEach(o => {
+                    ordersList.innerHTML += `
+                        <div class="bg-slate-50 border p-2.5 rounded-2xl text-xs space-y-1">
+                            <div class="flex justify-between items-center">
+                                <b>#${o.id}</b>
+                                <span class="font-black text-rose-600">${o.total} EGP</span>
+                            </div>
+                            <p class="text-slate-600 text-[11px]">العميل: ${o.customerName} (${o.customerPhone})</p>
+                            <p class="text-slate-400 text-[10px]">${o.date}</p>
+                        </div>`;
+                });
+            }
         }
 
-        // دالة زيادة كمية المخزون عند الضغط على زر (+) في لوحة التحكم للمنتج نفسه
         function increaseStock(id) {
             const p = state.products.find(x => x.id === id);
             if (p) {
@@ -484,9 +497,13 @@
         function checkoutPOS() {
             if (state.posCart.length === 0) return alert('برجاء اختيار منتجات للفاتورة أولاً!');
             
-            const custName = document.getElementById('cust-name').value.trim() || 'عميل نقدي';
-            const custPhone = document.getElementById('cust-phone').value.trim() || 'بدون رقم';
-            const total = parseFloat(document.getElementById('pos-grand-total').innerText);
+            const nameEl = document.getElementById('cust-name');
+            const phoneEl = document.getElementById('cust-phone');
+            const custName = nameEl && nameEl.value.trim() ? nameEl.value.trim() : 'عميل نقدي';
+            const custPhone = phoneEl && phoneEl.value.trim() ? phoneEl.value.trim() : 'بدون رقم';
+            
+            const totalEl = document.getElementById('pos-grand-total');
+            const total = totalEl ? parseFloat(totalEl.innerText) : 0;
             const orderId = 'ORD-' + Math.floor(1000 + Math.random() * 9000);
             const dateStr = new Date().toLocaleString('ar-EG');
 
@@ -516,37 +533,49 @@
         }
 
         function generateReceiptPDF(items, custName, custPhone, total, orderId, dateStr) {
-            document.getElementById('rec-id').innerText = orderId;
-            document.getElementById('rec-date').innerText = dateStr;
-            document.getElementById('rec-cust-name').innerText = custName;
-            document.getElementById('rec-cust-phone').innerText = custPhone;
+            const rId = document.getElementById('rec-id');
+            const rDate = document.getElementById('rec-date');
+            const rName = document.getElementById('rec-cust-name');
+            const rPhone = document.getElementById('rec-cust-phone');
+            
+            if(rId) rId.innerText = orderId;
+            if(rDate) rDate.innerText = dateStr;
+            if(rName) rName.innerText = custName;
+            if(rPhone) rPhone.innerText = custPhone;
             
             const listContainer = document.getElementById('rec-items-list');
-            listContainer.innerHTML = '';
-            items.forEach(i => {
-                listContainer.innerHTML += `
-                    <tr>
-                        <td class="p-2 font-bold text-slate-800">${i.name}</td>
-                        <td class="p-2 text-center font-bold">${i.qty}</td>
-                        <td class="p-2 text-left font-black text-slate-900">${i.price * i.qty} EGP</td>
-                    </tr>
-                `;
-            });
-            document.getElementById('rec-grand-total').innerText = total;
+            if(listContainer) {
+                listContainer.innerHTML = '';
+                items.forEach(i => {
+                    listContainer.innerHTML += `
+                        <tr>
+                            <td class="p-2 font-bold text-slate-800">${i.name}</td>
+                            <td class="p-2 text-center font-bold">${i.qty}</td>
+                            <td class="p-2 text-left font-black text-slate-900">${i.price * i.qty} EGP</td>
+                        </tr>
+                    `;
+                });
+            }
+            const rTotal = document.getElementById('rec-grand-total');
+            if(rTotal) rTotal.innerText = total;
             window.print();
         }
 
         function requestAdminAccess() {
-            document.getElementById('admin-pin-input').value = '';
-            document.getElementById('admin-pin-modal').classList.remove('hidden');
+            const pinInput = document.getElementById('admin-pin-input');
+            const pinModal = document.getElementById('admin-pin-modal');
+            if(pinInput) pinInput.value = '';
+            if(pinModal) pinModal.classList.remove('hidden');
         }
 
         function closePinModal() {
-            document.getElementById('admin-pin-modal').classList.add('hidden');
+            const pinModal = document.getElementById('admin-pin-modal');
+            if(pinModal) pinModal.classList.add('hidden');
         }
 
         function verifyAdminPin() {
-            const enteredPin = document.getElementById('admin-pin-input').value.trim();
+            const pinInput = document.getElementById('admin-pin-input');
+            const enteredPin = pinInput ? pinInput.value.trim() : '';
             if (enteredPin === ADMIN_PIN) {
                 closePinModal();
                 switchTab('admin');
@@ -555,15 +584,25 @@
             }
         }
 
-        function toggleNewProductModal() { document.getElementById('add-product-modal').classList.toggle('hidden'); }
+        function toggleNewProductModal() {
+            const modal = document.getElementById('add-product-modal');
+            if(modal) modal.classList.toggle('hidden'); 
+        }
 
         function addNewProduct() {
-            const name = document.getElementById('new-prod-name').value;
-            const price = parseFloat(document.getElementById('new-prod-price').value);
-            const stock = parseInt(document.getElementById('new-prod-stock').value);
-            const category = document.getElementById('new-prod-category').value;
-            const image = document.getElementById('new-prod-image').value || "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&q=80";
-            if (!name || !price) return alert('برجاء إدخال البيانات الأساسية!');
+            const nameEl = document.getElementById('new-prod-name');
+            const priceEl = document.getElementById('new-prod-price');
+            const stockEl = document.getElementById('new-prod-stock');
+            const catEl = document.getElementById('new-prod-category');
+            const imgEl = document.getElementById('new-prod-image');
+
+            const name = nameEl ? nameEl.value : '';
+            const price = priceEl ? parseFloat(priceEl.value) : 0;
+            const stock = stockEl ? parseInt(stockEl.value) : 1;
+            const category = catEl ? catEl.value : 'ملابس وهدايا';
+            const image = imgEl && imgEl.value ? imgEl.value : "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&q=80";
+            
+            if (!name || !price) return alert('برجاء إدخال اسم المنتج والسعر الأساسي!');
             
             state.products.push({ id: 'p' + Date.now(), name, price, stock: stock || 1, category, image });
             saveProducts();
@@ -580,19 +619,28 @@
             }
         }
 
+        // نظام التبديل بين الأقسام بفعالية وثبات كامل
         function switchTab(tab) {
-            ['pos', 'inventory', 'admin'].forEach(t => {
+            const tabs = ['pos', 'inventory', 'admin'];
+            tabs.forEach(t => {
                 const el = document.getElementById('tab-' + t);
                 if (el) el.classList.add('hidden');
+                
                 const btn = document.getElementById('nav-' + t);
-                if (btn) { btn.classList.remove('text-rose-600'); btn.classList.add('text-slate-400'); }
+                if (btn) {
+                    btn.classList.remove('text-rose-600');
+                    btn.classList.add('text-slate-400');
+                }
             });
             
             const targetTab = document.getElementById('tab-' + tab);
             if (targetTab) targetTab.classList.remove('hidden');
             
             const activeBtn = document.getElementById('nav-' + tab);
-            if (activeBtn) { activeBtn.classList.remove('text-slate-400'); activeBtn.classList.add('text-rose-600'); }
+            if (activeBtn) {
+                activeBtn.classList.remove('text-slate-400');
+                activeBtn.classList.add('text-rose-600');
+            }
         }
 
         document.addEventListener('DOMContentLoaded', initApp);
