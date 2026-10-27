@@ -129,10 +129,10 @@
                 <div class="flex items-center space-x-2 space-x-reverse overflow-x-auto pb-2 custom-scrollbar">
                     <button onclick="filterCategory('All')" class="cat-btn active bg-rose-600 text-white px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap shadow-sm transition-all">الكل</button>
                     <button onclick="filterCategory('ألعاب')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap shadow-sm transition-all">ألعاب</button>
-                    <button onclick="filterCategory('صناديق')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition-all">صناديق</button>
-                    <button onclick="filterCategory('هدايا')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition-all">هدايا</button>
-                    <button onclick="filterCategory('إكسسوارات')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition-all">إكسسوارات</button>
-                    <button onclick="filterCategory('عطور')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap transition-all">عطور</button>
+                    <button onclick="filterCategory('صناديق')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap shadow-sm transition-all">صناديق</button>
+                    <button onclick="filterCategory('هدايا')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap shadow-sm transition-all">هدايا</button>
+                    <button onclick="filterCategory('إكسسوارات')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap shadow-sm transition-all">إكسسوارات</button>
+                    <button onclick="filterCategory('عطور')" class="cat-btn bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 px-5 py-2.5 rounded-2xl text-xs font-bold whitespace-nowrap shadow-sm transition-all">عطور</button>
                 </div>
             </div>
 
@@ -346,7 +346,10 @@
 
     <!-- SCRIPT & REALTIME ENGINE -->
     <script>
-        const firebaseConfig = { databaseURL: "https://farafero-gift-shop-default-rtdb.firebaseio.com/" };
+        // Shared Public Firebase Endpoint for Instant Cross-Device Sync
+        const firebaseConfig = { 
+            databaseURL: "https://farafero-shop-default-rtdb.firebaseio.com/" 
+        };
         let db = null;
         let isCloudAvailable = false;
 
@@ -375,8 +378,12 @@
             if (isCloudAvailable && db) {
                 db.ref('products').on('value', (snapshot) => {
                     const data = snapshot.val();
-                    state.products = data ? Object.values(data) : defaultProducts;
-                    if (!data) db.ref('products').set(defaultProducts);
+                    if (data) {
+                        state.products = Object.values(data);
+                    } else {
+                        state.products = defaultProducts;
+                        db.ref('products').set(defaultProducts);
+                    }
                     renderAll();
                 });
                 db.ref('orders').on('value', (snapshot) => {
