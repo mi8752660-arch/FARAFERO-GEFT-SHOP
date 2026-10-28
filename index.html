@@ -152,11 +152,11 @@
                                     <input type="number" id="pos-discount" value="0" oninput="renderPOSCart()" class="w-full bg-white border border-slate-200 rounded-xl px-2 py-1.5 font-bold text-center focus:outline-none focus:border-rose-500">
                                 </div>
                                 <div>
-                                    <label class="text-[10px] font-bold text-slate-600 mb-1 block">مصاريف التغليف (+):</label>
+                                    <label class="text-[10px] font-bold text-rose-600 mb-1 block">مصاريف التغليف (+):</label>
                                     <input type="number" id="pos-packaging" value="0" oninput="renderPOSCart()" class="w-full bg-white border border-slate-200 rounded-xl px-2 py-1.5 font-bold text-center focus:outline-none focus:border-rose-500">
                                 </div>
                                 <div>
-                                    <label class="text-[10px] font-bold text-slate-600 mb-1 block">مصاريف الشحن (+):</label>
+                                    <label class="text-[10px] font-bold text-rose-600 mb-1 block">مصاريف الشحن (+):</label>
                                     <input type="number" id="pos-shipping" value="0" oninput="renderPOSCart()" class="w-full bg-white border border-slate-200 rounded-xl px-2 py-1.5 font-bold text-center focus:outline-none focus:border-rose-500">
                                 </div>
                             </div>
@@ -290,7 +290,7 @@
                 </div>
             </div>
 
-            <!-- إدارة فئات الهدايا (إضافة، تعديل، حذف) -->
+            <!-- إدارة فئات الهدايا -->
             <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-4">
                 <div class="flex justify-between items-center border-b pb-3">
                     <h3 class="text-lg font-black text-slate-900 flex items-center">
@@ -499,8 +499,8 @@
                     <input type="number" id="prod-stock" placeholder="الكمية..." class="w-full border p-2.5 rounded-xl">
                 </div>
                 <div>
-                    <label class="text-slate-600 block mb-1">القسم (الفئة):</label>
-                    <select id="prod-category" class="w-full border p-2.5 rounded-xl"></select>
+                    <label class="text-slate-600 block mb-1">القسم (اختر الفئة المخصصة):</label>
+                    <select id="prod-category" class="w-full border p-2.5 rounded-xl bg-slate-50 font-bold text-slate-800"></select>
                 </div>
                 <div>
                     <label class="text-slate-600 block mb-1">رابط الصورة (URL):</label>
@@ -601,7 +601,6 @@
         ];
 
         function initApp() {
-            // مزامنة الفئات سحابياً
             db.collection("settings").doc("categories").onSnapshot((doc) => {
                 if (doc.exists && doc.data().list) {
                     state.categories = doc.data().list;
@@ -746,7 +745,6 @@
             renderCatalogDashboard();
         }
 
-        // عرض وإدارة الفئات في لوحة التحكم
         function renderAdminCategories() {
             const grid = document.getElementById('admin-categories-grid');
             if(!grid) return;
@@ -797,17 +795,14 @@
             if (!newName) return alert('برجاء كتابة اسم الفئة!');
 
             if (oldName) {
-                // تعديل اسم الفئة
                 const index = state.categories.indexOf(oldName);
                 if (index !== -1) state.categories[index] = newName;
-                // تحديث المنتجات التابعة لها
                 state.products.forEach(p => {
                     if (p.category === oldName) {
                         db.collection("products").doc(p.id).update({ category: newName });
                     }
                 });
             } else {
-                // إضافة فئة جديدة
                 if (state.categories.includes(newName)) return alert('هذه الفئة موجودة بالفعل!');
                 state.categories.push(newName);
             }
