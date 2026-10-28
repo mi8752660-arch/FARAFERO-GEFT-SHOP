@@ -65,13 +65,16 @@
         </div>
     </header>
 
-    <!-- NAVIGATION BAR -->
+    <!-- NAVIGATION BAR (تم تبديل المكان وتغيير الاسم إلى الهدايا وتعديل أزرار التنقل) -->
     <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-2 py-3 flex justify-around shadow-2xl z-50 max-w-xl mx-auto md:max-w-7xl">
-        <button onclick="switchTab('pos')" id="nav-pos" class="nav-btn text-xs font-bold text-rose-600 flex flex-col items-center transition-all">
+        <button onclick="switchTab('catalog')" id="nav-catalog" class="nav-btn text-xs font-bold text-rose-600 flex flex-col items-center transition-all">
+            <i class="fa-solid fa-gift text-lg mb-1"></i> الهدايا
+        </button>
+        <button onclick="switchTab('pos')" id="nav-pos" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center transition-all">
             <i class="fa-solid fa-cash-register text-lg mb-1"></i> الحسابات
         </button>
-        <button onclick="switchTab('catalog')" id="nav-catalog" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center transition-all">
-            <i class="fa-solid fa-eye text-lg mb-1"></i> عرض الهدايا
+        <button onclick="switchTab('customers')" id="nav-customers" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center transition-all">
+            <i class="fa-solid fa-users text-lg mb-1"></i> العملاء
         </button>
         <button onclick="switchTab('inventory')" id="nav-inventory" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center transition-all">
             <i class="fa-solid fa-boxes-stacked text-lg mb-1"></i> حركة المخزون
@@ -84,8 +87,25 @@
     <!-- MAIN CONTAINER -->
     <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full space-y-6">
 
-        <!-- TAB 1: POS (الحسابات) -->
-        <div id="tab-pos" class="app-tab space-y-6">
+        <!-- TAB 1: CATALOG (الهدايا مقسمة إلى فئات منفصلة) -->
+        <div id="tab-catalog" class="app-tab space-y-6">
+            <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-4">
+                <div class="flex items-center justify-between border-b pb-3">
+                    <div>
+                        <h3 class="text-xl font-black text-slate-900">الهدايا والمواصفات (حسب الفئات)</h3>
+                        <p class="text-xs text-slate-500 mt-1">تصفح كافة الهدايا مقسمة ومنظمة داخل فئاتها المنفصلة</p>
+                    </div>
+                    <span class="bg-blush-50 text-blush-600 text-xs font-bold px-3 py-1.5 rounded-xl border border-blush-200">عرض الفئات</span>
+                </div>
+                
+                <input type="text" id="catalog-search" oninput="renderCatalogDashboard()" placeholder="ابحث في الهدايا أو الأكواد..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-rose-500">
+
+                <div id="catalog-categories-container" class="space-y-8 max-h-[600px] overflow-y-auto custom-scrollbar p-1"></div>
+            </div>
+        </div>
+
+        <!-- TAB 2: POS (الحسابات) -->
+        <div id="tab-pos" class="app-tab hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <!-- قسم اختيار الهدايا وإنشاء الفاتورة -->
                 <div class="lg:col-span-7 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
@@ -147,7 +167,6 @@
                                 <span>الإجمالي النهائي:</span>
                                 <span class="text-blush-600"><span id="pos-grand-total">0</span> EGP</span>
                             </div>
-                            <!-- أزرار منفصلة: تأكيد وخصم المخزون + زرار تحميل الفاتورة PDF -->
                             <div class="grid grid-cols-2 gap-2">
                                 <button onclick="checkoutPOS()" class="bg-rose-600 hover:bg-rose-700 text-white font-black py-3 rounded-2xl shadow-md text-xs transition-all flex items-center justify-center space-x-1.5 space-x-reverse">
                                     <i class="fa-solid fa-check-circle"></i>
@@ -175,24 +194,37 @@
             </div>
         </div>
 
-        <!-- TAB 2: CATALOG (عرض الهدايا) -->
-        <div id="tab-catalog" class="app-tab hidden space-y-6">
+        <!-- TAB 3: CUSTOMERS (صفحة العملاء الدائمة المستقلة) -->
+        <div id="tab-customers" class="app-tab hidden space-y-6">
             <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-4">
-                <div class="flex items-center justify-between border-b pb-3">
+                <div class="flex justify-between items-center border-b pb-3">
                     <div>
-                        <h3 class="text-xl font-black text-slate-900">عرض الهدايا والمواصفات</h3>
-                        <p class="text-xs text-slate-500 mt-1">عرض شامل لكل الهدايا بالصور، الأكواد، الأسعار، والأعداد</p>
+                        <h3 class="text-xl font-black text-slate-900">سجل العملاء الدائم</h3>
+                        <p class="text-xs text-slate-500 mt-1">قائمة بجميع أسماء وأرقام هواتف العملاء المسجلين من الفواتير (مستمرة بلا حدود)</p>
                     </div>
-                    <span class="bg-blush-50 text-blush-600 text-xs font-bold px-3 py-1.5 rounded-xl border border-blush-200">عرض فقط</span>
+                    <span class="bg-emerald-50 text-emerald-700 text-xs font-bold px-3 py-1.5 rounded-xl border border-emerald-200">حفظ دائم</span>
                 </div>
                 
-                <input type="text" id="catalog-search" oninput="renderCatalogDashboard()" placeholder="ابحث في الهدايا أو الأكواد..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-rose-500">
+                <input type="text" id="customers-search" oninput="renderCustomersPage()" placeholder="ابحث باسم العميل أو رقم الهاتف..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-rose-500">
 
-                <div id="catalog-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-h-[600px] overflow-y-auto custom-scrollbar p-1"></div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right text-xs">
+                        <thead class="bg-slate-50 text-slate-500 font-bold border-b">
+                            <tr>
+                                <th class="p-3">#</th>
+                                <th class="p-3">اسم العميل</th>
+                                <th class="p-3">رقم الهاتف</th>
+                                <th class="p-3">عدد الطلبات والفواتير</th>
+                                <th class="p-3 text-left">آخر تواصل / معاملة</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customers-table-body" class="divide-y font-medium"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
-        <!-- TAB 3: INVENTORY (حركة المخزون) -->
+        <!-- TAB 4: INVENTORY (حركة المخزون) -->
         <div id="tab-inventory" class="app-tab hidden space-y-6">
             <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-4">
                 <div class="flex justify-between items-center border-b pb-3">
@@ -224,14 +256,14 @@
             </div>
         </div>
 
-        <!-- TAB 4: ADMIN / DASHBOARD -->
+        <!-- TAB 5: ADMIN / DASHBOARD -->
         <div id="tab-admin" class="app-tab hidden space-y-6">
             <div class="flex justify-between items-center bg-rose-50 border border-rose-200 p-4 rounded-2xl">
                 <div class="flex items-center space-x-2 space-x-reverse">
                     <i class="fa-solid fa-shield-halved text-rose-600 text-lg"></i>
                     <span class="text-xs font-bold text-rose-900">أنت الآن في لوحة التحكم الإدارية السحابية</span>
                 </div>
-                <button onclick="switchTab('pos')" class="text-xs font-bold bg-white text-rose-600 border border-rose-300 px-3 py-1.5 rounded-xl shadow-sm">العودة للحسابات</button>
+                <button onclick="switchTab('catalog')" class="text-xs font-bold bg-white text-rose-600 border border-rose-300 px-3 py-1.5 rounded-xl shadow-sm">العودة للرئيسية</button>
             </div>
 
             <!-- الملخص العام -->
@@ -532,7 +564,7 @@
         const db = firebase.firestore();
 
         const ADMIN_PIN = "2580";
-        let state = { products: [], orders: [], posCart: [], currentActiveModalOrder: null, lastCheckoutOrder: null };
+        let state = { products: [], orders: [], customers: [], posCart: [], currentActiveModalOrder: null, lastCheckoutOrder: null };
 
         const defaultProducts = [
             { id: "p1", code: "G-001", name: "دبدوب أحمر كبير", category: "ملابس وهدايا", cost: 250, price: 350, stock: 20, image: "https://images.unsplash.com/photo-1582293041079-7814c2f12063?w=500&q=80" },
@@ -564,7 +596,16 @@
                 renderAll();
             });
 
-            switchTab('pos');
+            // استماع سحابي لصفحة العملاء الدائمة المستمرة
+            db.collection("customers").onSnapshot((snapshot) => {
+                state.customers = [];
+                snapshot.forEach((doc) => {
+                    state.customers.push({ id: doc.id, ...doc.data() });
+                });
+                renderCustomersPage();
+            });
+
+            switchTab('catalog');
         }
 
         function renderAll() {
@@ -574,6 +615,7 @@
             renderInventoryView();
             renderDashboard();
             renderPOSRecentOrders();
+            renderCustomersPage();
         }
 
         function renderPOSProducts() {
@@ -602,33 +644,87 @@
             });
         }
 
+        // عرض الهدايا مقسمة إلى فئات منفصلة
         function renderCatalogDashboard() {
-            const grid = document.getElementById('catalog-grid');
+            const container = document.getElementById('catalog-categories-container');
             const searchInput = document.getElementById('catalog-search');
-            if(!grid) return;
+            if(!container) return;
             const search = searchInput ? searchInput.value.toLowerCase() : '';
-            grid.innerHTML = '';
+            container.innerHTML = '';
 
-            state.products.filter(p => p.name.toLowerCase().includes(search) || (p.code && p.code.toLowerCase().includes(search))).forEach(p => {
-                grid.innerHTML += `
-                    <div class="bg-white rounded-3xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between space-y-3">
-                        <div class="h-40 rounded-2xl overflow-hidden bg-slate-100 relative">
-                            <img src="${p.image}" class="w-full h-full object-cover">
-                            <span class="absolute top-2 right-2 bg-white/90 text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm">${p.category}</span>
-                            <span class="absolute bottom-2 right-2 bg-rose-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-lg">${p.code || 'بدون كود'}</span>
-                        </div>
-                        <div class="space-y-1">
-                            <h4 class="font-black text-slate-900 text-sm line-clamp-1">${p.name}</h4>
-                            <div class="flex justify-between items-center text-xs pt-1">
-                                <span class="text-slate-500 font-bold">السعر:</span>
-                                <span class="font-black text-rose-600 text-sm">${p.price} EGP</span>
+            const categories = ["ملابس وهدايا", "إكسسوارات", "صناديق وتغليف", "عطور"];
+
+            categories.forEach(cat => {
+                const filteredProducts = state.products.filter(p => (p.category === cat || (!p.category && cat === "ملابس وهدايا")) && (p.name.toLowerCase().includes(search) || (p.code && p.code.toLowerCase().includes(search))));
+                
+                if (filteredProducts.length > 0) {
+                    let productsHtml = '';
+                    filteredProducts.forEach(p => {
+                        productsHtml += `
+                            <div class="bg-white rounded-3xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between space-y-3">
+                                <div class="h-36 rounded-2xl overflow-hidden bg-slate-100 relative">
+                                    <img src="${p.image}" class="w-full h-full object-cover">
+                                    <span class="absolute bottom-2 right-2 bg-rose-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-lg">${p.code || 'بدون كود'}</span>
+                                </div>
+                                <div class="space-y-1">
+                                    <h4 class="font-black text-slate-900 text-sm line-clamp-1">${p.name}</h4>
+                                    <div class="flex justify-between items-center text-xs pt-1">
+                                        <span class="text-slate-500 font-bold">السعر:</span>
+                                        <span class="font-black text-rose-600 text-sm">${p.price} EGP</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-xs">
+                                        <span class="text-slate-500 font-bold">الكمية المتاحة:</span>
+                                        <span class="font-black ${p.stock > 3 ? 'text-emerald-600' : 'text-rose-600'}">${p.stock} قطعة</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="flex justify-between items-center text-xs">
-                                <span class="text-slate-500 font-bold">الكمية المتاحة:</span>
-                                <span class="font-black ${p.stock > 3 ? 'text-emerald-600' : 'text-rose-600'}">${p.stock} قطعة</span>
+                        `;
+                    });
+
+                    container.innerHTML += `
+                        <div class="space-y-3">
+                            <div class="flex items-center space-x-2 space-x-reverse border-b pb-2">
+                                <i class="fa-solid fa-folder-open text-rose-600"></i>
+                                <h4 class="font-black text-slate-900 text-base">${cat}</h4>
+                                <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-bold">(${filteredProducts.length})</span>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                ${productsHtml}
                             </div>
                         </div>
-                    </div>
+                    `;
+                }
+            });
+
+            if (container.innerHTML === '') {
+                container.innerHTML = '<p class="text-center text-slate-400 py-8">لا توجد هدايا مطابقة للبحث</p>';
+            }
+        }
+
+        // عرض صفحة العملاء الدائمة المستمرة
+        function renderCustomersPage() {
+            const tbody = document.getElementById('customers-table-body');
+            const searchInput = document.getElementById('customers-search');
+            if(!tbody) return;
+            const search = searchInput ? searchInput.value.toLowerCase() : '';
+            tbody.innerHTML = '';
+
+            const filteredCustomers = state.customers.filter(c => c.name.toLowerCase().includes(search) || c.phone.toLowerCase().includes(search));
+
+            if (filteredCustomers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-slate-400 py-6">لا يوجد عملاء مسجلين حتى الآن</td></tr>';
+                return;
+            }
+
+            filteredCustomers.forEach((c, idx) => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="p-3 font-bold text-slate-400">${idx + 1}</td>
+                        <td class="p-3 font-black text-slate-900">${c.name}</td>
+                        <td class="p-3 font-bold text-rose-600 dir-ltr text-right">${c.phone}</td>
+                        <td class="p-3 font-bold text-slate-700">${c.ordersCount || 1} طلبات</td>
+                        <td class="p-3 text-left font-semibold text-slate-500">${c.lastDate || 'سجل دائم'}</td>
+                    </tr>
                 `;
             });
         }
@@ -870,7 +966,7 @@
             const o = state.currentActiveModalOrder;
             if (!o || o.status === 'cancelled') return;
 
-            if (confirm(`هل أنت متأكد من إلغاء الفاتورة #${o.id}؟ سيتم إرجاع الكميات للمخزن السحابي.`)) {
+            if (confirm(`هل أنت متأكد من إلغاء الفاتورة #${o.id}؟ سيتم إرجاع الكميات للمخزن السحابي ولن يتم حذف العميل من سجل العملاء المستمر.`)) {
                 o.status = 'cancelled';
 
                 o.detailedItems.forEach(item => {
@@ -904,7 +1000,7 @@
             }
         }
 
-        // تأكيد الطلب وخصم المخزون سحابياً فوراً
+        // تأكيد الطلب، خصم المخزون، وتسجيل العميل في صفحة العملاء الدائمة سحابياً فوراً
         function checkoutPOS() {
             if (state.posCart.length === 0) return alert('برجاء اختيار هدايا للفاتورة أولاً!');
             
@@ -947,17 +1043,40 @@
                 detailedItems: JSON.parse(JSON.stringify(state.posCart))
             };
 
+            // حفظ الطلب في سحابة الفواتير
             db.collection("orders").add(newOrder).then((docRef) => {
-                // حفظ آخر فاتورة مؤقتاً للتمكن من طباعتها بالزر المنفصل لو رغب
                 state.lastCheckoutOrder = { ...newOrder, firebaseId: docRef.id };
-                alert('تم تأكيد الطلب وخصم المخزون بنجاح!');
+                
+                // حفظ / تحديث بيانات العميل في صفحة العملاء الدائمة المستمرة سحابياً بلا حدود
+                const customerDocId = 'cust_' + custPhone.replace(/\s+/g, '_');
+                const customerRef = db.collection("customers").doc(customerDocId);
+                
+                customerRef.get().then((docSnap) => {
+                    if (docSnap.exists) {
+                        const existingData = docSnap.data();
+                        customerRef.update({
+                            name: custName, // تحديث الاسم لو اختلف
+                            ordersCount: (existingData.ordersCount || 1) + 1,
+                            lastDate: dateStr
+                        });
+                    } else {
+                        customerRef.set({
+                            name: custName,
+                            phone: custPhone,
+                            ordersCount: 1,
+                            lastDate: dateStr,
+                            timestamp: Date.now()
+                        });
+                    }
+                });
+
+                alert('تم تأكيد الطلب وخصم المخزون وتسجيل العميل في صفحة العملاء بنجاح!');
                 clearPOSCart();
             }).catch((err) => {
                 alert('حدث خطأ أثناء حفظ الفاتورة سحابياً، تأكد من الاتصال بالإنترنت.');
             });
         }
 
-        // زر منفصل لتحميل/طباعة الفاتورة PDF بناءً على آخر فاتورة تمت
         function printPOSReceipt() {
             if (!state.lastCheckoutOrder) {
                 return alert('برجاء تأكيد الطلب أولاً قبل طباعة الفاتورة!');
@@ -1078,17 +1197,23 @@
         }
 
         function switchTab(tab) {
-            ['pos', 'catalog', 'inventory', 'admin'].forEach(t => {
-                document.getElementById('tab-' + t).classList.add('hidden');
+            ['catalog', 'pos', 'customers', 'inventory', 'admin'].forEach(t => {
+                const el = document.getElementById('tab-' + t);
+                if(el) el.classList.add('hidden');
                 const btn = document.getElementById('nav-' + t);
-                btn.classList.remove('text-rose-600');
-                btn.classList.add('text-slate-400');
+                if(btn) {
+                    btn.classList.remove('text-rose-600');
+                    btn.classList.add('text-slate-400');
+                }
             });
             
-            document.getElementById('tab-' + tab).classList.remove('hidden');
+            const targetTab = document.getElementById('tab-' + tab);
+            if(targetTab) targetTab.classList.remove('hidden');
             const activeBtn = document.getElementById('nav-' + tab);
-            activeBtn.classList.remove('text-slate-400');
-            activeBtn.classList.add('text-rose-600');
+            if(activeBtn) {
+                activeBtn.classList.remove('text-slate-400');
+                activeBtn.classList.add('text-rose-600');
+            }
         }
 
         document.addEventListener('DOMContentLoaded', initApp);
