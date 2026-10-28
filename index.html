@@ -109,11 +109,11 @@
 
                         <div class="grid grid-cols-1 gap-3 bg-slate-50 p-3 rounded-2xl border border-slate-100">
                             <div>
-                                <label class="text-[11px] font-bold text-slate-600 mb-1 block">اسم العميل:</label>
+                                <label class="text-[11px] font-bold text-slate-600 mb-1 block">اسم العميل (إجباري):</label>
                                 <input type="text" id="cust-name" placeholder="أدخل اسم العميل..." class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-rose-500">
                             </div>
                             <div>
-                                <label class="text-[11px] font-bold text-slate-600 mb-1 block">رقم الهاتف:</label>
+                                <label class="text-[11px] font-bold text-slate-600 mb-1 block">رقم الهاتف (إجباري):</label>
                                 <input type="tel" id="cust-phone" placeholder="أدخل رقم التليفون..." class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-rose-500">
                             </div>
                         </div>
@@ -473,7 +473,7 @@
                 }
             });
 
-            db.collection("orders").orderBy("date", "desc").onSnapshot((snapshot) => {
+            db.collection("orders").onSnapshot((snapshot) => {
                 state.orders = [];
                 snapshot.forEach((doc) => {
                     state.orders.push({ firebaseId: doc.id, ...doc.data() });
@@ -659,7 +659,9 @@
             const ordersList = document.getElementById('recent-orders-list');
             if(ordersList) {
                 ordersList.innerHTML = '';
-                state.orders.forEach(o => {
+                // ترتيب الفواتير من الأحدث للأقدم
+                const sortedOrders = [...state.orders].sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                sortedOrders.forEach(o => {
                     const isCancelled = o.status === 'cancelled';
                     ordersList.innerHTML += `
                         <div onclick="openOrderDetails('${o.firebaseId}')" class="bg-slate-50 hover:bg-rose-50 border p-3 rounded-2xl text-xs space-y-1 cursor-pointer transition-all shadow-sm ${isCancelled ? 'opacity-60 border-amber-300 bg-amber-50/30' : ''}">
@@ -726,7 +728,6 @@
                 });
 
                 db.collection("orders").doc(o.firebaseId).update({ status: 'cancelled' });
-
                 closeOrderModal();
             }
         }
@@ -752,8 +753,15 @@
         function checkoutPOS() {
             if (state.posCart.length === 0) return alert('برجاء اختيار هدايا للفاتورة أولاً!');
             
-            const custName = document.getElementById('cust-name').value.trim() || 'عميل نقدي';
-            const custPhone = document.getElementById('cust-phone').value.trim() || 'بدون رقم';
+            const custName = document.getElementById('cust-name').value.trim();
+            const custPhone = document.getElementById('cust-phone').value.trim();
+
+            // جعل اسم العميل ورقم الهاتف إجباريين
+            if (!custName || !custPhone) {
+                alert('عذراً، يجب إدخال اسم العميل ورقم الهاتف لإتمام الفاتورة!');
+                return;
+            }
+
             const total = parseFloat(document.getElementById('pos-grand-total').innerText) || 0;
             const orderId = 'ORD-' + Math.floor(1000 + Math.random() * 9000);
             const dateStr = new Date().toLocaleString('ar-EG');
@@ -769,6 +777,7 @@
             const newOrder = { 
                 id: orderId, 
                 date: dateStr, 
+                timestamp: Date.now(),
                 total: total, 
                 customerName: custName,
                 customerPhone: custPhone,
@@ -776,10 +785,12 @@
                 detailedItems: JSON.parse(JSON.stringify(state.posCart))
             };
 
-            db.collection("orders").add(newOrder);
-
-            generateReceiptPDF(state.posCart, custName, custPhone, total, orderId, dateStr);
-            clearPOSCart();
+            db.collection("orders").add(newOrder).then(() => {
+                generateReceiptPDF(state.posCart, custName, custPhone, total, orderId, dateStr);
+                clearPOSCart();
+            }).catch((err) => {
+                alert('حدث خطأ أثناء حفظ الفاتورة سحابياً، تأكد من الاتصال بالإنترنت.');
+            });
         }
 
         function generateReceiptPDF(items, custName, custPhone, total, orderId, dateStr) {
@@ -820,7 +831,7 @@
                 closePinModal();
                 switchTab('admin');
             } else {
-                errorMsg.classList.remove('hidden'); // إظهار خطأ ناعم داخل النافذة بدل رسالة المتصفح المنبثقة
+                errorMsg.classList.remove('hidden');
             }
         }
 
