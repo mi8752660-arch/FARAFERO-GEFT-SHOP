@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -147,14 +147,21 @@
                                 <span>الإجمالي النهائي:</span>
                                 <span class="text-blush-600"><span id="pos-grand-total">0</span> EGP</span>
                             </div>
-                            <button onclick="checkoutPOS()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-black py-3 rounded-2xl shadow-lg text-sm transition-all flex items-center justify-center space-x-2 space-x-reverse">
-                                <i class="fa-solid fa-file-pdf"></i>
-                               <span>تأكيد الطلب وخصم المخزون وحفظ PDF</span>
-                            </button>
+                            <!-- أزرار منفصلة: تأكيد وخصم المخزون + زرار تحميل الفاتورة PDF -->
+                            <div class="grid grid-cols-2 gap-2">
+                                <button onclick="checkoutPOS()" class="bg-rose-600 hover:bg-rose-700 text-white font-black py-3 rounded-2xl shadow-md text-xs transition-all flex items-center justify-center space-x-1.5 space-x-reverse">
+                                    <i class="fa-solid fa-check-circle"></i>
+                                    <span>تأكيد وخصم المخزون</span>
+                                </button>
+                                <button onclick="printPOSReceipt()" class="bg-slate-800 hover:bg-slate-900 text-white font-black py-3 rounded-2xl shadow-md text-xs transition-all flex items-center justify-center space-x-1.5 space-x-reverse">
+                                    <i class="fa-solid fa-file-pdf"></i>
+                                    <span>تحميل الفاتورة PDF</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- سجل الفواتير الصادرة في قسم الحسابات (للاطلاع فقط بدون تعديل أو إلغاء) -->
+                    <!-- سجل الفواتير الصادرة في قسم الحسابات (للاطلاع فقط) -->
                     <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-3">
                         <div class="border-b pb-2 flex justify-between items-center">
                             <h4 class="font-black text-slate-900 text-sm flex items-center">
@@ -277,7 +284,7 @@
                     </div>
                 </div>
 
-                <!-- سجل الفواتير الصادرة في الإدارة (يتيح الاستعراض والإلغاء) -->
+                <!-- سجل الفواتير الصادرة في الإدارة -->
                 <div class="lg:col-span-4 bg-white rounded-3xl p-6 border shadow-sm space-y-4">
                     <div class="border-b pb-3">
                         <h3 class="text-lg font-black text-slate-900">سجل الفواتير الصادرة (إدارة)</h3>
@@ -309,7 +316,7 @@
         </div>
     </div>
 
-    <!-- VIEW ORDER DETAILS MODAL -->
+    <!-- VIEW ORDER DETAILS MODAL (ADMIN) -->
     <div id="order-details-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
@@ -359,7 +366,6 @@
                         <span>طباعة / حفظ PDF</span>
                     </button>
                 </div>
-                <!-- زر الإلغاء يظهر فقط للمدير في لوحة الإدارة -->
                 <button id="cancel-order-btn" onclick="cancelCurrentOrder()" class="w-full bg-amber-500 hover:bg-amber-600 text-white py-2.5 rounded-xl font-bold text-xs shadow-sm flex items-center justify-center space-x-1.5 space-x-reverse hidden">
                     <i class="fa-solid fa-ban"></i>
                     <span>إلغاء الفاتورة (إرجاع المخزون)</span>
@@ -526,7 +532,7 @@
         const db = firebase.firestore();
 
         const ADMIN_PIN = "2580";
-        let state = { products: [], orders: [], posCart: [], currentActiveModalOrder: null };
+        let state = { products: [], orders: [], posCart: [], currentActiveModalOrder: null, lastCheckoutOrder: null };
 
         const defaultProducts = [
             { id: "p1", code: "G-001", name: "دبدوب أحمر كبير", category: "ملابس وهدايا", cost: 250, price: 350, stock: 20, image: "https://images.unsplash.com/photo-1582293041079-7814c2f12063?w=500&q=80" },
@@ -627,7 +633,6 @@
             });
         }
 
-        // عرض الفواتير في قسم الحسابات (للاطلاع فقط بدون تعديل أو إلغاء)
         function renderPOSRecentOrders() {
             const list = document.getElementById('pos-recent-orders-list');
             if(!list) return;
@@ -818,7 +823,6 @@
             }
         }
 
-        // تفاصيل الفاتورة في لوحة الإدارة (تتيح الإلغاء)
         function openOrderDetails(firebaseId) {
             const order = state.orders.find(o => o.firebaseId === firebaseId);
             if (!order) return;
@@ -838,7 +842,7 @@
                 if(cancelBtn) cancelBtn.classList.add('hidden');
             } else {
                 statusEl.innerHTML = '<span class="text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">سارية ومعتمدة</span>';
-                if(cancelBtn) cancelBtn.classList.remove('hidden'); // يظهر زر الإلغاء في الإدارة فقط
+                if(cancelBtn) cancelBtn.classList.remove('hidden');
             }
 
             const itemsContainer = document.getElementById('view-ord-items');
@@ -900,6 +904,7 @@
             }
         }
 
+        // تأكيد الطلب وخصم المخزون سحابياً فوراً
         function checkoutPOS() {
             if (state.posCart.length === 0) return alert('برجاء اختيار هدايا للفاتورة أولاً!');
             
@@ -919,6 +924,7 @@
             const orderId = 'ORD-' + Math.floor(1000 + Math.random() * 9000);
             const dateStr = new Date().toLocaleString('ar-EG');
 
+            // خصم المخزون سحابياً فوراً
             state.posCart.forEach(item => {
                 const prod = state.products.find(p => p.id === item.id);
                 if (prod) {
@@ -941,12 +947,23 @@
                 detailedItems: JSON.parse(JSON.stringify(state.posCart))
             };
 
-            db.collection("orders").add(newOrder).then(() => {
-                generateReceiptPDF(state.posCart, custName, custPhone, total, orderId, dateStr, discount, packaging, shipping);
+            db.collection("orders").add(newOrder).then((docRef) => {
+                // حفظ آخر فاتورة مؤقتاً للتمكن من طباعتها بالزر المنفصل لو رغب
+                state.lastCheckoutOrder = { ...newOrder, firebaseId: docRef.id };
+                alert('تم تأكيد الطلب وخصم المخزون بنجاح!');
                 clearPOSCart();
             }).catch((err) => {
                 alert('حدث خطأ أثناء حفظ الفاتورة سحابياً، تأكد من الاتصال بالإنترنت.');
             });
+        }
+
+        // زر منفصل لتحميل/طباعة الفاتورة PDF بناءً على آخر فاتورة تمت
+        function printPOSReceipt() {
+            if (!state.lastCheckoutOrder) {
+                return alert('برجاء تأكيد الطلب أولاً قبل طباعة الفاتورة!');
+            }
+            const o = state.lastCheckoutOrder;
+            generateReceiptPDF(o.detailedItems, o.customerName, o.customerPhone, o.total, o.id, o.date, o.discount, o.packaging, o.shipping);
         }
 
         function generateReceiptPDF(items, custName, custPhone, total, orderId, dateStr, discount, packaging, shipping) {
