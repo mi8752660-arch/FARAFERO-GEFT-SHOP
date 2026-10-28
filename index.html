@@ -87,6 +87,7 @@
         <!-- TAB 1: POS (الحسابات) -->
         <div id="tab-pos" class="app-tab space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- قسم اختيار الهدايا وإنشاء الفاتورة -->
                 <div class="lg:col-span-7 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
                     <div class="flex items-center justify-between border-b pb-3">
                         <h3 class="text-xl font-black text-slate-900 flex items-center">
@@ -98,57 +99,70 @@
                     <div id="pos-product-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[480px] overflow-y-auto custom-scrollbar p-1"></div>
                 </div>
 
-                <div class="lg:col-span-5 bg-white rounded-3xl p-6 border border-slate-200 shadow-lg flex flex-col justify-between space-y-4">
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between border-b pb-3">
-                            <h4 class="font-black text-slate-900 flex items-center">
-                                <i class="fa-solid fa-file-invoice text-rose-600 ml-2"></i> فاتورة العميل وتجهيز الطلب
-                            </h4>
-                            <button onclick="clearPOSCart()" class="text-xs text-rose-500 font-bold hover:underline">إفراغ الفاتورة</button>
+                <!-- عربة التسوق وتأكيد الفاتورة -->
+                <div class="lg:col-span-5 space-y-6">
+                    <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-lg flex flex-col justify-between space-y-4">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between border-b pb-3">
+                                <h4 class="font-black text-slate-900 flex items-center">
+                                    <i class="fa-solid fa-file-invoice text-rose-600 ml-2"></i> فاتورة العميل وتجهيز الطلب
+                                </h4>
+                                <button onclick="clearPOSCart()" class="text-xs text-rose-500 font-bold hover:underline">إفراغ الفاتورة</button>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2 bg-slate-50 p-3 rounded-2xl border border-slate-100">
+                                <div>
+                                    <label class="text-[10px] font-bold text-slate-600 mb-1 block">اسم العميل (إجباري):</label>
+                                    <input type="text" id="cust-name" placeholder="اسم العميل..." class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold focus:outline-none focus:border-rose-500">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] font-bold text-slate-600 mb-1 block">رقم الهاتف (إجباري):</label>
+                                    <input type="tel" id="cust-phone" placeholder="رقم الموبايل..." class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold focus:outline-none focus:border-rose-500">
+                                </div>
+                            </div>
+
+                            <div class="space-y-1">
+                                <span class="text-xs font-bold text-slate-700">الأصناف المضافة للطلب:</span>
+                                <div id="pos-cart-items" class="divide-y max-h-[120px] overflow-y-auto my-1 text-xs bg-slate-50/50 p-2 rounded-xl border"></div>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-2 bg-slate-50 p-2.5 rounded-2xl border border-slate-100 text-xs">
+                                <div>
+                                    <label class="text-[10px] font-bold text-rose-600 mb-1 block">خصم الفاتورة (-):</label>
+                                    <input type="number" id="pos-discount" value="0" oninput="renderPOSCart()" class="w-full bg-white border border-slate-200 rounded-xl px-2 py-1.5 font-bold text-center focus:outline-none focus:border-rose-500">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] font-bold text-slate-600 mb-1 block">مصاريف التغليف (+):</label>
+                                    <input type="number" id="pos-packaging" value="0" oninput="renderPOSCart()" class="w-full bg-white border border-slate-200 rounded-xl px-2 py-1.5 font-bold text-center focus:outline-none focus:border-rose-500">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] font-bold text-slate-600 mb-1 block">مصاريف الشحن (+):</label>
+                                    <input type="number" id="pos-shipping" value="0" oninput="renderPOSCart()" class="w-full bg-white border border-slate-200 rounded-xl px-2 py-1.5 font-bold text-center focus:outline-none focus:border-rose-500">
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-2 bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                            <div>
-                                <label class="text-[10px] font-bold text-slate-600 mb-1 block">اسم العميل (إجباري):</label>
-                                <input type="text" id="cust-name" placeholder="اسم العميل..." class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold focus:outline-none focus:border-rose-500">
+                        <div class="space-y-3 pt-2 border-t">
+                            <div class="flex justify-between font-black text-base">
+                                <span>الإجمالي النهائي:</span>
+                                <span class="text-blush-600"><span id="pos-grand-total">0</span> EGP</span>
                             </div>
-                            <div>
-                                <label class="text-[10px] font-bold text-slate-600 mb-1 block">رقم الهاتف (إجباري):</label>
-                                <input type="tel" id="cust-phone" placeholder="رقم الموبايل..." class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold focus:outline-none focus:border-rose-500">
-                            </div>
-                        </div>
-
-                        <div class="space-y-1">
-                            <span class="text-xs font-bold text-slate-700">الأصناف المضافة للطلب:</span>
-                            <div id="pos-cart-items" class="divide-y max-h-[130px] overflow-y-auto my-1 text-xs bg-slate-50/50 p-2 rounded-xl border"></div>
-                        </div>
-
-                        <!-- بنود إضافية (خصم، تغليف، شحن) -->
-                        <div class="grid grid-cols-3 gap-2 bg-slate-50 p-2.5 rounded-2xl border border-slate-100 text-xs">
-                            <div>
-                                <label class="text-[10px] font-bold text-rose-600 mb-1 block">خصم الفاتورة (-):</label>
-                                <input type="number" id="pos-discount" value="0" oninput="renderPOSCart()" class="w-full bg-white border border-slate-200 rounded-xl px-2 py-1.5 font-bold text-center focus:outline-none focus:border-rose-500">
-                            </div>
-                            <div>
-                                <label class="text-[10px] font-bold text-slate-600 mb-1 block">مصاريف التغليف (+):</label>
-                                <input type="number" id="pos-packaging" value="0" oninput="renderPOSCart()" class="w-full bg-white border border-slate-200 rounded-xl px-2 py-1.5 font-bold text-center focus:outline-none focus:border-rose-500">
-                            </div>
-                            <div>
-                                <label class="text-[10px] font-bold text-slate-600 mb-1 block">مصاريف الشحن (+):</label>
-                                <input type="number" id="pos-shipping" value="0" oninput="renderPOSCart()" class="w-full bg-white border border-slate-200 rounded-xl px-2 py-1.5 font-bold text-center focus:outline-none focus:border-rose-500">
-                            </div>
+                            <button onclick="checkoutPOS()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-black py-3 rounded-2xl shadow-lg text-sm transition-all flex items-center justify-center space-x-2 space-x-reverse">
+                                <i class="fa-solid fa-file-pdf"></i>
+                               <span>تأكيد الطلب وخصم المخزون وحفظ PDF</span>
+                            </button>
                         </div>
                     </div>
 
-                    <div class="space-y-3 pt-2 border-t">
-                        <div class="flex justify-between font-black text-base">
-                            <span>الإجمالي النهائي:</span>
-                            <span class="text-blush-600"><span id="pos-grand-total">0</span> EGP</span>
+                    <!-- سجل الفواتير الصادرة في قسم الحسابات (للاطلاع فقط بدون تعديل أو إلغاء) -->
+                    <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-3">
+                        <div class="border-b pb-2 flex justify-between items-center">
+                            <h4 class="font-black text-slate-900 text-sm flex items-center">
+                                <i class="fa-solid fa-receipt text-rose-600 ml-2"></i> سجل الفواتير الصادرة (للاطلاع فقط)
+                            </h4>
+                            <span class="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-md font-bold">معتمدة</span>
                         </div>
-                        <button onclick="checkoutPOS()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-black py-3.5 rounded-2xl shadow-lg text-sm transition-all flex items-center justify-center space-x-2 space-x-reverse">
-                            <i class="fa-solid fa-file-pdf"></i>
-                            <span>تأكيد الطلب وخصم المخزون وحفظ PDF</span>
-                        </button>
+                        <div id="pos-recent-orders-list" class="space-y-2 max-h-[220px] overflow-y-auto custom-scrollbar"></div>
                     </div>
                 </div>
             </div>
@@ -263,10 +277,10 @@
                     </div>
                 </div>
 
-                <!-- سجل الفواتير الصادرة -->
+                <!-- سجل الفواتير الصادرة في الإدارة (يتيح الاستعراض والإلغاء) -->
                 <div class="lg:col-span-4 bg-white rounded-3xl p-6 border shadow-sm space-y-4">
                     <div class="border-b pb-3">
-                        <h3 class="text-lg font-black text-slate-900">سجل الفواتير الصادرة</h3>
+                        <h3 class="text-lg font-black text-slate-900">سجل الفواتير الصادرة (إدارة)</h3>
                         <p class="text-xs text-slate-500">اضغط على أي فاتورة لاستعراضها أو إلغائها</p>
                     </div>
                     <div id="recent-orders-list" class="space-y-3 max-h-[350px] overflow-y-auto custom-scrollbar"></div>
@@ -330,7 +344,6 @@
                 <div id="view-ord-items" class="bg-slate-50/50 rounded-2xl border p-3 divide-y text-xs max-h-[130px] overflow-y-auto custom-scrollbar"></div>
             </div>
 
-            <!-- تفاصيل إضافية في المودال (خصم، تغليف، شحن) -->
             <div id="view-ord-extras" class="space-y-1 bg-rose-50/50 p-3 rounded-xl border border-rose-100 text-xs font-bold text-slate-700"></div>
 
             <div class="flex justify-between items-center border-t pt-3 font-black text-base">
@@ -346,11 +359,54 @@
                         <span>طباعة / حفظ PDF</span>
                     </button>
                 </div>
-                <button id="cancel-order-btn" onclick="cancelCurrentOrder()" class="w-full bg-amber-500 hover:bg-amber-600 text-white py-2.5 rounded-xl font-bold text-xs shadow-sm flex items-center justify-center space-x-1.5 space-x-reverse">
+                <!-- زر الإلغاء يظهر فقط للمدير في لوحة الإدارة -->
+                <button id="cancel-order-btn" onclick="cancelCurrentOrder()" class="w-full bg-amber-500 hover:bg-amber-600 text-white py-2.5 rounded-xl font-bold text-xs shadow-sm flex items-center justify-center space-x-1.5 space-x-reverse hidden">
                     <i class="fa-solid fa-ban"></i>
                     <span>إلغاء الفاتورة (إرجاع المخزون)</span>
                 </button>
             </div>
+        </div>
+    </div>
+
+    <!-- VIEW ORDER DETAILS (READ ONLY) FOR POS TAB -->
+    <div id="pos-order-details-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-black text-lg text-slate-900 flex items-center">
+                    <i class="fa-solid fa-receipt text-rose-600 ml-2"></i>
+                    استعراض الفاتورة <span id="pos-view-ord-id" class="mr-1 text-rose-600"></span>
+                </h3>
+                <button onclick="closePOSOrderModal()" class="w-8 h-8 rounded-full bg-slate-100 font-bold text-slate-500">✕</button>
+            </div>
+
+            <div class="space-y-2 bg-slate-50 p-4 rounded-2xl border border-slate-100 text-xs">
+                <div class="flex justify-between">
+                    <span class="text-slate-500 font-bold">اسم العميل:</span>
+                    <span id="pos-view-ord-cust-name" class="font-black text-slate-900"></span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-500 font-bold">رقم الهاتف:</span>
+                    <span id="pos-view-ord-cust-phone" class="font-bold text-slate-800"></span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-500 font-bold">تاريخ الإصدار:</span>
+                    <span id="pos-view-ord-date" class="font-semibold text-slate-600"></span>
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <h4 class="font-black text-xs text-slate-800">الأصناف:</h4>
+                <div id="pos-view-ord-items" class="bg-slate-50/50 rounded-2xl border p-3 divide-y text-xs max-h-[130px] overflow-y-auto custom-scrollbar"></div>
+            </div>
+
+            <div id="pos-view-ord-extras" class="space-y-1 bg-slate-50 p-3 rounded-xl border text-xs font-bold text-slate-700"></div>
+
+            <div class="flex justify-between items-center border-t pt-3 font-black text-base">
+                <span>الإجمالي الكلي:</span>
+                <span class="text-rose-600 text-lg"><span id="pos-view-ord-total">0</span> EGP</span>
+            </div>
+
+            <button onclick="closePOSOrderModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 py-3 rounded-xl font-bold text-xs">إغلاق</button>
         </div>
     </div>
 
@@ -439,7 +495,6 @@
             </table>
         </div>
 
-        <!-- تفاصيل إضافية تطبع في الفاتورة PDF -->
         <div id="rec-extras-section" class="space-y-1 border-t pt-2 text-[11px] font-bold text-slate-700"></div>
 
         <div class="border-t-2 border-rose-600 pt-3 flex justify-between items-center text-base font-black text-slate-900">
@@ -512,6 +567,7 @@
             renderCatalogDashboard();
             renderInventoryView();
             renderDashboard();
+            renderPOSRecentOrders();
         }
 
         function renderPOSProducts() {
@@ -569,6 +625,60 @@
                     </div>
                 `;
             });
+        }
+
+        // عرض الفواتير في قسم الحسابات (للاطلاع فقط بدون تعديل أو إلغاء)
+        function renderPOSRecentOrders() {
+            const list = document.getElementById('pos-recent-orders-list');
+            if(!list) return;
+            list.innerHTML = '';
+            const sortedOrders = [...state.orders].sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+            sortedOrders.forEach(o => {
+                const isCancelled = o.status === 'cancelled';
+                list.innerHTML += `
+                    <div onclick="openPOSOrderDetails('${o.firebaseId}')" class="bg-slate-50 hover:bg-slate-100 border p-2.5 rounded-xl text-xs space-y-1 cursor-pointer transition-all shadow-sm ${isCancelled ? 'opacity-60 bg-amber-50/20' : ''}">
+                        <div class="flex justify-between items-center">
+                            <b class="text-slate-900">#${o.id} ${isCancelled ? '<span class="text-amber-600 text-[9px]">(ملغية)</span>' : ''}</b>
+                            <span class="font-black ${isCancelled ? 'text-slate-400 line-through' : 'text-rose-600'}">${o.total} EGP</span>
+                        </div>
+                        <p class="text-slate-600 text-[10px]">العميل: ${o.customerName} (${o.customerPhone})</p>
+                    </div>`;
+            });
+        }
+
+        function openPOSOrderDetails(firebaseId) {
+            const order = state.orders.find(o => o.firebaseId === firebaseId);
+            if (!order) return;
+
+            document.getElementById('pos-view-ord-id').innerText = '#' + order.id;
+            document.getElementById('pos-view-ord-cust-name').innerText = order.customerName;
+            document.getElementById('pos-view-ord-cust-phone').innerText = order.customerPhone;
+            document.getElementById('pos-view-ord-date').innerText = order.date;
+            document.getElementById('pos-view-ord-total').innerText = order.total;
+
+            const itemsContainer = document.getElementById('pos-view-ord-items');
+            itemsContainer.innerHTML = '';
+            order.detailedItems.forEach(item => {
+                itemsContainer.innerHTML += `
+                    <div class="flex justify-between items-center py-1">
+                        <span class="font-bold text-slate-800">${item.name} × ${item.qty}</span>
+                        <span class="font-black text-rose-600">${item.price * item.qty} EGP</span>
+                    </div>
+                `;
+            });
+
+            const extrasContainer = document.getElementById('pos-view-ord-extras');
+            extrasContainer.innerHTML = `
+                <div class="flex justify-between"><span>الخصم:</span> <span class="text-rose-600 font-bold">- ${order.discount || 0} EGP</span></div>
+                <div class="flex justify-between"><span>مصاريف التغليف:</span> <span class="font-bold">+ ${order.packaging || 0} EGP</span></div>
+                <div class="flex justify-between"><span>مصاريف الشحن:</span> <span class="font-bold">+ ${order.shipping || 0} EGP</span></div>
+            `;
+
+            document.getElementById('pos-order-details-modal').classList.remove('hidden');
+        }
+
+        function closePOSOrderModal() {
+            document.getElementById('pos-order-details-modal').classList.add('hidden');
         }
 
         function addToPOS(id) {
@@ -708,6 +818,7 @@
             }
         }
 
+        // تفاصيل الفاتورة في لوحة الإدارة (تتيح الإلغاء)
         function openOrderDetails(firebaseId) {
             const order = state.orders.find(o => o.firebaseId === firebaseId);
             if (!order) return;
@@ -727,7 +838,7 @@
                 if(cancelBtn) cancelBtn.classList.add('hidden');
             } else {
                 statusEl.innerHTML = '<span class="text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">سارية ومعتمدة</span>';
-                if(cancelBtn) cancelBtn.classList.remove('hidden');
+                if(cancelBtn) cancelBtn.classList.remove('hidden'); // يظهر زر الإلغاء في الإدارة فقط
             }
 
             const itemsContainer = document.getElementById('view-ord-items');
@@ -741,7 +852,6 @@
                 `;
             });
 
-            // عرض بنود الخصم، التغليف، والشحن في المودال
             const extrasContainer = document.getElementById('view-ord-extras');
             extrasContainer.innerHTML = `
                 <div class="flex justify-between"><span>الخصم:</span> <span class="text-rose-600 font-bold">- ${order.discount || 0} EGP</span></div>
@@ -857,7 +967,6 @@
                 `;
             });
 
-            // طباعة بنود الخصم، التغليف، الشحن في الفاتورة PDF
             const extrasSection = document.getElementById('rec-extras-section');
             extrasSection.innerHTML = `
                 <div class="flex justify-between"><span>خصم الفاتورة:</span> <span class="text-rose-600">- ${discount || 0} EGP</span></div>
