@@ -65,7 +65,7 @@
         </div>
     </header>
 
-    <!-- NAVIGATION BAR (تم تبديل المكان وتغيير الاسم إلى الهدايا وتعديل أزرار التنقل) -->
+    <!-- NAVIGATION BAR -->
     <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-2 py-3 flex justify-around shadow-2xl z-50 max-w-xl mx-auto md:max-w-7xl">
         <button onclick="switchTab('catalog')" id="nav-catalog" class="nav-btn text-xs font-bold text-rose-600 flex flex-col items-center transition-all">
             <i class="fa-solid fa-gift text-lg mb-1"></i> الهدايا
@@ -87,20 +87,21 @@
     <!-- MAIN CONTAINER -->
     <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full space-y-6">
 
-        <!-- TAB 1: CATALOG (الهدايا مقسمة إلى فئات منفصلة) -->
+        <!-- TAB 1: CATALOG (الهدايا مقسمة لبنود قابلة للضغط) -->
         <div id="tab-catalog" class="app-tab space-y-6">
             <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-4">
                 <div class="flex items-center justify-between border-b pb-3">
                     <div>
-                        <h3 class="text-xl font-black text-slate-900">الهدايا والمواصفات (حسب الفئات)</h3>
-                        <p class="text-xs text-slate-500 mt-1">تصفح كافة الهدايا مقسمة ومنظمة داخل فئاتها المنفصلة</p>
+                        <h3 class="text-xl font-black text-slate-900">فئات وبنود الهدايا</h3>
+                        <p class="text-xs text-slate-500 mt-1">اضغط على أي بند أو فئة لعرض وعزل البضاعة التابعة لها</p>
                     </div>
-                    <span class="bg-blush-50 text-blush-600 text-xs font-bold px-3 py-1.5 rounded-xl border border-blush-200">عرض الفئات</span>
+                    <span class="bg-blush-50 text-blush-600 text-xs font-bold px-3 py-1.5 rounded-xl border border-blush-200">بنود الفئات</span>
                 </div>
                 
                 <input type="text" id="catalog-search" oninput="renderCatalogDashboard()" placeholder="ابحث في الهدايا أو الأكواد..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-rose-500">
 
-                <div id="catalog-categories-container" class="space-y-8 max-h-[600px] overflow-y-auto custom-scrollbar p-1"></div>
+                <!-- حاوية بنود الفئات -->
+                <div id="catalog-categories-container" class="space-y-4 max-h-[600px] overflow-y-auto custom-scrollbar p-1"></div>
             </div>
         </div>
 
@@ -152,11 +153,11 @@
                                     <input type="number" id="pos-discount" value="0" oninput="renderPOSCart()" class="w-full bg-white border border-slate-200 rounded-xl px-2 py-1.5 font-bold text-center focus:outline-none focus:border-rose-500">
                                 </div>
                                 <div>
-                                    <label class="text-[10px] font-bold text-slate-600 mb-1 block">مصاريف التغليف (+):</label>
+                                    <label class="text-[10px] font-bold text-rose-600 mb-1 block">مصاريف التغليف (+):</label>
                                     <input type="number" id="pos-packaging" value="0" oninput="renderPOSCart()" class="w-full bg-white border border-slate-200 rounded-xl px-2 py-1.5 font-bold text-center focus:outline-none focus:border-rose-500">
                                 </div>
                                 <div>
-                                    <label class="text-[10px] font-bold text-slate-600 mb-1 block">مصاريف الشحن (+):</label>
+                                    <label class="text-[10px] font-bold text-rose-600 mb-1 block">مصاريف الشحن (+):</label>
                                     <input type="number" id="pos-shipping" value="0" oninput="renderPOSCart()" class="w-full bg-white border border-slate-200 rounded-xl px-2 py-1.5 font-bold text-center focus:outline-none focus:border-rose-500">
                                 </div>
                             </div>
@@ -564,7 +565,7 @@
         const db = firebase.firestore();
 
         const ADMIN_PIN = "2580";
-        let state = { products: [], orders: [], customers: [], posCart: [], currentActiveModalOrder: null, lastCheckoutOrder: null };
+        let state = { products: [], orders: [], customers: [], posCart: [], currentActiveModalOrder: null, lastCheckoutOrder: null, openCategory: null };
 
         const defaultProducts = [
             { id: "p1", code: "G-001", name: "دبدوب أحمر كبير", category: "ملابس وهدايا", cost: 250, price: 350, stock: 20, image: "https://images.unsplash.com/photo-1582293041079-7814c2f12063?w=500&q=80" },
@@ -596,7 +597,6 @@
                 renderAll();
             });
 
-            // استماع سحابي لصفحة العملاء الدائمة المستمرة
             db.collection("customers").onSnapshot((snapshot) => {
                 state.customers = [];
                 snapshot.forEach((doc) => {
@@ -644,7 +644,7 @@
             });
         }
 
-        // عرض الهدايا مقسمة إلى فئات منفصلة
+        // عرض الهدايا بنظام بنود وفئات قابلة للفتح والغلق بالضغط
         function renderCatalogDashboard() {
             const container = document.getElementById('catalog-categories-container');
             const searchInput = document.getElementById('catalog-search');
@@ -658,6 +658,8 @@
                 const filteredProducts = state.products.filter(p => (p.category === cat || (!p.category && cat === "ملابس وهدايا")) && (p.name.toLowerCase().includes(search) || (p.code && p.code.toLowerCase().includes(search))));
                 
                 if (filteredProducts.length > 0) {
+                    const isOpen = state.openCategory === cat || search !== ''; // لو فيه بحث افتح الكل تلقائي
+                    
                     let productsHtml = '';
                     filteredProducts.forEach(p => {
                         productsHtml += `
@@ -682,13 +684,16 @@
                     });
 
                     container.innerHTML += `
-                        <div class="space-y-3">
-                            <div class="flex items-center space-x-2 space-x-reverse border-b pb-2">
-                                <i class="fa-solid fa-folder-open text-rose-600"></i>
-                                <h4 class="font-black text-slate-900 text-base">${cat}</h4>
-                                <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-bold">(${filteredProducts.length})</span>
-                            </div>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="border rounded-2xl overflow-hidden shadow-sm bg-slate-50/50">
+                            <button onclick="toggleCategory('${cat}')" class="w-full flex justify-between items-center p-4 bg-white hover:bg-slate-50 font-black text-slate-900 text-sm transition-all">
+                                <div class="flex items-center space-x-2 space-x-reverse">
+                                    <i class="fa-solid fa-folder-tree text-rose-600 text-base"></i>
+                                    <span>${cat}</span>
+                                    <span class="text-xs bg-rose-50 text-rose-600 px-2.5 py-0.5 rounded-full font-bold">(${filteredProducts.length} صنف)</span>
+                                </div>
+                                <i class="fa-solid fa-chevron-${isOpen ? 'up' : 'down'} text-slate-400 text-xs"></i>
+                            </button>
+                            <div id="cat-content-${cat.replace(/\s+/g, '')}" class="${isOpen ? 'block' : 'hidden'} p-4 border-t bg-slate-50 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                                 ${productsHtml}
                             </div>
                         </div>
@@ -701,7 +706,15 @@
             }
         }
 
-        // عرض صفحة العملاء الدائمة المستمرة
+        function toggleCategory(catName) {
+            if (state.openCategory === catName) {
+                state.openCategory = null;
+            } else {
+                state.openCategory = catName;
+            }
+            renderCatalogDashboard();
+        }
+
         function renderCustomersPage() {
             const tbody = document.getElementById('customers-table-body');
             const searchInput = document.getElementById('customers-search');
@@ -1000,7 +1013,6 @@
             }
         }
 
-        // تأكيد الطلب، خصم المخزون، وتسجيل العميل في صفحة العملاء الدائمة سحابياً فوراً
         function checkoutPOS() {
             if (state.posCart.length === 0) return alert('برجاء اختيار هدايا للفاتورة أولاً!');
             
@@ -1020,7 +1032,6 @@
             const orderId = 'ORD-' + Math.floor(1000 + Math.random() * 9000);
             const dateStr = new Date().toLocaleString('ar-EG');
 
-            // خصم المخزون سحابياً فوراً
             state.posCart.forEach(item => {
                 const prod = state.products.find(p => p.id === item.id);
                 if (prod) {
@@ -1043,11 +1054,9 @@
                 detailedItems: JSON.parse(JSON.stringify(state.posCart))
             };
 
-            // حفظ الطلب في سحابة الفواتير
             db.collection("orders").add(newOrder).then((docRef) => {
                 state.lastCheckoutOrder = { ...newOrder, firebaseId: docRef.id };
                 
-                // حفظ / تحديث بيانات العميل في صفحة العملاء الدائمة المستمرة سحابياً بلا حدود
                 const customerDocId = 'cust_' + custPhone.replace(/\s+/g, '_');
                 const customerRef = db.collection("customers").doc(customerDocId);
                 
@@ -1055,7 +1064,7 @@
                     if (docSnap.exists) {
                         const existingData = docSnap.data();
                         customerRef.update({
-                            name: custName, // تحديث الاسم لو اختلف
+                            name: custName,
                             ordersCount: (existingData.ordersCount || 1) + 1,
                             lastDate: dateStr
                         });
