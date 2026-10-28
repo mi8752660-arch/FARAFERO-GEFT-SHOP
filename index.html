@@ -47,7 +47,7 @@
 <body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col pb-24 md:pb-0">
 
     <!-- LOGIN SCREEN -->
-    <div id="auth-screen" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+    <div id="auth-screen" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl w-full max-w-sm p-8 shadow-2xl space-y-6 text-center">
             <div class="w-16 h-16 bg-gradient-to-tr from-blush-500 to-rosegold-500 rounded-3xl flex items-center justify-center text-white shadow-lg mx-auto text-2xl">
                 <i class="fa-solid fa-store"></i>
@@ -641,7 +641,6 @@
         </div>
     </div>
 
-
     <!-- SCRIPT ENGINE -->
     <script>
         const firebaseConfig = {
@@ -704,25 +703,36 @@
         ];
 
         function initApp() {
+            // استقبال النتيجة عند العودة من تسجيل الدخول بطريقة Redirect
+            auth.getRedirectResult().then((result) => {
+                if (result.user) {
+                    currentAuthUser = result.user.email || result.user.displayName;
+                }
+            }).catch((error) => {
+                alert('خطأ في تسجيل الدخول: ' + error.message);
+            });
+
             auth.onAuthStateChanged((user) => {
+                const authScreen = document.getElementById('auth-screen');
+                const userDisplay = document.getElementById('current-user-display');
+                
                 if (user) {
                     currentAuthUser = user.email || user.displayName || 'مستخدم غير معروف';
-                    document.getElementById('current-user-display').innerText = currentAuthUser;
-                    document.getElementById('auth-screen').classList.add('hidden');
+                    if (userDisplay) userDisplay.innerText = currentAuthUser;
+                    if (authScreen) authScreen.classList.add('hidden');
                     startDataListeners();
                 } else {
                     currentAuthUser = null;
-                    document.getElementById('current-user-display').innerText = 'غير مسجل';
-                    document.getElementById('auth-screen').classList.remove('hidden');
+                    if (userDisplay) userDisplay.innerText = 'غير مسجل';
+                    if (authScreen) authScreen.classList.remove('hidden');
                 }
             });
         }
 
         function loginWithGoogle() {
             const provider = new firebase.auth.GoogleAuthProvider();
-            auth.signInWithPopup(provider).catch((error) => {
-                alert('فشل تسجيل الدخول: ' + error.message);
-            });
+            // الاستبدال بـ signInWithRedirect لضمان العمل على الهواتف الذكية
+            auth.signInWithRedirect(provider);
         }
 
         function logoutGoogle() {
