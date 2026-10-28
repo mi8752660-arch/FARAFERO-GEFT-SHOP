@@ -58,36 +58,48 @@
                 </div>
             </div>
 
-            <div class="flex items-center space-x-2 space-x-reverse bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
-                <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                <span class="text-[11px] font-bold text-emerald-700">متصل سحابياً (مزامنة فورية)</span>
+            <!-- اسم المستخدم الحالي السريع -->
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <div class="hidden sm:flex items-center space-x-1.5 space-x-reverse bg-slate-100 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700">
+                    <i class="fa-solid fa-user-gear text-rose-600"></i>
+                    <span>المستخدم:</span>
+                    <span id="current-user-display" class="text-rose-600">المدير العام</span>
+                    <button onclick="changeActiveUser()" class="text-[10px] bg-white px-2 py-0.5 rounded-md border shadow-sm mr-2 text-slate-500 hover:text-rose-600">تغيير</button>
+                </div>
+                <div class="flex items-center space-x-1 space-x-reverse bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
+                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                    <span class="text-[11px] font-bold text-emerald-700">متصل سحابياً</span>
+                </div>
             </div>
         </div>
     </header>
 
     <!-- NAVIGATION BAR -->
-    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-2 py-3 flex justify-around shadow-2xl z-50 max-w-xl mx-auto md:max-w-7xl">
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-1 py-3 flex justify-around shadow-2xl z-50 max-w-xl mx-auto md:max-w-7xl">
         <button onclick="switchTab('catalog')" id="nav-catalog" class="nav-btn text-xs font-bold text-rose-600 flex flex-col items-center transition-all">
-            <i class="fa-solid fa-gift text-lg mb-1"></i> الهدايا
+            <i class="fa-solid fa-gift text-base mb-1"></i> الهدايا
+        </button>
+        <button onclick="switchTab('bestseller')" id="nav-bestseller" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center transition-all">
+            <i class="fa-solid fa-fire text-base mb-1"></i> الأكثر مبيعا
         </button>
         <button onclick="switchTab('pos')" id="nav-pos" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center transition-all">
-            <i class="fa-solid fa-cash-register text-lg mb-1"></i> الحسابات
+            <i class="fa-solid fa-cash-register text-base mb-1"></i> الحسابات
         </button>
         <button onclick="switchTab('customers')" id="nav-customers" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center transition-all">
-            <i class="fa-solid fa-users text-lg mb-1"></i> العملاء
+            <i class="fa-solid fa-users text-base mb-1"></i> العملاء
         </button>
         <button onclick="switchTab('inventory')" id="nav-inventory" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center transition-all">
-            <i class="fa-solid fa-boxes-stacked text-lg mb-1"></i> حركة المخزون
+            <i class="fa-solid fa-boxes-stacked text-base mb-1"></i> المخزون
         </button>
         <button onclick="requestAdminAccess()" id="nav-admin" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center transition-all">
-            <i class="fa-solid fa-chart-line text-lg mb-1"></i> الإدارة والأرباح
+            <i class="fa-solid fa-chart-line text-base mb-1"></i> الإدارة
         </button>
     </div>
 
     <!-- MAIN CONTAINER -->
     <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full space-y-6">
 
-        <!-- TAB 1: CATALOG (الهدايا مقسمة لبنود قابلة للضغط) -->
+        <!-- TAB 1: CATALOG -->
         <div id="tab-catalog" class="app-tab space-y-6">
             <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-4">
                 <div class="flex items-center justify-between border-b pb-3">
@@ -101,6 +113,23 @@
                 <input type="text" id="catalog-search" oninput="renderCatalogDashboard()" placeholder="ابحث في الهدايا أو الأكواد..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-rose-500">
 
                 <div id="catalog-categories-container" class="space-y-4 max-h-[600px] overflow-y-auto custom-scrollbar p-1"></div>
+            </div>
+        </div>
+
+        <!-- TAB 1.5: BEST SELLER (الأكثر مبيعا) -->
+        <div id="tab-bestseller" class="app-tab hidden space-y-6">
+            <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-4">
+                <div class="flex items-center justify-between border-b pb-3">
+                    <div>
+                        <h3 class="text-xl font-black text-slate-900 flex items-center">
+                            <i class="fa-solid fa-fire text-amber-500 ml-2"></i> الموديلات والهدايا الأكثر مبيعا
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-1">ترتيب تصاعدي/تنازلي للأصناف بناءً على إجمالي القطع المباعة من الفواتير المعتمدة</p>
+                    </div>
+                    <span class="bg-amber-50 text-amber-700 text-xs font-bold px-3 py-1.5 rounded-xl border border-amber-200">الأكثر طلباً</span>
+                </div>
+
+                <div id="bestseller-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
             </div>
         </div>
 
@@ -170,7 +199,7 @@
                             <div class="grid grid-cols-2 gap-2">
                                 <button onclick="previewPOSReceiptBeforeCheckout()" class="bg-slate-800 hover:bg-slate-900 text-white font-black py-3 rounded-2xl shadow-md text-xs transition-all flex items-center justify-center space-x-1.5 space-x-reverse">
                                     <i class="fa-solid fa-eye"></i>
-                                    <span>معاينة الفاتورة (قبل الخصم)</span>
+                                    <span>معاينة الفاتورة</span>
                                 </button>
                                 <button onclick="checkoutPOS()" class="bg-rose-600 hover:bg-rose-700 text-white font-black py-3 rounded-2xl shadow-md text-xs transition-all flex items-center justify-center space-x-1.5 space-x-reverse">
                                     <i class="fa-solid fa-check-circle"></i>
@@ -194,13 +223,13 @@
             </div>
         </div>
 
-        <!-- TAB 3: CUSTOMERS (صفحة العملاء الدائمة المستقلة) -->
+        <!-- TAB 3: CUSTOMERS -->
         <div id="tab-customers" class="app-tab hidden space-y-6">
             <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-4">
                 <div class="flex justify-between items-center border-b pb-3">
                     <div>
                         <h3 class="text-xl font-black text-slate-900">سجل العملاء الدائم</h3>
-                        <p class="text-xs text-slate-500 mt-1">قائمة بجميع أسماء وأرقام هواتف العملاء المسجلين من الفواتير (مستمرة بلا حدود)</p>
+                        <p class="text-xs text-slate-500 mt-1">قائمة بجميع أسماء وأرقام هواتف العملاء المسجلين من الفواتير</p>
                     </div>
                     <span class="bg-emerald-50 text-emerald-700 text-xs font-bold px-3 py-1.5 rounded-xl border border-emerald-200">حفظ دائم</span>
                 </div>
@@ -224,7 +253,7 @@
             </div>
         </div>
 
-        <!-- TAB 4: INVENTORY (حركة المخزون) -->
+        <!-- TAB 4: INVENTORY -->
         <div id="tab-inventory" class="app-tab hidden space-y-6">
             <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-4">
                 <div class="flex justify-between items-center border-b pb-3">
@@ -287,6 +316,29 @@
                     <p class="text-xs font-bold text-slate-400">إجمالي عدد قطع الهدايا بالمخزن</p>
                     <h4 class="text-2xl font-black text-slate-900"><span id="dash-total-pieces">0</span> قطعة</h4>
                     <p class="text-[10px] text-slate-500 font-semibold">مجموع القطع لكل الأصناف</p>
+                </div>
+            </div>
+
+            <!-- سجل النشاطات والعمليات (مين عمل إيه؟) -->
+            <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-4">
+                <div class="flex justify-between items-center border-b pb-3">
+                    <h3 class="text-lg font-black text-slate-900 flex items-center">
+                        <i class="fa-solid fa-clipboard-user text-rose-600 ml-2"></i> سجل نشاطات الموظفين والكاشير (مين عمل إيه؟)
+                    </h3>
+                    <span class="text-[10px] bg-slate-100 text-slate-600 px-3 py-1 rounded-xl font-bold">متابعة لحظية</span>
+                </div>
+                <div class="overflow-x-auto max-h-[250px] overflow-y-auto custom-scrollbar">
+                    <table class="w-full text-right text-xs">
+                        <thead class="bg-slate-50 text-slate-500 font-bold border-b sticky top-0">
+                            <tr>
+                                <th class="p-3">اسم المستخدم / الكاشير</th>
+                                <th class="p-3">نوع العملية</th>
+                                <th class="p-3">التفاصيل</th>
+                                <th class="p-3 text-left">التاريخ والوقت</th>
+                            </tr>
+                        </thead>
+                        <tbody id="activity-log-table-body" class="divide-y font-medium text-slate-700"></tbody>
+                    </table>
                 </div>
             </div>
 
@@ -361,6 +413,26 @@
         </div>
     </div>
 
+    <!-- USER SELECT / LOGIN MODAL -->
+    <div id="user-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl w-full max-w-xs p-6 shadow-2xl space-y-4 text-center">
+            <div class="w-12 h-12 bg-blush-50 text-blush-600 rounded-2xl flex items-center justify-center mx-auto text-xl shadow-inner">
+                <i class="fa-solid fa-user-check"></i>
+            </div>
+            <div>
+                <h3 class="font-black text-base text-slate-900">اختر اسم المستخدم / الكاشير</h3>
+                <p class="text-[11px] text-slate-400 mt-1">مين اللي شغال على السيستم دلوقتي؟</p>
+            </div>
+            <select id="active-user-select" class="w-full border border-slate-200 bg-slate-50 p-3 rounded-xl text-center text-sm font-bold focus:outline-none focus:border-rose-500">
+                <option value="المدير العام">المدير العام</option>
+                <option value="كاشير 1 (أحمد)">كاشير 1 (أحمد)</option>
+                <option value="كاشير 2 (محمود)">كاشير 2 (محمود)</option>
+                <option value="مساعد المحل">مساعد المحل</option>
+            </select>
+            <button onclick="saveActiveUser()" class="w-full bg-rose-600 text-white py-2.5 rounded-xl text-xs font-bold shadow-md">متابعة العمل</button>
+        </div>
+    </div>
+
     <!-- VIEW ORDER DETAILS MODAL (ADMIN) -->
     <div id="order-details-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-4">
@@ -384,6 +456,10 @@
                 <div class="flex justify-between">
                     <span class="text-slate-500 font-bold">تاريخ الإصدار:</span>
                     <span id="view-ord-date" class="font-semibold text-slate-600"></span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-500 font-bold">تمت بواسطة:</span>
+                    <span id="view-ord-user" class="font-bold text-rose-600"></span>
                 </div>
                 <div class="flex justify-between">
                     <span class="text-slate-500 font-bold">حالة الفاتورة:</span>
@@ -539,6 +615,7 @@
             <div class="space-y-1">
                 <p><b>رقم الفاتورة:</b> <span id="rec-id" class="font-bold text-slate-900"></span></p>
                 <p><b>تاريخ الإصدار:</b> <span id="rec-date"></span></p>
+                <p><b>الكاشير:</b> <span id="rec-user" class="font-bold text-rose-600"></span></p>
             </div>
             <div class="space-y-1 text-left dir-rtl">
                 <p><b>اسم العميل:</b> <span id="rec-cust-name" class="font-bold text-slate-900"></span></p>
@@ -591,10 +668,13 @@
         const db = firebase.firestore();
 
         const ADMIN_PIN = "2580";
+        let currentUser = localStorage.getItem('farafero_active_user') || 'المدير العام';
+
         let state = { 
             products: [], 
             orders: [], 
             customers: [], 
+            activities: [],
             categories: ["دباديب", "ورد", "هدايا استانلس", "شنط حريمى"], 
             posCart: [], 
             currentActiveModalOrder: null, 
@@ -604,22 +684,17 @@
         };
 
         const defaultNewProducts = [
-            // 5 أنواع دباديب (G-001 -> G-005)
             { id: "p1", code: "G-001", name: "دبدوب أحمر عملاق كلاسيك", category: "دباديب", cost: 250, price: 450, stock: 100, image: "https://images.unsplash.com/photo-1582293041079-7814c2f12063?w=500&q=80" },
             { id: "p2", code: "G-002", name: "دبدوب بنكي محبوك بشريطة", category: "دباديب", cost: 180, price: 320, stock: 100, image: "https://images.unsplash.com/photo-1559454403-b8fb88521f11?w=500&q=80" },
             { id: "p3", code: "G-003", name: "دبدوب أبيض قطيفة ناعم", category: "دباديب", cost: 200, price: 380, stock: 100, image: "https://images.unsplash.com/photo-1563241527-3004b7be0ffd?w=500&q=80" },
             { id: "p4", code: "G-004", name: "دبدوب بني فائق النعومة", category: "دباديب", cost: 220, price: 400, stock: 100, image: "https://images.unsplash.com/photo-1533227268428-f9ed0900fb3b?w=500&q=80" },
             { id: "p5", code: "G-005", name: "دبدوب رمادي مع قلادة قلب", category: "دباديب", cost: 190, price: 350, stock: 100, image: "https://images.unsplash.com/photo-1558060370-d644479cb6f7?w=500&q=80" },
-
-            // 6 أنواع ورد (G-006 -> G-011)
             { id: "p6", code: "G-006", name: "بوكيه ورد جوري أحمر طبيعي", category: "ورد", cost: 200, price: 380, stock: 100, image: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=500&q=80" },
             { id: "p7", code: "G-007", name: "بوكيه ورد توليب أبيض فاخر", category: "ورد", cost: 220, price: 420, stock: 100, image: "https://images.unsplash.com/photo-1520763185298-1b434c919102?w=500&q=80" },
             { id: "p8", code: "G-008", name: "باقة ورد زهرية مجمعة للمناسبات", category: "ورد", cost: 250, price: 450, stock: 100, image: "https://images.unsplash.com/photo-1561181286-d3fee7d55364?w=500&q=80" },
             { id: "p9", code: "G-009", name: "صندوق ورد أصفر ملكي", category: "ورد", cost: 280, price: 500, stock: 100, image: "https://images.unsplash.com/photo-1508610048659-a06b669e3321?w=500&q=80" },
             { id: "p10", code: "G-010", name: "بوكيه ورد جوري بنفشي فريد", category: "ورد", cost: 230, price: 430, stock: 100, image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=500&q=80" },
             { id: "p11", code: "G-011", name: "فازة ورد دوار الشمس المشرق", category: "ورد", cost: 180, price: 340, stock: 100, image: "https://images.unsplash.com/photo-1597848212624-a19eb35e2651?w=500&q=80" },
-
-            // 7 أنواع هدايا استانلس (G-012 -> G-018)
             { id: "p12", code: "G-012", name: "سلسلة استانلس فضي طلاء ثقيل", category: "هدايا استانلس", cost: 90, price: 180, stock: 100, image: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500&q=80" },
             { id: "p13", code: "G-013", name: "سوار استانلس ذهبي مرصع بالفصوص", category: "هدايا استانلس", cost: 120, price: 230, stock: 100, image: "https://images.unsplash.com/photo-1611591475165-385fb9f7a5bd?w=500&q=80" },
             { id: "p14", code: "G-014", name: "خاتم استانلس مطعم بحجر عقيق", category: "هدايا استانلس", cost: 70, price: 140, stock: 100, image: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=500&q=80" },
@@ -627,8 +702,6 @@
             { id: "p16", code: "G-016", name: "خلخال استانلس ناعم أنيق", category: "هدايا استانلس", cost: 60, price: 130, stock: 100, image: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=500&q=80" },
             { id: "p17", code: "G-017", name: "حلق استانلس كوري عصري", category: "هدايا استانلس", cost: 80, price: 160, stock: 100, image: "https://images.unsplash.com/photo-1630019852942-f89202989a59?w=500&q=80" },
             { id: "p18", code: "G-018", name: "طقم استانلس (سلسلة + انسيال)", category: "هدايا استانلس", cost: 160, price: 300, stock: 100, image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=500&q=80" },
-
-            // 6 أنواع شنط حريمى (G-019 -> G-024)
             { id: "p19", code: "G-019", name: "شنطة يد جلد سوداء كلاسيك", category: "شنط حريمى", cost: 280, price: 520, stock: 100, image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=500&q=80" },
             { id: "p20", code: "G-020", name: "شنطة كروس جلد بني فاخرة", category: "شنط حريمى", cost: 240, price: 460, stock: 100, image: "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=500&q=80" },
             { id: "p21", code: "G-021", name: "حقيبة سهرة بيج بأقفال ذهبية", category: "شنط حريمى", cost: 300, price: 580, stock: 100, image: "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?w=500&q=80" },
@@ -638,6 +711,8 @@
         ];
 
         function initApp() {
+            document.getElementById('current-user-display').innerText = currentUser;
+
             db.collection("settings").doc("categories").onSnapshot((doc) => {
                 if (doc.exists && doc.data().list) {
                     state.categories = doc.data().list;
@@ -649,7 +724,6 @@
 
             db.collection("products").onSnapshot((snapshot) => {
                 if (snapshot.empty) {
-                    // إذا كان المخزون فارغاً بالكامل، يتم تحميل الـ 24 صنفاً تلقائياً لأول مرة
                     db.collection("settings").doc("categories").set({ list: state.categories });
                     defaultNewProducts.forEach(p => {
                         db.collection("products").doc(p.id).set(p);
@@ -679,19 +753,123 @@
                 renderCustomersPage();
             });
 
+            // جلب سجل النشاطات
+            db.collection("activities").orderBy("timestamp", "desc").limit(50).onSnapshot((snapshot) => {
+                state.activities = [];
+                snapshot.forEach((doc) => {
+                    state.activities.push({ id: doc.id, ...doc.data() });
+                });
+                renderActivityLog();
+            });
+
             switchTab('catalog');
+        }
+
+        function logActivity(actionType, details) {
+            const act = {
+                user: currentUser,
+                action: actionType,
+                details: details,
+                date: new Date().toLocaleString('ar-EG'),
+                timestamp: Date.now()
+            };
+            db.collection("activities").add(act);
+        }
+
+        function changeActiveUser() {
+            document.getElementById('active-user-select').value = currentUser;
+            document.getElementById('user-modal').classList.remove('hidden');
+        }
+
+        function saveActiveUser() {
+            currentUser = document.getElementById('active-user-select').value;
+            localStorage.setItem('farafero_active_user', currentUser);
+            document.getElementById('current-user-display').innerText = currentUser;
+            document.getElementById('user-modal').classList.add('hidden');
+            logActivity('تسجيل دخول / تبديل مستخدم', `تم العمل بواسطة: ${currentUser}`);
         }
 
         function renderAll() {
             renderPOSProducts();
             renderPOSCart();
             renderCatalogDashboard();
+            renderBestSellers();
             renderInventoryView();
             renderDashboard();
             renderPOSRecentOrders();
             renderCustomersPage();
             renderAdminCategories();
             populateCategoryDropdown();
+        }
+
+        // دالة حساب وعرض الأكثر مبيعا
+        function renderBestSellers() {
+            const grid = document.getElementById('bestseller-grid');
+            if(!grid) return;
+            grid.innerHTML = '';
+
+            // تجميع المبيعات لكل منتج
+            let salesMap = {};
+            state.products.forEach(p => {
+                salesMap[p.id] = { ...p, totalSold: 0 };
+            });
+
+            state.orders.forEach(o => {
+                if (o.status !== 'cancelled' && o.detailedItems) {
+                    o.detailedItems.forEach(item => {
+                        if (salesMap[item.id]) {
+                            salesMap[item.id].totalSold += (item.qty || 0);
+                        }
+                    });
+                }
+            });
+
+            // تحويل الخريطة إلى مصفوفة وترتيبها تنازلياً حسب الأكثر مبيعا
+            let sortedSellers = Object.values(salesMap).sort((a, b) => b.totalSold - a.totalSold);
+
+            sortedSellers.forEach((p, idx) => {
+                let badgeColor = idx === 0 ? 'bg-amber-500 text-white' : idx === 1 ? 'bg-slate-400 text-white' : idx === 2 ? 'bg-amber-700 text-white' : 'bg-slate-100 text-slate-700';
+                grid.innerHTML += `
+                    <div class="bg-white rounded-3xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between space-y-3 relative overflow-hidden">
+                        <span class="absolute top-3 left-3 ${badgeColor} text-[10px] font-black px-2.5 py-1 rounded-xl shadow-sm">المركز #${idx + 1}</span>
+                        <div class="h-36 rounded-2xl overflow-hidden bg-slate-100 relative mt-2">
+                            <img src="${p.image}" class="w-full h-full object-cover">
+                            <span class="absolute bottom-2 right-2 bg-rose-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-lg">${p.code}</span>
+                        </div>
+                        <div class="space-y-1">
+                            <h4 class="font-black text-slate-900 text-sm line-clamp-1">${p.name}</h4>
+                            <div class="flex justify-between items-center text-xs pt-1">
+                                <span class="text-slate-500 font-bold">إجمالي المباع:</span>
+                                <span class="font-black text-amber-600 text-sm">${p.totalSold} قطعة</span>
+                            </div>
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="text-slate-500 font-bold">السعر:</span>
+                                <span class="font-black text-rose-600">${p.price} EGP</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function renderActivityLog() {
+            const tbody = document.getElementById('activity-log-table-body');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            if(state.activities.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center text-slate-400 py-4">لا توجد نشاطات مسجلة بعد</td></tr>';
+                return;
+            }
+            state.activities.forEach(act => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="p-3 font-black text-slate-900 flex items-center"><i class="fa-solid fa-user-circle text-rose-500 ml-1.5"></i> ${act.user}</td>
+                        <td class="p-3 font-bold text-rose-600">${act.action}</td>
+                        <td class="p-3 font-semibold text-slate-600">${act.details}</td>
+                        <td class="p-3 text-left font-semibold text-slate-400">${act.date}</td>
+                    </tr>
+                `;
+            });
         }
 
         function renderPOSProducts() {
@@ -841,9 +1019,11 @@
                         db.collection("products").doc(p.id).update({ category: newName });
                     }
                 });
+                logActivity('تعديل فئة', `تم تعديل الفئة من (${oldName}) إلى (${newName})`);
             } else {
                 if (state.categories.includes(newName)) return alert('هذه الفئة موجودة بالفعل!');
                 state.categories.push(newName);
+                logActivity('إضافة فئة جديدة', `تم إضافة فئة: ${newName}`);
             }
 
             db.collection("settings").doc("categories").set({ list: state.categories }).then(() => {
@@ -855,6 +1035,7 @@
             if (confirm(`هل أنت متأكد من حذف الفئة "${catName}"؟`)) {
                 state.categories = state.categories.filter(c => c !== catName);
                 db.collection("settings").doc("categories").set({ list: state.categories });
+                logActivity('حذف فئة', `تم حذف الفئة: ${catName}`);
             }
         }
 
@@ -899,7 +1080,7 @@
                             <span class="font-black ${isCancelled ? 'text-slate-400 line-through' : 'text-rose-600'}">${o.total} EGP</span>
                         </div>
                         <div class="flex justify-between items-center text-[10px]">
-                            <span class="text-slate-600">العميل: ${o.customerName} (${o.customerPhone})</span>
+                            <span class="text-slate-600">بواسطة: ${o.cashier || 'المدير'} | العميل: ${o.customerName}</span>
                             <button onclick="printDirectOrder('${o.firebaseId}')" title="طباعة الفاتورة" class="bg-slate-800 hover:bg-slate-900 text-white font-bold px-2 py-0.5 rounded-md flex items-center space-x-1 space-x-reverse transition-all">
                                 <i class="fa-solid fa-print"></i>
                                 <span>طباعة / PDF</span>
@@ -933,6 +1114,7 @@
 
             const extrasContainer = document.getElementById('pos-view-ord-extras');
             extrasContainer.innerHTML = `
+                <div class="flex justify-between"><span>بواسطة الكاشير:</span> <span class="font-bold text-rose-600">${order.cashier || 'المدير'}</span></div>
                 <div class="flex justify-between"><span>الخصم:</span> <span class="text-rose-600 font-bold">- ${order.discount || 0} EGP</span></div>
                 <div class="flex justify-between"><span>مصاريف التغليف:</span> <span class="font-bold">+ ${order.packaging || 0} EGP</span></div>
                 <div class="flex justify-between"><span>مصاريف الشحن:</span> <span class="font-bold">+ ${order.shipping || 0} EGP</span></div>
@@ -948,13 +1130,13 @@
         function printPOSOrderFromModal() {
             if (!state.posActiveModalOrder) return;
             const o = state.posActiveModalOrder;
-            generateReceiptPDF(o.detailedItems, o.customerName, o.customerPhone, o.total, o.id, o.date, o.discount, o.packaging, o.shipping);
+            generateReceiptPDF(o.detailedItems, o.customerName, o.customerPhone, o.total, o.id, o.date, o.discount, o.packaging, o.shipping, o.cashier);
         }
 
         function printDirectOrder(firebaseId) {
             const o = state.orders.find(x => x.firebaseId === firebaseId);
             if (!o) return;
-            generateReceiptPDF(o.detailedItems, o.customerName, o.customerPhone, o.total, o.id, o.date, o.discount, o.packaging, o.shipping);
+            generateReceiptPDF(o.detailedItems, o.customerName, o.customerPhone, o.total, o.id, o.date, o.discount, o.packaging, o.shipping, o.cashier);
         }
 
         function addToPOS(id) {
@@ -1089,7 +1271,7 @@
                                 <b class="text-slate-900">#${o.id} ${isCancelled ? '<span class="text-amber-600 text-[10px]">(ملغية)</span>' : ''}</b>
                                 <span class="font-black ${isCancelled ? 'text-slate-400 line-through' : 'text-rose-600'}">${o.total} EGP</span>
                             </div>
-                            <p class="text-slate-600 text-[11px] font-semibold">العميل: ${o.customerName} (${o.customerPhone})</p>
+                            <p class="text-slate-600 text-[11px] font-semibold">بواسطة: ${o.cashier || 'المدير'} | العميل: ${o.customerName}</p>
                             <p class="text-slate-400 text-[10px]">${o.date}</p>
                         </div>`;
                 });
@@ -1105,6 +1287,7 @@
             document.getElementById('view-ord-cust-name').innerText = order.customerName;
             document.getElementById('view-ord-cust-phone').innerText = order.customerPhone;
             document.getElementById('view-ord-date').innerText = order.date;
+            document.getElementById('view-ord-user').innerText = order.cashier || 'المدير العام';
             document.getElementById('view-ord-total').innerText = order.total;
 
             const statusEl = document.getElementById('view-ord-status');
@@ -1143,7 +1326,7 @@
             const o = state.currentActiveModalOrder;
             if (!o || o.status === 'cancelled') return;
 
-            if (confirm(`هل أنت متأكد من إلغاء الفاتورة #${o.id}؟ سيتم إرجاع الكميات للمخزن السحابي ولن يتم حذف العميل من سجل العملاء المستمر.`)) {
+            if (confirm(`هل أنت متأكد من إلغاء الفاتورة #${o.id}؟ سيتم إرجاع الكميات للمخزن السحابي.`)) {
                 o.status = 'cancelled';
 
                 o.detailedItems.forEach(item => {
@@ -1155,6 +1338,7 @@
                 });
 
                 db.collection("orders").doc(o.firebaseId).update({ status: 'cancelled' });
+                logActivity('إلغاء فاتورة', `قام (${currentUser}) بإلغاء الفاتورة #${o.id}`);
                 closeOrderModal();
             }
         }
@@ -1166,7 +1350,7 @@
         function printCurrentModalOrder() {
             if (!state.currentActiveModalOrder) return;
             const o = state.currentActiveModalOrder;
-            generateReceiptPDF(o.detailedItems, o.customerName, o.customerPhone, o.total, o.id, o.date, o.discount, o.packaging, o.shipping);
+            generateReceiptPDF(o.detailedItems, o.customerName, o.customerPhone, o.total, o.id, o.date, o.discount, o.packaging, o.shipping, o.cashier);
         }
 
         function increaseStock(id) {
@@ -1174,6 +1358,7 @@
             if (p) {
                 const newStock = p.stock + 1;
                 db.collection("products").doc(id).update({ stock: newStock });
+                logActivity('زيادة مخزون', `قام (${currentUser}) بزيادة مخزون الصنف (${p.name}) قطعة واحدة`);
             }
         }
 
@@ -1188,7 +1373,7 @@
             const previewId = 'PREV-' + Math.floor(1000 + Math.random() * 9000);
             const dateStr = new Date().toLocaleString('ar-EG');
 
-            generateReceiptPDF(state.posCart, custName, custPhone, total, previewId, dateStr, discount, packaging, shipping);
+            generateReceiptPDF(state.posCart, custName, custPhone, total, previewId, dateStr, discount, packaging, shipping, currentUser);
         }
 
         function checkoutPOS() {
@@ -1228,6 +1413,7 @@
                 shipping: shipping,
                 customerName: custName,
                 customerPhone: custPhone,
+                cashier: currentUser,
                 status: 'active',
                 detailedItems: JSON.parse(JSON.stringify(state.posCart))
             };
@@ -1257,24 +1443,18 @@
                     }
                 });
 
-                alert('تم تأكيد الطلب وخصم المخزون وتسجيل العميل في صفحة العملاء بنجاح!');
+                logActivity('إصدار فاتورة مبيعات', `قام (${currentUser}) بإصدار الفاتورة #${orderId} للعميل (${custName}) بقيمة ${total} EGP`);
+                alert('تم تأكيد الطلب وخصم المخزون وتسجيل العميل بنجاح!');
                 clearPOSCart();
             }).catch((err) => {
-                alert('حدث خطأ أثناء حفظ الفاتورة سحابياً، تأكد من الاتصال بالإنترنت.');
+                alert('حدث خطأ أثناء حفظ الفاتورة سحابياً.');
             });
         }
 
-        function printPOSReceipt() {
-            if (!state.lastCheckoutOrder) {
-                return alert('برجاء تأكيد الطلب أولاً قبل طباعة الفاتورة!');
-            }
-            const o = state.lastCheckoutOrder;
-            generateReceiptPDF(o.detailedItems, o.customerName, o.customerPhone, o.total, o.id, o.date, o.discount, o.packaging, o.shipping);
-        }
-
-        function generateReceiptPDF(items, custName, custPhone, total, orderId, dateStr, discount, packaging, shipping) {
+        function generateReceiptPDF(items, custName, custPhone, total, orderId, dateStr, discount, packaging, shipping, cashierName) {
             document.getElementById('rec-id').innerText = orderId;
             document.getElementById('rec-date').innerText = dateStr;
+            document.getElementById('rec-user').innerText = cashierName || currentUser;
             document.getElementById('rec-cust-name').innerText = custName;
             document.getElementById('rec-cust-phone').innerText = custPhone;
             
@@ -1317,6 +1497,7 @@
             if (enteredPin === ADMIN_PIN) {
                 closePinModal();
                 switchTab('admin');
+                logActivity('دخول لوحة الإدارة', `قام (${currentUser}) بالدخول للوحة الإدارة الصلاحيات العالية`);
             } else {
                 errorMsg.classList.remove('hidden');
             }
@@ -1381,22 +1562,26 @@
 
             if (editId) {
                 db.collection("products").doc(editId).update(prodData);
+                logActivity('تعديل منتج', `قام (${currentUser}) بتعديل بيانات الصنف: ${name} (${code})`);
             } else {
                 const newId = 'p' + Date.now();
                 db.collection("products").doc(newId).set(prodData);
+                logActivity('إضافة منتج جديد', `قام (${currentUser}) بإضافة صنف جديد: ${name} (${code})`);
             }
 
             closeProductModal();
         }
 
         function deleteProd(id) {
+            const p = state.products.find(x => x.id === id);
             if (confirm('هل أنت متأكد من حذف هذه الهدية نهائياً من السحابة؟')) {
                 db.collection("products").doc(id).delete();
+                logActivity('حذف صنف', `قام (${currentUser}) بحذف الصنف: ${p ? p.name : id}`);
             }
         }
 
         function switchTab(tab) {
-            ['catalog', 'pos', 'customers', 'inventory', 'admin'].forEach(t => {
+            ['catalog', 'bestseller', 'pos', 'customers', 'inventory', 'admin'].forEach(t => {
                 const el = document.getElementById('tab-' + t);
                 if(el) el.classList.add('hidden');
                 const btn = document.getElementById('nav-' + t);
