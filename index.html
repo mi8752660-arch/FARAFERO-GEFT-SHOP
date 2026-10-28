@@ -46,23 +46,6 @@
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col pb-24 md:pb-0">
 
-    <!-- LOGIN SCREEN -->
-    <div id="auth-screen" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-3xl w-full max-w-sm p-8 shadow-2xl space-y-6 text-center">
-            <div class="w-16 h-16 bg-gradient-to-tr from-blush-500 to-rosegold-500 rounded-3xl flex items-center justify-center text-white shadow-lg mx-auto text-2xl">
-                <i class="fa-solid fa-store"></i>
-            </div>
-            <div class="space-y-1">
-                <h2 class="text-xl font-black text-slate-900">تسجيل دخول الموظفين</h2>
-                <p class="text-xs text-slate-500">اختر حساب جوجل الخاص بك للبدء في استخدام النظام ومتابعة العمل</p>
-            </div>
-            <button onclick="loginWithGoogle()" class="w-full bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 py-3.5 rounded-2xl font-bold text-xs shadow-sm flex items-center justify-center space-x-2 space-x-reverse transition-all">
-                <i class="fa-brands fa-google text-red-500 text-base"></i>
-                <span>تسجيل الدخول باستخدام Google</span>
-            </button>
-        </div>
-    </div>
-
     <!-- TOP HEADER -->
     <header class="bg-white/90 backdrop-blur-md sticky top-0 z-40 border-b border-blush-100 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
@@ -77,10 +60,9 @@
             </div>
 
             <div class="flex items-center space-x-3 space-x-reverse">
-                <div class="hidden sm:flex items-center space-x-1.5 space-x-reverse bg-slate-100 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700">
+                <div class="flex items-center space-x-1.5 space-x-reverse bg-slate-100 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700">
                     <i class="fa-solid fa-user-check text-rose-600"></i>
-                    <span id="current-user-display" class="text-rose-600">جاري التحميل...</span>
-                    <button onclick="logoutGoogle()" title="تسجيل الخروج" class="text-[10px] bg-white px-2 py-0.5 rounded-md border shadow-sm mr-2 text-rose-500 hover:bg-rose-50">خروج</button>
+                    <span id="current-user-display" class="text-rose-600">مدير المحل (مباشر)</span>
                 </div>
                 <div class="flex items-center space-x-1 space-x-reverse bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
                     <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
@@ -344,7 +326,7 @@
                     <table class="w-full text-right text-xs">
                         <thead class="bg-slate-50 text-slate-500 font-bold border-b sticky top-0">
                             <tr>
-                                <th class="p-3">إيميل الموظف</th>
+                                <th class="p-3">اسم المستخدم</th>
                                 <th class="p-3">نوع العملية</th>
                                 <th class="p-3">التفاصيل</th>
                                 <th class="p-3 text-left">التاريخ والوقت</th>
@@ -450,7 +432,7 @@
                     <span id="view-ord-date" class="font-semibold text-slate-600"></span>
                 </div>
                 <div class="flex justify-between">
-                    <span class="text-slate-500 font-bold">بواسطة إيميل:</span>
+                    <span class="text-slate-500 font-bold">بواسطة:</span>
                     <span id="view-ord-user" class="font-bold text-rose-600"></span>
                 </div>
                 <div class="flex justify-between">
@@ -642,7 +624,7 @@
     </div>
 
 
-    <!-- SCRIPT ENGINE -->
+    <!-- SCRIPT ENGINE (DIRECT ACCESS WITHOUT LOGIN) -->
     <script>
         const firebaseConfig = {
           apiKey: "AIzaSyAuP10QxT-N1gEo7nW6Zc9I1Nzg9ehdD6E",
@@ -658,10 +640,9 @@
             firebase.initializeApp(firebaseConfig);
         }
         const db = firebase.firestore();
-        const auth = firebase.auth();
 
         const ADMIN_PIN = "2580";
-        let currentAuthUser = null;
+        const currentAuthUser = "مدير المحل (مباشر)";
 
         let state = { 
             products: [], 
@@ -704,36 +685,7 @@
         ];
 
         function initApp() {
-            auth.onAuthStateChanged((user) => {
-                const authScreen = document.getElementById('auth-screen');
-                const userDisplay = document.getElementById('current-user-display');
-                
-                if (user) {
-                    currentAuthUser = user.email || user.displayName || 'مستخدم غير معروف';
-                    if (userDisplay) userDisplay.innerText = currentAuthUser;
-                    if (authScreen) authScreen.classList.add('hidden');
-                    startDataListeners();
-                } else {
-                    currentAuthUser = null;
-                    if (userDisplay) userDisplay.innerText = 'غير مسجل';
-                    if (authScreen) authScreen.classList.remove('hidden');
-                }
-            });
-        }
-
-        function loginWithGoogle() {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            auth.signInWithPopup(provider).then((result) => {
-                console.log("تم تسجيل الدخول بنجاح", result.user);
-            }).catch((error) => {
-                alert("خطأ في تسجيل الدخول: " + error.message);
-            });
-        }
-
-        function logoutGoogle() {
-            auth.signOut().then(() => {
-                location.reload();
-            });
+            startDataListeners();
         }
 
         function startDataListeners() {
@@ -790,7 +742,7 @@
 
         function logActivity(actionType, details) {
             const act = {
-                user: currentAuthUser || 'مجهول',
+                user: currentAuthUser,
                 action: actionType,
                 details: details,
                 date: new Date().toLocaleString('ar-EG'),
@@ -870,7 +822,7 @@
             state.activities.forEach(act => {
                 tbody.innerHTML += `
                     <tr>
-                        <td class="p-3 font-black text-rose-600 flex items-center"><i class="fa-solid fa-envelope-circle-check ml-1.5"></i> ${act.user}</td>
+                        <td class="p-3 font-black text-rose-600 flex items-center"><i class="fa-solid fa-user-shield ml-1.5"></i> ${act.user}</td>
                         <td class="p-3 font-bold text-slate-800">${act.action}</td>
                         <td class="p-3 font-semibold text-slate-600">${act.details}</td>
                         <td class="p-3 text-left font-semibold text-slate-400">${act.date}</td>
@@ -1121,7 +1073,7 @@
 
             const extrasContainer = document.getElementById('pos-view-ord-extras');
             extrasContainer.innerHTML = `
-                <div class="flex justify-between"><span>بواسطة الإيميل:</span> <span class="font-bold text-rose-600">${order.cashierEmail || 'المدير'}</span></div>
+                <div class="flex justify-between"><span>بواسطة:</span> <span class="font-bold text-rose-600">${order.cashierEmail || 'مدير المحل'}</span></div>
                 <div class="flex justify-between"><span>الخصم:</span> <span class="text-rose-600 font-bold">- ${order.discount || 0} EGP</span></div>
                 <div class="flex justify-between"><span>مصاريف التغليف:</span> <span class="font-bold">+ ${order.packaging || 0} EGP</span></div>
                 <div class="flex justify-between"><span>مصاريف الشحن:</span> <span class="font-bold">+ ${order.shipping || 0} EGP</span></div>
@@ -1278,7 +1230,7 @@
                                 <b class="text-slate-900">#${o.id} ${isCancelled ? '<span class="text-amber-600 text-[10px]">(ملغية)</span>' : ''}</b>
                                 <span class="font-black ${isCancelled ? 'text-slate-400 line-through' : 'text-rose-600'}">${o.total} EGP</span>
                             </div>
-                            <p class="text-slate-600 text-[11px] font-semibold">بواسطة: ${o.cashierEmail || 'المدير'} | العميل: ${o.customerName}</p>
+                            <p class="text-slate-600 text-[11px] font-semibold">بواسطة: ${o.cashierEmail || 'مدير المحل'} | العميل: ${o.customerName}</p>
                             <p class="text-slate-400 text-[10px]">${o.date}</p>
                         </div>`;
                 });
@@ -1294,7 +1246,7 @@
             document.getElementById('view-ord-cust-name').innerText = order.customerName;
             document.getElementById('view-ord-cust-phone').innerText = order.customerPhone;
             document.getElementById('view-ord-date').innerText = order.date;
-            document.getElementById('view-ord-user').innerText = order.cashierEmail || 'المدير العام';
+            document.getElementById('view-ord-user').innerText = order.cashierEmail || 'مدير المحل';
             document.getElementById('view-ord-total').innerText = order.total;
 
             const statusEl = document.getElementById('view-ord-status');
@@ -1345,7 +1297,7 @@
                 });
 
                 db.collection("orders").doc(o.firebaseId).update({ status: 'cancelled' });
-                logActivity('إلغاء فاتورة', `قام (${currentAuthUser}) بإلغاء الفاتورة #${o.id}`);
+                logActivity('إلغاء فاتورة', `قام (مدير المحل) بإلغاء الفاتورة #${o.id}`);
                 closeOrderModal();
             }
         }
@@ -1365,7 +1317,7 @@
             if (p) {
                 const newStock = p.stock + 1;
                 db.collection("products").doc(id).update({ stock: newStock });
-                logActivity('زيادة مخزون', `قام (${currentAuthUser}) بزيادة مخزون الصنف (${p.name}) قطعة واحدة`);
+                logActivity('زيادة مخزون', `قام (مدير المحل) بزيادة مخزون الصنف (${p.name}) قطعة واحدة`);
             }
         }
 
@@ -1450,7 +1402,7 @@
                     }
                 });
 
-                logActivity('إصدار فاتورة مبيعات', `قام (${currentAuthUser}) بإصدار الفاتورة #${orderId} للعميل (${custName}) بقيمة ${total} EGP`);
+                logActivity('إصدار فاتورة مبيعات', `قام (مدير المحل) بإصدار الفاتورة #${orderId} للعميل (${custName}) بقيمة ${total} EGP`);
                 alert('تم تأكيد الطلب وخصم المخزون وتسجيل العميل بنجاح!');
                 clearPOSCart();
             }).catch((err) => {
@@ -1504,7 +1456,7 @@
             if (enteredPin === ADMIN_PIN) {
                 closePinModal();
                 switchTab('admin');
-                logActivity('دخول لوحة الإدارة', `قام (${currentAuthUser}) بالدخول للوحة الإدارة`);
+                logActivity('دخول لوحة الإدارة', `قام (مدير المحل) بالدخول للوحة الإدارة`);
             } else {
                 errorMsg.classList.remove('hidden');
             }
@@ -1569,11 +1521,11 @@
 
             if (editId) {
                 db.collection("products").doc(editId).update(prodData);
-                logActivity('تعديل منتج', `قام (${currentAuthUser}) بتعديل بيانات الصنف: ${name} (${code})`);
+                logActivity('تعديل منتج', `قام (مدير المحل) بتعديل بيانات الصنف: ${name} (${code})`);
             } else {
                 const newId = 'p' + Date.now();
                 db.collection("products").doc(newId).set(prodData);
-                logActivity('إضافة منتج جديد', `قام (${currentAuthUser}) بإضافة صنف جديد: ${name} (${code})`);
+                logActivity('إضافة منتج جديد', `قام (مدير المحل) بإضافة صنف جديد: ${name} (${code})`);
             }
 
             closeProductModal();
@@ -1583,7 +1535,7 @@
             const p = state.products.find(x => x.id === id);
             if (confirm('هل أنت متأكد من حذف هذه الهدية نهائياً من السحابة؟')) {
                 db.collection("products").doc(id).delete();
-                logActivity('حذف صنف', `قام (${currentAuthUser}) بحذف الصنف: ${p ? p.name : id}`);
+                logActivity('حذف صنف', `قام (مدير المحل) بحذف الصنف: ${p ? p.name : id}`);
             }
         }
 
@@ -1599,6 +1551,7 @@
             });
             
             const targetTab = document.getElementById('tab-' + tab);
+            if(targetTab) targetTab.nested = false; // dummy
             if(targetTab) targetTab.classList.remove('hidden');
             const activeBtn = document.getElementById('nav-' + tab);
             if(activeBtn) {
