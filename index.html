@@ -271,6 +271,7 @@
                 <p class="text-[11px] text-slate-400 mt-1">أدخل كلمة المرور للمتابعة</p>
             </div>
             <input type="password" id="admin-pin-input" placeholder="كلمة المرور..." class="w-full border border-slate-200 bg-slate-50 p-3 rounded-xl text-center text-sm font-bold focus:outline-none focus:border-rose-500">
+            <p id="pin-error-msg" class="text-rose-500 text-[11px] font-bold hidden">كلمة المرور غير صحيحة!</p>
             <div class="flex space-x-2 space-x-reverse pt-1">
                 <button onclick="closePinModal()" class="w-1/2 bg-slate-100 py-2.5 rounded-xl text-xs font-bold text-slate-600">إلغاء</button>
                 <button onclick="verifyAdminPin()" class="w-1/2 bg-rose-600 text-white py-2.5 rounded-xl text-xs font-bold shadow-md">دخول</button>
@@ -430,9 +431,8 @@
     </div>
 
 
-    <!-- SCRIPT ENGINE (FIREBASE CLOUD SYNC) -->
+    <!-- SCRIPT ENGINE -->
     <script>
-        // إعدادات الـ Firebase الخاصة بك
         const firebaseConfig = {
           apiKey: "AIzaSyAuP10QxT-N1gEo7nW6Zc9I1Nzg9ehdD6E",
           authDomain: "farafero-store-99e0d.firebaseapp.com",
@@ -443,7 +443,6 @@
           measurementId: "G-Q736FT0ZH5"
         };
 
-        // تهيئة Firebase
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
@@ -460,7 +459,6 @@
         ];
 
         function initApp() {
-            // استماع سحابي فوري للمنتجات
             db.collection("products").onSnapshot((snapshot) => {
                 if (snapshot.empty) {
                     defaultProducts.forEach(p => {
@@ -475,7 +473,6 @@
                 }
             });
 
-            // استماع سحابي فوري للفواتير والطلبات
             db.collection("orders").orderBy("date", "desc").onSnapshot((snapshot) => {
                 state.orders = [];
                 snapshot.forEach((doc) => {
@@ -731,7 +728,6 @@
                 db.collection("orders").doc(o.firebaseId).update({ status: 'cancelled' });
 
                 closeOrderModal();
-                alert('تم إلغاء الفاتورة وإرجاع الكميات بنجاح.');
             }
         }
 
@@ -809,6 +805,7 @@
 
         function requestAdminAccess() {
             document.getElementById('admin-pin-input').value = '';
+            document.getElementById('pin-error-msg').classList.add('hidden');
             document.getElementById('admin-pin-modal').classList.remove('hidden');
         }
 
@@ -818,11 +815,12 @@
 
         function verifyAdminPin() {
             const enteredPin = document.getElementById('admin-pin-input').value.trim();
+            const errorMsg = document.getElementById('pin-error-msg');
             if (enteredPin === ADMIN_PIN) {
                 closePinModal();
                 switchTab('admin');
             } else {
-                alert('كلمة المرور غير صحيحة! كلمة المرور هي 2580');
+                errorMsg.classList.remove('hidden'); // إظهار خطأ ناعم داخل النافذة بدل رسالة المتصفح المنبثقة
             }
         }
 
@@ -867,17 +865,15 @@
             const category = document.getElementById('prod-category').value;
             const image = document.getElementById('prod-image').value.trim() || "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&q=80";
 
-            if (!name || isNaN(price)) return alert('برجاء إدخال اسم الهدية وسعر البيع بشكل صحيح!');
+            if (!name || isNaN(price)) return;
 
             const prodData = { code, name, cost, price, stock, category, image };
 
             if (editId) {
                 db.collection("products").doc(editId).update(prodData);
-                alert('تم تعديل بيانات الهدية سحابياً بنجاح!');
             } else {
                 const newId = 'p' + Date.now();
                 db.collection("products").doc(newId).set(prodData);
-                alert('تم إضافة الهدية الجديدة سحابياً بنجاح!');
             }
 
             closeProductModal();
