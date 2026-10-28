@@ -11,6 +11,7 @@
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
     <script>
@@ -45,6 +46,23 @@
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col pb-24 md:pb-0">
 
+    <!-- LOGIN SCREEN (صفحة تسجيل الدخول بالـ Google إذا لم يتم تسجيل الدخول) -->
+    <div id="auth-screen" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl w-full max-w-sm p-8 shadow-2xl space-y-6 text-center">
+            <div class="w-16 h-16 bg-gradient-to-tr from-blush-500 to-rosegold-500 rounded-3xl flex items-center justify-center text-white shadow-lg mx-auto text-2xl">
+                <i class="fa-solid fa-store"></i>
+            </div>
+            <div class="space-y-1">
+                <h2 class="text-xl font-black text-slate-900">تسجيل دخول الموظفين</h2>
+                <p class="text-xs text-slate-500">اختر حساب جوجل الخاص بك للبدء في استخدام النظام ومتابعة العمل</p>
+            </div>
+            <button onclick="loginWithGoogle()" class="w-full bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 py-3.5 rounded-2xl font-bold text-xs shadow-sm flex items-center justify-center space-x-2 space-x-reverse transition-all">
+                <i class="fa-brands fa-google text-red-500 text-base"></i>
+                <span>تسجيل الدخول باستخدام Google</span>
+            </button>
+        </div>
+    </div>
+
     <!-- TOP HEADER -->
     <header class="bg-white/90 backdrop-blur-md sticky top-0 z-40 border-b border-blush-100 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
@@ -58,13 +76,12 @@
                 </div>
             </div>
 
-            <!-- اسم المستخدم الحالي السريع -->
+            <!-- عرض إيميل المستخدم الحالي وزر الخروج -->
             <div class="flex items-center space-x-3 space-x-reverse">
                 <div class="hidden sm:flex items-center space-x-1.5 space-x-reverse bg-slate-100 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700">
-                    <i class="fa-solid fa-user-gear text-rose-600"></i>
-                    <span>المستخدم:</span>
-                    <span id="current-user-display" class="text-rose-600">المدير العام</span>
-                    <button onclick="changeActiveUser()" class="text-[10px] bg-white px-2 py-0.5 rounded-md border shadow-sm mr-2 text-slate-500 hover:text-rose-600">تغيير</button>
+                    <i class="fa-solid fa-user-check text-rose-600"></i>
+                    <span id="current-user-display" class="text-rose-600">جاري التحميل...</span>
+                    <button onclick="logoutGoogle()" title="تسجيل الخروج" class="text-[10px] bg-white px-2 py-0.5 rounded-md border shadow-sm mr-2 text-rose-500 hover:bg-rose-50">خروج</button>
                 </div>
                 <div class="flex items-center space-x-1 space-x-reverse bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
                     <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
@@ -75,7 +92,7 @@
     </header>
 
     <!-- NAVIGATION BAR -->
-    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-1 py-3 flex justify-around shadow-2xl z-50 max-w-xl mx-auto md:max-w-7xl">
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-2 py-3 flex justify-around shadow-2xl z-50 max-w-xl mx-auto md:max-w-7xl">
         <button onclick="switchTab('catalog')" id="nav-catalog" class="nav-btn text-xs font-bold text-rose-600 flex flex-col items-center transition-all">
             <i class="fa-solid fa-gift text-base mb-1"></i> الهدايا
         </button>
@@ -116,7 +133,7 @@
             </div>
         </div>
 
-        <!-- TAB 1.5: BEST SELLER (الأكثر مبيعا) -->
+        <!-- TAB 1.5: BEST SELLER -->
         <div id="tab-bestseller" class="app-tab hidden space-y-6">
             <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-4">
                 <div class="flex items-center justify-between border-b pb-3">
@@ -136,7 +153,6 @@
         <!-- TAB 2: POS (الحسابات) -->
         <div id="tab-pos" class="app-tab hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <!-- قسم اختيار الهدايا وإنشاء الفاتورة -->
                 <div class="lg:col-span-7 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
                     <div class="flex items-center justify-between border-b pb-3">
                         <h3 class="text-xl font-black text-slate-900 flex items-center">
@@ -148,7 +164,6 @@
                     <div id="pos-product-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[480px] overflow-y-auto custom-scrollbar p-1"></div>
                 </div>
 
-                <!-- عربة التسوق وتأكيد الفاتورة -->
                 <div class="lg:col-span-5 space-y-6">
                     <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-lg flex flex-col justify-between space-y-4">
                         <div class="space-y-3">
@@ -209,7 +224,6 @@
                         </div>
                     </div>
 
-                    <!-- سجل الفواتير الصادرة في قسم الحسابات -->
                     <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-3">
                         <div class="border-b pb-2 flex justify-between items-center">
                             <h4 class="font-black text-slate-900 text-sm flex items-center">
@@ -319,11 +333,11 @@
                 </div>
             </div>
 
-            <!-- سجل النشاطات والعمليات (مين عمل إيه؟) -->
+            <!-- سجل النشاطات والعمليات -->
             <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-4">
                 <div class="flex justify-between items-center border-b pb-3">
                     <h3 class="text-lg font-black text-slate-900 flex items-center">
-                        <i class="fa-solid fa-clipboard-user text-rose-600 ml-2"></i> سجل نشاطات الموظفين والكاشير (مين عمل إيه؟)
+                        <i class="fa-solid fa-clipboard-user text-rose-600 ml-2"></i> سجل نشاطات الموظفين (مين عمل إيه بالإيميل؟)
                     </h3>
                     <span class="text-[10px] bg-slate-100 text-slate-600 px-3 py-1 rounded-xl font-bold">متابعة لحظية</span>
                 </div>
@@ -331,7 +345,7 @@
                     <table class="w-full text-right text-xs">
                         <thead class="bg-slate-50 text-slate-500 font-bold border-b sticky top-0">
                             <tr>
-                                <th class="p-3">اسم المستخدم / الكاشير</th>
+                                <th class="p-3">إيميل الموظف</th>
                                 <th class="p-3">نوع العملية</th>
                                 <th class="p-3">التفاصيل</th>
                                 <th class="p-3 text-left">التاريخ والوقت</th>
@@ -381,7 +395,6 @@
                     </div>
                 </div>
 
-                <!-- سجل الفواتير الصادرة في الإدارة -->
                 <div class="lg:col-span-4 bg-white rounded-3xl p-6 border shadow-sm space-y-4">
                     <div class="border-b pb-3">
                         <h3 class="text-lg font-black text-slate-900">سجل الفواتير الصادرة (إدارة)</h3>
@@ -413,26 +426,6 @@
         </div>
     </div>
 
-    <!-- USER SELECT / LOGIN MODAL -->
-    <div id="user-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl w-full max-w-xs p-6 shadow-2xl space-y-4 text-center">
-            <div class="w-12 h-12 bg-blush-50 text-blush-600 rounded-2xl flex items-center justify-center mx-auto text-xl shadow-inner">
-                <i class="fa-solid fa-user-check"></i>
-            </div>
-            <div>
-                <h3 class="font-black text-base text-slate-900">اختر اسم المستخدم / الكاشير</h3>
-                <p class="text-[11px] text-slate-400 mt-1">مين اللي شغال على السيستم دلوقتي؟</p>
-            </div>
-            <select id="active-user-select" class="w-full border border-slate-200 bg-slate-50 p-3 rounded-xl text-center text-sm font-bold focus:outline-none focus:border-rose-500">
-                <option value="المدير العام">المدير العام</option>
-                <option value="كاشير 1 (أحمد)">كاشير 1 (أحمد)</option>
-                <option value="كاشير 2 (محمود)">كاشير 2 (محمود)</option>
-                <option value="مساعد المحل">مساعد المحل</option>
-            </select>
-            <button onclick="saveActiveUser()" class="w-full bg-rose-600 text-white py-2.5 rounded-xl text-xs font-bold shadow-md">متابعة العمل</button>
-        </div>
-    </div>
-
     <!-- VIEW ORDER DETAILS MODAL (ADMIN) -->
     <div id="order-details-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-4">
@@ -458,7 +451,7 @@
                     <span id="view-ord-date" class="font-semibold text-slate-600"></span>
                 </div>
                 <div class="flex justify-between">
-                    <span class="text-slate-500 font-bold">تمت بواسطة:</span>
+                    <span class="text-slate-500 font-bold">بواسطة إيميل:</span>
                     <span id="view-ord-user" class="font-bold text-rose-600"></span>
                 </div>
                 <div class="flex justify-between">
@@ -615,7 +608,7 @@
             <div class="space-y-1">
                 <p><b>رقم الفاتورة:</b> <span id="rec-id" class="font-bold text-slate-900"></span></p>
                 <p><b>تاريخ الإصدار:</b> <span id="rec-date"></span></p>
-                <p><b>الكاشير:</b> <span id="rec-user" class="font-bold text-rose-600"></span></p>
+                <p><b>بواسطة:</b> <span id="rec-user" class="font-bold text-rose-600"></span></p>
             </div>
             <div class="space-y-1 text-left dir-rtl">
                 <p><b>اسم العميل:</b> <span id="rec-cust-name" class="font-bold text-slate-900"></span></p>
@@ -666,9 +659,10 @@
             firebase.initializeApp(firebaseConfig);
         }
         const db = firebase.firestore();
+        const auth = firebase.auth();
 
         const ADMIN_PIN = "2580";
-        let currentUser = localStorage.getItem('farafero_active_user') || 'المدير العام';
+        let currentAuthUser = null;
 
         let state = { 
             products: [], 
@@ -711,8 +705,34 @@
         ];
 
         function initApp() {
-            document.getElementById('current-user-display').innerText = currentUser;
+            // مراقبة حالة تسجيل الدخول عبر Firebase Auth
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    currentAuthUser = user.email || user.displayName || 'مستخدم غير معروف';
+                    document.getElementById('current-user-display').innerText = currentAuthUser;
+                    document.getElementById('auth-screen').classList.add('hidden');
+                    startDataListeners();
+                } else {
+                    currentAuthUser = null;
+                    document.getElementById('auth-screen').classList.remove('hidden');
+                }
+            });
+        }
 
+        function loginWithGoogle() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider).catch((error) => {
+                alert('فشل تسجيل الدخول: ' + error.message);
+            });
+        }
+
+        function logoutGoogle() {
+            auth.signOut().then(() => {
+                location.reload();
+            });
+        }
+
+        function startDataListeners() {
             db.collection("settings").doc("categories").onSnapshot((doc) => {
                 if (doc.exists && doc.data().list) {
                     state.categories = doc.data().list;
@@ -753,7 +773,6 @@
                 renderCustomersPage();
             });
 
-            // جلب سجل النشاطات
             db.collection("activities").orderBy("timestamp", "desc").limit(50).onSnapshot((snapshot) => {
                 state.activities = [];
                 snapshot.forEach((doc) => {
@@ -767,26 +786,13 @@
 
         function logActivity(actionType, details) {
             const act = {
-                user: currentUser,
+                user: currentAuthUser || 'مجهول',
                 action: actionType,
                 details: details,
                 date: new Date().toLocaleString('ar-EG'),
                 timestamp: Date.now()
             };
             db.collection("activities").add(act);
-        }
-
-        function changeActiveUser() {
-            document.getElementById('active-user-select').value = currentUser;
-            document.getElementById('user-modal').classList.remove('hidden');
-        }
-
-        function saveActiveUser() {
-            currentUser = document.getElementById('active-user-select').value;
-            localStorage.setItem('farafero_active_user', currentUser);
-            document.getElementById('current-user-display').innerText = currentUser;
-            document.getElementById('user-modal').classList.add('hidden');
-            logActivity('تسجيل دخول / تبديل مستخدم', `تم العمل بواسطة: ${currentUser}`);
         }
 
         function renderAll() {
@@ -802,13 +808,11 @@
             populateCategoryDropdown();
         }
 
-        // دالة حساب وعرض الأكثر مبيعا
         function renderBestSellers() {
             const grid = document.getElementById('bestseller-grid');
             if(!grid) return;
             grid.innerHTML = '';
 
-            // تجميع المبيعات لكل منتج
             let salesMap = {};
             state.products.forEach(p => {
                 salesMap[p.id] = { ...p, totalSold: 0 };
@@ -824,7 +828,6 @@
                 }
             });
 
-            // تحويل الخريطة إلى مصفوفة وترتيبها تنازلياً حسب الأكثر مبيعا
             let sortedSellers = Object.values(salesMap).sort((a, b) => b.totalSold - a.totalSold);
 
             sortedSellers.forEach((p, idx) => {
@@ -863,8 +866,8 @@
             state.activities.forEach(act => {
                 tbody.innerHTML += `
                     <tr>
-                        <td class="p-3 font-black text-slate-900 flex items-center"><i class="fa-solid fa-user-circle text-rose-500 ml-1.5"></i> ${act.user}</td>
-                        <td class="p-3 font-bold text-rose-600">${act.action}</td>
+                        <td class="p-3 font-black text-rose-600 flex items-center"><i class="fa-solid fa-envelope-circle-check ml-1.5"></i> ${act.user}</td>
+                        <td class="p-3 font-bold text-slate-800">${act.action}</td>
                         <td class="p-3 font-semibold text-slate-600">${act.details}</td>
                         <td class="p-3 text-left font-semibold text-slate-400">${act.date}</td>
                     </tr>
@@ -1080,7 +1083,7 @@
                             <span class="font-black ${isCancelled ? 'text-slate-400 line-through' : 'text-rose-600'}">${o.total} EGP</span>
                         </div>
                         <div class="flex justify-between items-center text-[10px]">
-                            <span class="text-slate-600">بواسطة: ${o.cashier || 'المدير'} | العميل: ${o.customerName}</span>
+                            <span class="text-slate-600">بواسطة: ${o.cashierEmail || 'المدير'} | العميل: ${o.customerName}</span>
                             <button onclick="printDirectOrder('${o.firebaseId}')" title="طباعة الفاتورة" class="bg-slate-800 hover:bg-slate-900 text-white font-bold px-2 py-0.5 rounded-md flex items-center space-x-1 space-x-reverse transition-all">
                                 <i class="fa-solid fa-print"></i>
                                 <span>طباعة / PDF</span>
@@ -1114,7 +1117,7 @@
 
             const extrasContainer = document.getElementById('pos-view-ord-extras');
             extrasContainer.innerHTML = `
-                <div class="flex justify-between"><span>بواسطة الكاشير:</span> <span class="font-bold text-rose-600">${order.cashier || 'المدير'}</span></div>
+                <div class="flex justify-between"><span>بواسطة الإيميل:</span> <span class="font-bold text-rose-600">${order.cashierEmail || 'المدير'}</span></div>
                 <div class="flex justify-between"><span>الخصم:</span> <span class="text-rose-600 font-bold">- ${order.discount || 0} EGP</span></div>
                 <div class="flex justify-between"><span>مصاريف التغليف:</span> <span class="font-bold">+ ${order.packaging || 0} EGP</span></div>
                 <div class="flex justify-between"><span>مصاريف الشحن:</span> <span class="font-bold">+ ${order.shipping || 0} EGP</span></div>
@@ -1130,13 +1133,13 @@
         function printPOSOrderFromModal() {
             if (!state.posActiveModalOrder) return;
             const o = state.posActiveModalOrder;
-            generateReceiptPDF(o.detailedItems, o.customerName, o.customerPhone, o.total, o.id, o.date, o.discount, o.packaging, o.shipping, o.cashier);
+            generateReceiptPDF(o.detailedItems, o.customerName, o.customerPhone, o.total, o.id, o.date, o.discount, o.packaging, o.shipping, o.cashierEmail);
         }
 
         function printDirectOrder(firebaseId) {
             const o = state.orders.find(x => x.firebaseId === firebaseId);
             if (!o) return;
-            generateReceiptPDF(o.detailedItems, o.customerName, o.customerPhone, o.total, o.id, o.date, o.discount, o.packaging, o.shipping, o.cashier);
+            generateReceiptPDF(o.detailedItems, o.customerName, o.customerPhone, o.total, o.id, o.date, o.discount, o.packaging, o.shipping, o.cashierEmail);
         }
 
         function addToPOS(id) {
@@ -1271,7 +1274,7 @@
                                 <b class="text-slate-900">#${o.id} ${isCancelled ? '<span class="text-amber-600 text-[10px]">(ملغية)</span>' : ''}</b>
                                 <span class="font-black ${isCancelled ? 'text-slate-400 line-through' : 'text-rose-600'}">${o.total} EGP</span>
                             </div>
-                            <p class="text-slate-600 text-[11px] font-semibold">بواسطة: ${o.cashier || 'المدير'} | العميل: ${o.customerName}</p>
+                            <p class="text-slate-600 text-[11px] font-semibold">بواسطة: ${o.cashierEmail || 'المدير'} | العميل: ${o.customerName}</p>
                             <p class="text-slate-400 text-[10px]">${o.date}</p>
                         </div>`;
                 });
@@ -1287,7 +1290,7 @@
             document.getElementById('view-ord-cust-name').innerText = order.customerName;
             document.getElementById('view-ord-cust-phone').innerText = order.customerPhone;
             document.getElementById('view-ord-date').innerText = order.date;
-            document.getElementById('view-ord-user').innerText = order.cashier || 'المدير العام';
+            document.getElementById('view-ord-user').innerText = order.cashierEmail || 'المدير العام';
             document.getElementById('view-ord-total').innerText = order.total;
 
             const statusEl = document.getElementById('view-ord-status');
@@ -1338,7 +1341,7 @@
                 });
 
                 db.collection("orders").doc(o.firebaseId).update({ status: 'cancelled' });
-                logActivity('إلغاء فاتورة', `قام (${currentUser}) بإلغاء الفاتورة #${o.id}`);
+                logActivity('إلغاء فاتورة', `قام (${currentAuthUser}) بإلغاء الفاتورة #${o.id}`);
                 closeOrderModal();
             }
         }
@@ -1350,7 +1353,7 @@
         function printCurrentModalOrder() {
             if (!state.currentActiveModalOrder) return;
             const o = state.currentActiveModalOrder;
-            generateReceiptPDF(o.detailedItems, o.customerName, o.customerPhone, o.total, o.id, o.date, o.discount, o.packaging, o.shipping, o.cashier);
+            generateReceiptPDF(o.detailedItems, o.customerName, o.customerPhone, o.total, o.id, o.date, o.discount, o.packaging, o.shipping, o.cashierEmail);
         }
 
         function increaseStock(id) {
@@ -1358,7 +1361,7 @@
             if (p) {
                 const newStock = p.stock + 1;
                 db.collection("products").doc(id).update({ stock: newStock });
-                logActivity('زيادة مخزون', `قام (${currentUser}) بزيادة مخزون الصنف (${p.name}) قطعة واحدة`);
+                logActivity('زيادة مخزون', `قام (${currentAuthUser}) بزيادة مخزون الصنف (${p.name}) قطعة واحدة`);
             }
         }
 
@@ -1373,7 +1376,7 @@
             const previewId = 'PREV-' + Math.floor(1000 + Math.random() * 9000);
             const dateStr = new Date().toLocaleString('ar-EG');
 
-            generateReceiptPDF(state.posCart, custName, custPhone, total, previewId, dateStr, discount, packaging, shipping, currentUser);
+            generateReceiptPDF(state.posCart, custName, custPhone, total, previewId, dateStr, discount, packaging, shipping, currentAuthUser);
         }
 
         function checkoutPOS() {
@@ -1413,7 +1416,7 @@
                 shipping: shipping,
                 customerName: custName,
                 customerPhone: custPhone,
-                cashier: currentUser,
+                cashierEmail: currentAuthUser,
                 status: 'active',
                 detailedItems: JSON.parse(JSON.stringify(state.posCart))
             };
@@ -1443,7 +1446,7 @@
                     }
                 });
 
-                logActivity('إصدار فاتورة مبيعات', `قام (${currentUser}) بإصدار الفاتورة #${orderId} للعميل (${custName}) بقيمة ${total} EGP`);
+                logActivity('إصدار فاتورة مبيعات', `قام (${currentAuthUser}) بإصدار الفاتورة #${orderId} للعميل (${custName}) بقيمة ${total} EGP`);
                 alert('تم تأكيد الطلب وخصم المخزون وتسجيل العميل بنجاح!');
                 clearPOSCart();
             }).catch((err) => {
@@ -1451,10 +1454,10 @@
             });
         }
 
-        function generateReceiptPDF(items, custName, custPhone, total, orderId, dateStr, discount, packaging, shipping, cashierName) {
+        function generateReceiptPDF(items, custName, custPhone, total, orderId, dateStr, discount, packaging, shipping, userEmail) {
             document.getElementById('rec-id').innerText = orderId;
             document.getElementById('rec-date').innerText = dateStr;
-            document.getElementById('rec-user').innerText = cashierName || currentUser;
+            document.getElementById('rec-user').innerText = userEmail || currentAuthUser;
             document.getElementById('rec-cust-name').innerText = custName;
             document.getElementById('rec-cust-phone').innerText = custPhone;
             
@@ -1497,7 +1500,7 @@
             if (enteredPin === ADMIN_PIN) {
                 closePinModal();
                 switchTab('admin');
-                logActivity('دخول لوحة الإدارة', `قام (${currentUser}) بالدخول للوحة الإدارة الصلاحيات العالية`);
+                logActivity('دخول لوحة الإدارة', `قام (${currentAuthUser}) بالدخول للوحة الإدارة`);
             } else {
                 errorMsg.classList.remove('hidden');
             }
@@ -1535,7 +1538,7 @@
             document.getElementById('prod-name').value = p.name;
             document.getElementById('prod-cost').value = p.cost || 0;
             document.getElementById('prod-price').value = p.price;
-            document.getElementById('prod-stock').value = p.stock;
+            document.getElementById('prod-stock').value, p.stock;
             populateCategoryDropdown();
             document.getElementById('prod-category').value = p.category;
             document.getElementById('prod-image').value = p.image;
@@ -1562,11 +1565,11 @@
 
             if (editId) {
                 db.collection("products").doc(editId).update(prodData);
-                logActivity('تعديل منتج', `قام (${currentUser}) بتعديل بيانات الصنف: ${name} (${code})`);
+                logActivity('تعديل منتج', `قام (${currentAuthUser}) بتعديل بيانات الصنف: ${name} (${code})`);
             } else {
                 const newId = 'p' + Date.now();
                 db.collection("products").doc(newId).set(prodData);
-                logActivity('إضافة منتج جديد', `قام (${currentUser}) بإضافة صنف جديد: ${name} (${code})`);
+                logActivity('إضافة منتج جديد', `قام (${currentAuthUser}) بإضافة صنف جديد: ${name} (${code})`);
             }
 
             closeProductModal();
@@ -1576,7 +1579,7 @@
             const p = state.products.find(x => x.id === id);
             if (confirm('هل أنت متأكد من حذف هذه الهدية نهائياً من السحابة؟')) {
                 db.collection("products").doc(id).delete();
-                logActivity('حذف صنف', `قام (${currentUser}) بحذف الصنف: ${p ? p.name : id}`);
+                logActivity('حذف صنف', `قام (${currentAuthUser}) بحذف الصنف: ${p ? p.name : id}`);
             }
         }
 
@@ -1584,7 +1587,7 @@
             ['catalog', 'bestseller', 'pos', 'customers', 'inventory', 'admin'].forEach(t => {
                 const el = document.getElementById('tab-' + t);
                 if(el) el.classList.add('hidden');
-                const btn = document.getElementById('nav-' + t);
+                const, btn = document.getElementById('nav-' + t);
                 if(btn) {
                     btn.classList.remove('text-rose-600');
                     btn.classList.add('text-slate-400');
