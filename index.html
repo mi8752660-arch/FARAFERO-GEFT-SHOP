@@ -477,8 +477,8 @@
             <input type="hidden" id="edit-prod-id">
             <div class="space-y-3 text-xs font-bold">
                 <div>
-                    <label class="text-slate-600 block mb-1">كود الهدية (مثال: G-001):</label>
-                    <input type="text" id="prod-code" placeholder="أدخل الكود..." class="w-full border p-2.5 rounded-xl">
+                    <label class="text-slate-600 block mb-1">كود الهدية (متسلسل تلقائياً):</label>
+                    <input type="text" id="prod-code" readonly class="w-full border p-2.5 rounded-xl bg-slate-100 text-rose-600 font-black cursor-not-allowed">
                 </div>
                 <div>
                     <label class="text-slate-600 block mb-1">اسم الهدية / الموديل:</label>
@@ -496,7 +496,7 @@
                 </div>
                 <div>
                     <label class="text-slate-600 block mb-1">الكمية بالمخزن:</label>
-                    <input type="number" id="prod-stock" placeholder="الكمية..." class="w-full border p-2.5 rounded-xl">
+                    <input type="number" id="prod-stock" value="100" placeholder="الكمية..." class="w-full border p-2.5 rounded-xl">
                 </div>
                 <div>
                     <label class="text-slate-600 block mb-1">القسم (اختر الفئة المخصصة):</label>
@@ -593,11 +593,13 @@
         const ADMIN_PIN = "2580";
         let state = { products: [], orders: [], customers: [], categories: ["ملابس وهدايا", "إكسسوارات", "صناديق وتغليف", "عطور"], posCart: [], currentActiveModalOrder: null, posActiveModalOrder: null, lastCheckoutOrder: null, openCategory: null };
 
+        // 5 أنواع بضاعة مرتبطة بالفئات وبرصيد 100 قطعة لكل صنف مع صور
         const defaultProducts = [
-            { id: "p1", code: "G-001", name: "دبدوب أحمر كبير", category: "ملابس وهدايا", cost: 250, price: 350, stock: 20, image: "https://images.unsplash.com/photo-1582293041079-7814c2f12063?w=500&q=80" },
-            { id: "p2", code: "G-002", name: "صندوق خشبي فاخر", category: "صناديق وتغليف", cost: 100, price: 150, stock: 15, image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&q=80" },
-            { id: "p3", code: "G-003", name: "بوكيه ورد جوري أحمر", category: "ملابس وهدايا", cost: 280, price: 400, stock: 10, image: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=500&q=80" },
-            { id: "p4", code: "G-004", name: "عطر فرافيرو الملكي الفاخر", category: "عطور", cost: 450, price: 650, stock: 12, image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=500&q=80" }
+            { id: "p1", code: "G-001", name: "بيجاما قطيفة نسائية فاخرة", category: "ملابس وهدايا", cost: 250, price: 450, stock: 100, image: "https://images.unsplash.com/photo-1582293041079-7814c2f12063?w=500&q=80" },
+            { id: "p2", code: "G-002", name: "سلسلة فضة عيار 925 مرصعة", category: "إكسسوارات", cost: 150, price: 300, stock: 100, image: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500&q=80" },
+            { id: "p3", code: "G-003", name: "صندوق هدايا مخملي وردي مع شريطة", category: "صناديق وتغليف", cost: 80, price: 150, stock: 100, image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&q=80" },
+            { id: "p4", code: "G-004", name: "عطر روز ماري الفرنسي المركز", category: "عطور", cost: 350, price: 600, stock: 100, image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=500&q=80" },
+            { id: "p5", code: "G-005", name: "بوكيه ورد جوري أحمر طبيعي مع تنسيق", category: "ملابس وهدايا", cost: 200, price: 350, stock: 100, image: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=500&q=80" }
         ];
 
         function initApp() {
@@ -1136,7 +1138,6 @@
             }
         }
 
-        // معاينة الفاتورة قبل الخصم وتأكيد الطلب
         function previewPOSReceiptBeforeCheckout() {
             if (state.posCart.length === 0) return alert('برجاء اختيار هدايا للفاتورة أولاً!');
             const custName = document.getElementById('cust-name').value.trim() || 'عميل نقدي';
@@ -1285,11 +1286,16 @@
         function openAddProductModal() {
             document.getElementById('modal-title').innerText = 'إضافة هدية جديدة للمخزن';
             document.getElementById('edit-prod-id').value = '';
-            document.getElementById('prod-code').value = '';
+            
+            // توليد كود مسلسل تلقائي جديد بناءً على عدد المنتجات الحالية
+            const nextCodeNum = state.products.length + 1;
+            const generatedCode = 'G-' + String(nextCodeNum).padStart(3, '0');
+            document.getElementById('prod-code').value = generatedCode;
+
             document.getElementById('prod-name').value = '';
             document.getElementById('prod-cost').value = '';
             document.getElementById('prod-price').value = '';
-            document.getElementById('prod-stock').value = '';
+            document.getElementById('prod-stock').value = '100';
             document.getElementById('prod-image').value = '';
             populateCategoryDropdown();
             document.getElementById('product-modal').classList.remove('hidden');
@@ -1300,7 +1306,7 @@
             if (!p) return;
             document.getElementById('modal-title').innerText = 'تعديل بيانات ومواصفات الهدية';
             document.getElementById('edit-prod-id').value = p.id;
-            document.getElementById('prod-code').value = p.code || '';
+            document.getElementById('prod-code').value = p.code || 'G-001';
             document.getElementById('prod-name').value = p.name;
             document.getElementById('prod-cost').value = p.cost || 0;
             document.getElementById('prod-price').value = p.price;
@@ -1321,11 +1327,11 @@
             const name = document.getElementById('prod-name').value.trim();
             const cost = parseFloat(document.getElementById('prod-cost').value) || 0;
             const price = parseFloat(document.getElementById('prod-price').value);
-            const stock = parseInt(document.getElementById('prod-stock').value) || 0;
+            const stock = parseInt(document.getElementById('prod-stock').value) || 100;
             const category = document.getElementById('prod-category').value;
             const image = document.getElementById('prod-image').value.trim() || "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&q=80";
 
-            if (!name || isNaN(price)) return;
+            if (!name || isNaN(price)) return alert('برجاء إدخال اسم الهدية وسعر البيع!');
 
             const prodData = { code, name, cost, price, stock, category, image };
 
