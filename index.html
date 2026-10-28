@@ -33,25 +33,21 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cf5d78; border-radius: 4px; }
         
-        /* العلامة المائية للفاتورة */
-        .watermark-bg {
-            position: relative;
-        }
-        .watermark-bg::before {
+        /* العلامة المائية في خلفية الويب سايت بالكامل */
+        body::before {
             content: "";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80%;
-            height: 80%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
             background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><g fill="none" stroke="%23ff69b4" stroke-width="3"><path d="M110,60 C80,20 40,50 80,80 C110,100 150,80 150,80 C150,80 190,100 220,80 C260,50 220,20 190,60 C170,80 150,80 150,80 C150,80 130,80 110,60 Z" fill="%23ffb6c1" fill-opacity="0.3"/><circle cx="70" cy="50" r="3" fill="%23ff1493"/><circle cx="230" cy="50" r="3" fill="%23ff1493"/></g><text x="150" y="125" font-family="Cairo, sans-serif" font-weight="900" font-size="28" fill="%23e07a93" text-anchor="middle">FARAFERO</text><text x="150" y="155" font-family="Cairo, sans-serif" font-weight="800" font-size="24" fill="%23e07a93" text-anchor="middle">GIFTS</text><text x="150" y="175" font-family="Cairo, sans-serif" font-weight="600" font-size="10" fill="%23b76e79" letter-spacing="4" text-anchor="middle">GIFT SHOP</text></svg>');
-            background-repeat: no-repeat;
+            background-repeat: repeat;
             background-position: center;
-            background-size: contain;
-            opacity: 0.08; /* بلون باهت جداً */
+            background-size: 350px 250px;
+            opacity: 0.035; /* درجة شفافة وباهتة جداً لا تعيق رؤية المحتوى */
             pointer-events: none;
-            z-index: 0;
+            z-index: -1;
         }
 
         @media print {
@@ -62,19 +58,15 @@
                 direction: rtl !important; font-family: 'Cairo', sans-serif !important; display: block !important;
                 background-color: white !important; padding: 20px !important;
             }
-            .watermark-bg::before {
-                opacity: 0.1 !important; /* درجة وضوح العلامة المائية عند الطباعة */
-            }
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col pb-24 md:pb-0">
+<body class="bg-slate-50/90 text-slate-800 font-sans antialiased min-h-screen flex flex-col pb-24 md:pb-0">
 
     <!-- TOP HEADER -->
     <header class="bg-white/90 backdrop-blur-md sticky top-0 z-40 border-b border-blush-100 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <div class="flex items-center space-x-3 space-x-reverse">
-                <!-- SVG LOGO FARAFERO GIFTS -->
                 <div class="w-12 h-12 flex items-center justify-center">
                     <svg viewBox="0 0 200 180" class="w-full h-full">
                         <path d="M60,50 C30,10 -10,40 30,70 C60,90 100,70 100,70 C100,70 140,90 170,70 C210,40 170,10 140,50 C120,70 100,70 100,70 C100,70 80,70 60,50 Z" fill="#ffb6c1" stroke="#ff69b4" stroke-width="4"/>
@@ -583,9 +575,9 @@
         </div>
     </div>
 
-    <!-- PRINTABLE RECEIPT TEMPLATE (مع العلامة المائية الباهتة) -->
-    <div id="printable-receipt" class="hidden max-w-xl mx-auto p-8 bg-white border border-slate-200 rounded-2xl text-xs space-y-4 watermark-bg">
-        <div class="text-center space-y-2 border-b border-slate-200 pb-4 relative z-10">
+    <!-- PRINTABLE RECEIPT TEMPLATE (بدون علامة مائية وبشكل نظيف تماماً) -->
+    <div id="printable-receipt" class="hidden max-w-xl mx-auto p-8 bg-white border border-slate-200 rounded-2xl text-xs space-y-4">
+        <div class="text-center space-y-2 border-b border-slate-200 pb-4">
             <div class="w-16 h-16 mx-auto flex items-center justify-center">
                 <svg viewBox="0 0 200 180" class="w-full h-full">
                     <path d="M60,50 C30,10 -10,40 30,70 C60,90 100,70 100,70 C100,70 140,90 170,70 C210,40 170,10 140,50 C120,70 100,70 100,70 C100,70 80,70 60,50 Z" fill="#ffb6c1" stroke="#ff69b4" stroke-width="4"/>
@@ -601,7 +593,7 @@
             <p class="text-xs font-bold text-rose-600">فاتورة مبيعات معتمدة</p>
         </div>
 
-        <div class="grid grid-cols-2 gap-3 bg-slate-50/90 p-4 rounded-xl border border-slate-200 text-slate-700 text-[11px] relative z-10">
+        <div class="grid grid-cols-2 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200 text-slate-700 text-[11px]">
             <div class="space-y-1">
                 <p><b>اسم العميل:</b> <span id="rec-cust-name" class="font-bold text-slate-900"></span></p>
                 <p><b>رقم الهاتف:</b> <span id="rec-cust-phone"></span></p>
@@ -612,11 +604,11 @@
             </div>
         </div>
 
-        <div class="space-y-2 pt-2 relative z-10">
+        <div class="space-y-2 pt-2">
             <h3 class="font-black text-slate-900 text-xs border-b pb-1">تفاصيل البضاعة المباعة:</h3>
             <table class="w-full text-right text-xs">
                 <thead>
-                    <tr class="bg-slate-100/90 text-slate-600 font-bold border-b">
+                    <tr class="bg-slate-100 text-slate-600 font-bold border-b">
                         <th class="p-2">الصنف</th>
                         <th class="p-2 text-center">الكمية</th>
                         <th class="p-2 text-center">السعر</th>
@@ -627,14 +619,14 @@
             </table>
         </div>
 
-        <div id="rec-extras-section" class="space-y-1 border-t pt-2 text-[11px] font-bold text-slate-700 relative z-10"></div>
+        <div id="rec-extras-section" class="space-y-1 border-t pt-2 text-[11px] font-bold text-slate-700"></div>
 
-        <div class="border-t-2 border-rose-600 pt-3 flex justify-between items-center text-base font-black text-slate-900 relative z-10">
+        <div class="border-t-2 border-rose-600 pt-3 flex justify-between items-center text-base font-black text-slate-900">
             <span>الإجمالي النهائي المستحق:</span>
             <span class="text-rose-600 text-xl"><span id="rec-grand-total">0</span> EGP</span>
         </div>
 
-        <div class="text-center pt-6 border-t border-slate-100 text-[10px] text-slate-400 space-y-1 font-bold relative z-10">
+        <div class="text-center pt-6 border-t border-slate-100 text-[10px] text-slate-400 space-y-1 font-bold">
             <p>شكراً لتعاملكم معنا! ❤️</p>
         </div>
     </div>
@@ -784,7 +776,7 @@
             sortedSellers.forEach((p, idx) => {
                 let badgeColor = idx === 0 ? 'bg-amber-500 text-white' : idx === 1 ? 'bg-slate-400 text-white' : idx === 2 ? 'bg-amber-700 text-white' : 'bg-slate-100 text-slate-700';
                 grid.innerHTML += `
-                    <div class="bg-white rounded-3xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between space-y-3 relative overflow-hidden">
+                    <div class="bg-white/90 backdrop-blur-sm rounded-3xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between space-y-3 relative overflow-hidden">
                         <span class="absolute top-3 left-3 ${badgeColor} text-[10px] font-black px-2.5 py-1 rounded-xl shadow-sm">المركز #${idx + 1}</span>
                         <div class="h-36 rounded-2xl overflow-hidden bg-slate-100 relative mt-2">
                             <img src="${p.image}" class="w-full h-full object-cover">
@@ -815,7 +807,7 @@
 
             state.products.filter(p => p.name.toLowerCase().includes(search) || (p.code && p.code.toLowerCase().includes(search))).forEach(p => {
                 grid.innerHTML += `
-                    <div onclick="addToPOS('${p.id}')" class="bg-slate-50 hover:bg-rose-50 border p-2.5 rounded-2xl cursor-pointer text-xs space-y-1 transition-all flex flex-col justify-between">
+                    <div onclick="addToPOS('${p.id}')" class="bg-white/80 hover:bg-rose-50 border p-2.5 rounded-2xl cursor-pointer text-xs space-y-1 transition-all flex flex-col justify-between">
                         <div class="flex items-center space-x-2 space-x-reverse">
                             <img src="${p.image}" class="w-8 h-8 rounded-xl object-cover">
                             <div>
@@ -848,7 +840,7 @@
                     let productsHtml = '';
                     filteredProducts.forEach(p => {
                         productsHtml += `
-                            <div class="bg-white rounded-3xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between space-y-3">
+                            <div class="bg-white/90 backdrop-blur-sm rounded-3xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between space-y-3">
                                 <div class="h-36 rounded-2xl overflow-hidden bg-slate-100 relative">
                                     <img src="${p.image}" class="w-full h-full object-cover">
                                     <span class="absolute bottom-2 right-2 bg-rose-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-lg">${p.code || 'بدون كود'}</span>
@@ -869,8 +861,8 @@
                     });
 
                     container.innerHTML += `
-                        <div class="border rounded-2xl overflow-hidden shadow-sm bg-slate-50/50">
-                            <button onclick="toggleCategory('${cat}')" class="w-full flex justify-between items-center p-4 bg-white hover:bg-slate-50 font-black text-slate-900 text-sm transition-all">
+                        <div class="border rounded-2xl overflow-hidden shadow-sm bg-white/50 backdrop-blur-sm">
+                            <button onclick="toggleCategory('${cat}')" class="w-full flex justify-between items-center p-4 bg-white/90 hover:bg-slate-50 font-black text-slate-900 text-sm transition-all">
                                 <div class="flex items-center space-x-2 space-x-reverse">
                                     <i class="fa-solid fa-folder-tree text-rose-600 text-base"></i>
                                     <span>${cat}</span>
@@ -878,7 +870,7 @@
                                 </div>
                                 <i class="fa-solid fa-chevron-${isOpen ? 'up' : 'down'} text-slate-400 text-xs"></i>
                             </button>
-                            <div class="${isOpen ? 'block' : 'hidden'} p-4 border-t bg-slate-50 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div class="${isOpen ? 'block' : 'hidden'} p-4 border-t bg-slate-50/50 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                                 ${productsHtml || '<p class="col-span-full text-center text-slate-400 py-4">لا توجد هدايا في هذه الفئة حالياً</p>'}
                             </div>
                         </div>
@@ -902,7 +894,7 @@
             grid.innerHTML = '';
             state.categories.forEach(cat => {
                 grid.innerHTML += `
-                    <div class="bg-slate-50 border p-3 rounded-2xl flex justify-between items-center text-xs">
+                    <div class="bg-white/80 border p-3 rounded-2xl flex justify-between items-center text-xs">
                         <span class="font-black text-slate-900">${cat}</span>
                         <div class="flex space-x-1 space-x-reverse">
                             <button onclick="openEditCategoryModal('${cat}')" class="bg-sky-50 text-sky-600 px-2.5 py-1 rounded-xl font-bold shadow-sm">تعديل</button>
@@ -1005,7 +997,7 @@
             sortedOrders.forEach(o => {
                 const isCancelled = o.status === 'cancelled';
                 list.innerHTML += `
-                    <div class="bg-slate-50 hover:bg-slate-100 border p-2.5 rounded-xl text-xs space-y-1.5 transition-all shadow-sm ${isCancelled ? 'opacity-60 bg-amber-50/20' : ''}">
+                    <div class="bg-white/80 hover:bg-slate-100 border p-2.5 rounded-xl text-xs space-y-1.5 transition-all shadow-sm ${isCancelled ? 'opacity-60 bg-amber-50/20' : ''}">
                         <div class="flex justify-between items-center cursor-pointer" onclick="openPOSOrderDetails('${o.firebaseId}')">
                             <b class="text-slate-900">${o.id} ${isCancelled ? '<span class="text-amber-600 text-[9px]">(ملغية)</span>' : ''}</b>
                             <span class="font-black ${isCancelled ? 'text-slate-400 line-through' : 'text-rose-600'}">${o.total} EGP</span>
@@ -1196,7 +1188,7 @@
                 sortedOrders.forEach(o => {
                     const isCancelled = o.status === 'cancelled';
                     ordersList.innerHTML += `
-                        <div onclick="openOrderDetails('${o.firebaseId}')" class="bg-slate-50 hover:bg-rose-50 border p-3 rounded-2xl text-xs space-y-1 cursor-pointer transition-all shadow-sm ${isCancelled ? 'opacity-60 border-amber-300 bg-amber-50/30' : ''}">
+                        <div onclick="openOrderDetails('${o.firebaseId}')" class="bg-white/80 hover:bg-rose-50 border p-3 rounded-2xl text-xs space-y-1 cursor-pointer transition-all shadow-sm ${isCancelled ? 'opacity-60 border-amber-300 bg-amber-50/30' : ''}">
                             <div class="flex justify-between items-center">
                                 <b class="text-slate-900">${o.id} ${isCancelled ? '<span class="text-amber-600 text-[10px]">(ملغية)</span>' : ''}</b>
                                 <span class="font-black ${isCancelled ? 'text-slate-400 line-through' : 'text-rose-600'}">${o.total} EGP</span>
@@ -1513,9 +1505,9 @@
                 }
             });
             
-            const targetTab = document.getElementById('tab-' + tab);
+            let targetTab = document.getElementById('tab-' + tab);
             if(targetTab) targetTab.classList.remove('hidden');
-            const activeBtn = document.getElementById('nav-' + tab);
+            let activeBtn = document.getElementById('nav-' + tab);
             if(activeBtn) {
                 activeBtn.classList.remove('text-slate-400');
                 activeBtn.classList.add('text-rose-600');
