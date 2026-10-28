@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FARAFERO STORE - نظام إدارة المحل والمخزون السحابي</title>
+    <title>FARAFERO GIFTS - نظام إدارة المحل والمخزون السحابي</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
@@ -33,6 +33,27 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cf5d78; border-radius: 4px; }
         
+        /* العلامة المائية للفاتورة */
+        .watermark-bg {
+            position: relative;
+        }
+        .watermark-bg::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 80%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><g fill="none" stroke="%23ff69b4" stroke-width="3"><path d="M110,60 C80,20 40,50 80,80 C110,100 150,80 150,80 C150,80 190,100 220,80 C260,50 220,20 190,60 C170,80 150,80 150,80 C150,80 130,80 110,60 Z" fill="%23ffb6c1" fill-opacity="0.3"/><circle cx="70" cy="50" r="3" fill="%23ff1493"/><circle cx="230" cy="50" r="3" fill="%23ff1493"/></g><text x="150" y="125" font-family="Cairo, sans-serif" font-weight="900" font-size="28" fill="%23e07a93" text-anchor="middle">FARAFERO</text><text x="150" y="155" font-family="Cairo, sans-serif" font-weight="800" font-size="24" fill="%23e07a93" text-anchor="middle">GIFTS</text><text x="150" y="175" font-family="Cairo, sans-serif" font-weight="600" font-size="10" fill="%23b76e79" letter-spacing="4" text-anchor="middle">GIFT SHOP</text></svg>');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+            opacity: 0.08; /* بلون باهت جداً */
+            pointer-events: none;
+            z-index: 0;
+        }
+
         @media print {
             body * { visibility: hidden !important; }
             #printable-receipt, #printable-receipt * { visibility: visible !important; }
@@ -40,6 +61,9 @@
                 position: absolute !important; left: 0 !important; top: 0 !important; width: 100% !important; 
                 direction: rtl !important; font-family: 'Cairo', sans-serif !important; display: block !important;
                 background-color: white !important; padding: 20px !important;
+            }
+            .watermark-bg::before {
+                opacity: 0.1 !important; /* درجة وضوح العلامة المائية عند الطباعة */
             }
         }
     </style>
@@ -50,19 +74,28 @@
     <header class="bg-white/90 backdrop-blur-md sticky top-0 z-40 border-b border-blush-100 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <div class="flex items-center space-x-3 space-x-reverse">
-                <div class="w-10 h-10 bg-gradient-to-tr from-blush-500 to-rosegold-500 rounded-2xl flex items-center justify-center text-white shadow-md">
-                    <i class="fa-solid fa-store text-base"></i>
+                <!-- SVG LOGO FARAFERO GIFTS -->
+                <div class="w-12 h-12 flex items-center justify-center">
+                    <svg viewBox="0 0 200 180" class="w-full h-full">
+                        <path d="M60,50 C30,10 -10,40 30,70 C60,90 100,70 100,70 C100,70 140,90 170,70 C210,40 170,10 140,50 C120,70 100,70 100,70 C100,70 80,70 60,50 Z" fill="#ffb6c1" stroke="#ff69b4" stroke-width="4"/>
+                        <path d="M100,70 L100,100" stroke="#ff1493" stroke-width="4"/>
+                        <polygon points="25,35 30,45 20,45" fill="#ff1493"/>
+                        <polygon points="175,35 180,45 170,45" fill="#ff1493"/>
+                        <text x="100" y="125" font-family="Cairo, sans-serif" font-weight="900" font-size="22" fill="#cf5d78" text-anchor="middle">FARAFERO</text>
+                        <text x="100" y="152" font-family="Cairo, sans-serif" font-weight="800" font-size="20" fill="#cf5d78" text-anchor="middle">GIFTS</text>
+                        <text x="100" y="170" font-family="Cairo, sans-serif" font-weight="600" font-size="9" fill="#b76e79" letter-spacing="3" text-anchor="middle">GIFT SHOP</text>
+                    </svg>
                 </div>
                 <div>
-                    <h1 class="text-lg font-black tracking-wide text-slate-900 leading-tight">FARAFERO</h1>
-                    <p class="text-[10px] text-slate-500 font-bold tracking-widest uppercase">نظام إدارة المحل والمخزون</p>
+                    <h1 class="text-lg font-black tracking-wide text-slate-900 leading-tight">FARAFERO GIFTS</h1>
+                    <p class="text-[10px] text-rose-500 font-bold tracking-widest uppercase">متجر الهدايا الحصرية</p>
                 </div>
             </div>
 
             <div class="flex items-center space-x-3 space-x-reverse">
                 <div class="flex items-center space-x-1.5 space-x-reverse bg-slate-100 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700">
                     <i class="fa-solid fa-user-check text-rose-600"></i>
-                    <span id="current-user-display" class="text-rose-600">مدير المحل (مباشر)</span>
+                    <span class="text-rose-600">مدير المحل (مباشر)</span>
                 </div>
                 <div class="flex items-center space-x-1 space-x-reverse bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
                     <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
@@ -122,7 +155,7 @@
                         <h3 class="text-xl font-black text-slate-900 flex items-center">
                             <i class="fa-solid fa-fire text-amber-500 ml-2"></i> الموديلات والهدايا الأكثر مبيعا
                         </h3>
-                        <p class="text-xs text-slate-500 mt-1">ترتيب تصاعدي/تنازلي للأصناف بناءً على إجمالي القطع المباعة من الفواتير المعتمدة</p>
+                        <p class="text-xs text-slate-500 mt-1">ترتيب الأصناف بناءً على إجمالي القطع المباعة من الفواتير المعتمدة</p>
                     </div>
                     <span class="bg-amber-50 text-amber-700 text-xs font-bold px-3 py-1.5 rounded-xl border border-amber-200">الأكثر طلباً</span>
                 </div>
@@ -311,29 +344,6 @@
                     <p class="text-xs font-bold text-slate-400">إجمالي عدد قطع الهدايا بالمخزن</p>
                     <h4 class="text-2xl font-black text-slate-900"><span id="dash-total-pieces">0</span> قطعة</h4>
                     <p class="text-[10px] text-slate-500 font-semibold">مجموع القطع لكل الأصناف</p>
-                </div>
-            </div>
-
-            <!-- سجل النشاطات والعمليات -->
-            <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-4">
-                <div class="flex justify-between items-center border-b pb-3">
-                    <h3 class="text-lg font-black text-slate-900 flex items-center">
-                        <i class="fa-solid fa-clipboard-user text-rose-600 ml-2"></i> سجل نشاطات الموظفين (مين عمل إيه بالإيميل؟)
-                    </h3>
-                    <span class="text-[10px] bg-slate-100 text-slate-600 px-3 py-1 rounded-xl font-bold">متابعة لحظية</span>
-                </div>
-                <div class="overflow-x-auto max-h-[250px] overflow-y-auto custom-scrollbar">
-                    <table class="w-full text-right text-xs">
-                        <thead class="bg-slate-50 text-slate-500 font-bold border-b sticky top-0">
-                            <tr>
-                                <th class="p-3">اسم المستخدم</th>
-                                <th class="p-3">نوع العملية</th>
-                                <th class="p-3">التفاصيل</th>
-                                <th class="p-3 text-left">التاريخ والوقت</th>
-                            </tr>
-                        </thead>
-                        <tbody id="activity-log-table-body" class="divide-y font-medium text-slate-700"></tbody>
-                    </table>
                 </div>
             </div>
 
@@ -573,33 +583,40 @@
         </div>
     </div>
 
-    <!-- PRINTABLE RECEIPT TEMPLATE -->
-    <div id="printable-receipt" class="hidden max-w-xl mx-auto p-8 bg-white border border-slate-200 rounded-2xl text-xs space-y-4">
-        <div class="text-center space-y-2 border-b border-slate-200 pb-4">
-            <div class="w-12 h-12 bg-rose-600 rounded-2xl text-white font-black text-xl flex items-center justify-center mx-auto shadow-md">F</div>
-            <h1 class="text-2xl font-black text-slate-900 tracking-wider">FARAFERO STORE</h1>
+    <!-- PRINTABLE RECEIPT TEMPLATE (مع العلامة المائية الباهتة) -->
+    <div id="printable-receipt" class="hidden max-w-xl mx-auto p-8 bg-white border border-slate-200 rounded-2xl text-xs space-y-4 watermark-bg">
+        <div class="text-center space-y-2 border-b border-slate-200 pb-4 relative z-10">
+            <div class="w-16 h-16 mx-auto flex items-center justify-center">
+                <svg viewBox="0 0 200 180" class="w-full h-full">
+                    <path d="M60,50 C30,10 -10,40 30,70 C60,90 100,70 100,70 C100,70 140,90 170,70 C210,40 170,10 140,50 C120,70 100,70 100,70 C100,70 80,70 60,50 Z" fill="#ffb6c1" stroke="#ff69b4" stroke-width="4"/>
+                    <path d="M100,70 L100,100" stroke="#ff1493" stroke-width="4"/>
+                    <polygon points="25,35 30,45 20,45" fill="#ff1493"/>
+                    <polygon points="175,35 180,45 170,45" fill="#ff1493"/>
+                    <text x="100" y="125" font-family="Cairo, sans-serif" font-weight="900" font-size="22" fill="#cf5d78" text-anchor="middle">FARAFERO</text>
+                    <text x="100" y="152" font-family="Cairo, sans-serif" font-weight="800" font-size="20" fill="#cf5d78" text-anchor="middle">GIFTS</text>
+                    <text x="100" y="170" font-family="Cairo, sans-serif" font-weight="600" font-size="9" fill="#b76e79" letter-spacing="3" text-anchor="middle">GIFT SHOP</text>
+                </svg>
+            </div>
+            <h1 class="text-2xl font-black text-slate-900 tracking-wider">FARAFERO GIFTS</h1>
             <p class="text-xs font-bold text-rose-600">فاتورة مبيعات معتمدة</p>
         </div>
 
-        <!-- التعديل الجديد: بيانات الفاتورة فوق على الشمال، واسم العميل والهاتف على اليمين -->
-        <div class="grid grid-cols-2 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200 text-slate-700 text-[11px]">
-            <!-- يمين الفاتورة: اسم العميل ورقم الهاتف -->
+        <div class="grid grid-cols-2 gap-3 bg-slate-50/90 p-4 rounded-xl border border-slate-200 text-slate-700 text-[11px] relative z-10">
             <div class="space-y-1">
                 <p><b>اسم العميل:</b> <span id="rec-cust-name" class="font-bold text-slate-900"></span></p>
                 <p><b>رقم الهاتف:</b> <span id="rec-cust-phone"></span></p>
             </div>
-            <!-- شمال الفاتورة: رقم الفاتورة (مسلسل إجباري) وتحته التاريخ -->
             <div class="space-y-1 text-left">
                 <p><b>رقم الفاتورة:</b> <span id="rec-id" class="font-bold text-rose-600"></span></p>
                 <p><b>تاريخ الإصدار:</b> <span id="rec-date"></span></p>
             </div>
         </div>
 
-        <div class="space-y-2 pt-2">
+        <div class="space-y-2 pt-2 relative z-10">
             <h3 class="font-black text-slate-900 text-xs border-b pb-1">تفاصيل البضاعة المباعة:</h3>
             <table class="w-full text-right text-xs">
                 <thead>
-                    <tr class="bg-slate-100 text-slate-600 font-bold border-b">
+                    <tr class="bg-slate-100/90 text-slate-600 font-bold border-b">
                         <th class="p-2">الصنف</th>
                         <th class="p-2 text-center">الكمية</th>
                         <th class="p-2 text-center">السعر</th>
@@ -610,20 +627,20 @@
             </table>
         </div>
 
-        <div id="rec-extras-section" class="space-y-1 border-t pt-2 text-[11px] font-bold text-slate-700"></div>
+        <div id="rec-extras-section" class="space-y-1 border-t pt-2 text-[11px] font-bold text-slate-700 relative z-10"></div>
 
-        <div class="border-t-2 border-rose-600 pt-3 flex justify-between items-center text-base font-black text-slate-900">
+        <div class="border-t-2 border-rose-600 pt-3 flex justify-between items-center text-base font-black text-slate-900 relative z-10">
             <span>الإجمالي النهائي المستحق:</span>
             <span class="text-rose-600 text-xl"><span id="rec-grand-total">0</span> EGP</span>
         </div>
 
-        <div class="text-center pt-6 border-t border-slate-100 text-[10px] text-slate-400 space-y-1 font-bold">
+        <div class="text-center pt-6 border-t border-slate-100 text-[10px] text-slate-400 space-y-1 font-bold relative z-10">
             <p>شكراً لتعاملكم معنا! ❤️</p>
         </div>
     </div>
 
 
-    <!-- SCRIPT ENGINE (DIRECT ACCESS WITHOUT LOGIN) -->
+    <!-- SCRIPT ENGINE -->
     <script>
         const firebaseConfig = {
           apiKey: "AIzaSyAuP10QxT-N1gEo7nW6Zc9I1Nzg9ehdD6E",
@@ -641,13 +658,11 @@
         const db = firebase.firestore();
 
         const ADMIN_PIN = "2580";
-        const currentAuthUser = "مدير المحل (مباشر)";
 
         let state = { 
             products: [], 
             orders: [], 
             customers: [], 
-            activities: [],
             categories: ["دباديب", "ورد", "هدايا استانلس", "شنط حريمى"], 
             posCart: [], 
             currentActiveModalOrder: null, 
@@ -728,26 +743,7 @@
                 renderCustomersPage();
             });
 
-            db.collection("activities").orderBy("timestamp", "desc").limit(50).onSnapshot((snapshot) => {
-                state.activities = [];
-                snapshot.forEach((doc) => {
-                    state.activities.push({ id: doc.id, ...doc.data() });
-                });
-                renderActivityLog();
-            });
-
             switchTab('catalog');
-        }
-
-        function logActivity(actionType, details) {
-            const act = {
-                user: currentAuthUser,
-                action: actionType,
-                details: details,
-                date: new Date().toLocaleString('ar-EG'),
-                timestamp: Date.now()
-            };
-            db.collection("activities").add(act);
         }
 
         function renderAll() {
@@ -806,26 +802,6 @@
                             </div>
                         </div>
                     </div>
-                `;
-            });
-        }
-
-        function renderActivityLog() {
-            const tbody = document.getElementById('activity-log-table-body');
-            if(!tbody) return;
-            tbody.innerHTML = '';
-            if(state.activities.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="text-center text-slate-400 py-4">لا توجد نشاطات مسجلة بعد</td></tr>';
-                return;
-            }
-            state.activities.forEach(act => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td class="p-3 font-black text-rose-600 flex items-center"><i class="fa-solid fa-user-shield ml-1.5"></i> ${act.user}</td>
-                        <td class="p-3 font-bold text-slate-800">${act.action}</td>
-                        <td class="p-3 font-semibold text-slate-600">${act.details}</td>
-                        <td class="p-3 text-left font-semibold text-slate-400">${act.date}</td>
-                    </tr>
                 `;
             });
         }
@@ -977,11 +953,9 @@
                         db.collection("products").doc(p.id).update({ category: newName });
                     }
                 });
-                logActivity('تعديل فئة', `تم تعديل الفئة من (${oldName}) إلى (${newName})`);
             } else {
                 if (state.categories.includes(newName)) return alert('هذه الفئة موجودة بالفعل!');
                 state.categories.push(newName);
-                logActivity('إضافة فئة جديدة', `تم إضافة فئة: ${newName}`);
             }
 
             db.collection("settings").doc("categories").set({ list: state.categories }).then(() => {
@@ -993,7 +967,6 @@
             if (confirm(`هل أنت متأكد من حذف الفئة "${catName}"؟`)) {
                 state.categories = state.categories.filter(c => c !== catName);
                 db.collection("settings").doc("categories").set({ list: state.categories });
-                logActivity('حذف فئة', `تم حذف الفئة: ${catName}`);
             }
         }
 
@@ -1294,7 +1267,6 @@
                 });
 
                 db.collection("orders").doc(o.firebaseId).update({ status: 'cancelled' });
-                logActivity('إلغاء فاتورة', `قام (مدير المحل) بإلغاء الفاتورة ${o.id}`);
                 closeOrderModal();
             }
         }
@@ -1314,7 +1286,6 @@
             if (p) {
                 const newStock = p.stock + 1;
                 db.collection("products").doc(id).update({ stock: newStock });
-                logActivity('زيادة مخزون', `قام (مدير المحل) بزيادة مخزون الصنف (${p.name}) قطعة واحدة`);
             }
         }
 
@@ -1327,7 +1298,6 @@
             const shipping = parseFloat(document.getElementById('pos-shipping').value) || 0;
             const total = parseFloat(document.getElementById('pos-grand-total').innerText) || 0;
             
-            // توليد رقم معاينة مؤقت
             const previewId = 'ORD-' + String(state.orders.length + 1).padStart(4, '0');
             const dateStr = new Date().toLocaleString('ar-EG');
 
@@ -1350,7 +1320,6 @@
             const shipping = parseFloat(document.getElementById('pos-shipping').value) || 0;
             const total = parseFloat(document.getElementById('pos-grand-total').innerText) || 0;
             
-            // مسلسل تلقائي إجباري يبدأ من ORD-0001 إلى مالا نهاية
             const nextSeqNum = state.orders.length + 1;
             const orderId = 'ORD-' + String(nextSeqNum).padStart(4, '0');
             const dateStr = new Date().toLocaleString('ar-EG');
@@ -1402,7 +1371,6 @@
                     }
                 });
 
-                logActivity('إصدار فاتورة مبيعات', `قام (مدير المحل) بإصدار الفاتورة ${orderId} للعميل (${custName}) بقيمة ${total} EGP`);
                 alert('تم تأكيد الطلب وخصم المخزون وتسجيل العميل بنجاح!');
                 clearPOSCart();
             }).catch((err) => {
@@ -1456,7 +1424,6 @@
             if (enteredPin === ADMIN_PIN) {
                 closePinModal();
                 switchTab('admin');
-                logActivity('دخول لوحة الإدارة', `قام (مدير المحل) بالدخول للوحة الإدارة`);
             } else {
                 errorMsg.classList.remove('hidden');
             }
@@ -1521,21 +1488,17 @@
 
             if (editId) {
                 db.collection("products").doc(editId).update(prodData);
-                logActivity('تعديل منتج', `قام (مدير المحل) بتعديل بيانات الصنف: ${name} (${code})`);
             } else {
                 const newId = 'p' + Date.now();
                 db.collection("products").doc(newId).set(prodData);
-                logActivity('إضافة منتج جديد', `قام (مدير المحل) بإضافة صنف جديد: ${name} (${code})`);
             }
 
             closeProductModal();
         }
 
         function deleteProd(id) {
-            const p = state.products.find(x => x.id === id);
             if (confirm('هل أنت متأكد من حذف هذه الهدية نهائياً من السحابة؟')) {
                 db.collection("products").doc(id).delete();
-                logActivity('حذف صنف', `قام (مدير المحل) بحذف الصنف: ${p ? p.name : id}`);
             }
         }
 
