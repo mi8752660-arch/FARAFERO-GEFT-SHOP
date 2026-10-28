@@ -307,14 +307,9 @@
                 <div class="lg:col-span-8 bg-white rounded-3xl p-6 border shadow-sm space-y-4">
                     <div class="flex justify-between items-center border-b pb-3">
                         <h3 class="text-lg font-black text-slate-900">إدارة وتعديل المخزون والأسعار</h3>
-                        <div class="flex space-x-2 space-x-reverse">
-                            <button onclick="resetAndLoadNewStock()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold px-3 py-2 rounded-xl text-xs shadow-md">
-                                <i class="fa-solid fa-arrows-rotate ml-1"></i> إعادة تحميل البضاعة الجديدة
-                            </button>
-                            <button onclick="openAddProductModal()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md">
-                                <i class="fa-solid fa-plus ml-1"></i> إضافة هدية جديدة للمحل
-                            </button>
-                        </div>
+                        <button onclick="openAddProductModal()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md">
+                            <i class="fa-solid fa-plus ml-1"></i> إضافة هدية جديدة للمحل
+                        </button>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-right text-xs">
@@ -608,7 +603,6 @@
             openCategory: null 
         };
 
-        // قائمة البضاعة الجديدة 24 صنفاً متسلسلة بدقة وبصيد 100 قطعة
         const defaultNewProducts = [
             // 5 أنواع دباديب (G-001 -> G-005)
             { id: "p1", code: "G-001", name: "دبدوب أحمر عملاق كلاسيك", category: "دباديب", cost: 250, price: 450, stock: 100, image: "https://images.unsplash.com/photo-1582293041079-7814c2f12063?w=500&q=80" },
@@ -654,11 +648,19 @@
             });
 
             db.collection("products").onSnapshot((snapshot) => {
-                state.products = [];
-                snapshot.forEach((doc) => {
-                    state.products.push({ id: doc.id, ...doc.data() });
-                });
-                renderAll();
+                if (snapshot.empty) {
+                    // إذا كان المخزون فارغاً بالكامل، يتم تحميل الـ 24 صنفاً تلقائياً لأول مرة
+                    db.collection("settings").doc("categories").set({ list: state.categories });
+                    defaultNewProducts.forEach(p => {
+                        db.collection("products").doc(p.id).set(p);
+                    });
+                } else {
+                    state.products = [];
+                    snapshot.forEach((doc) => {
+                        state.products.push({ id: doc.id, ...doc.data() });
+                    });
+                    renderAll();
+                }
             });
 
             db.collection("orders").onSnapshot((snapshot) => {
@@ -678,35 +680,6 @@
             });
 
             switchTab('catalog');
-        }
-
-        // مسح القديم وتحميل الـ 24 صنفاً الجدد سحابياً
-        function resetAndLoadNewStock() {
-            if (confirm('هل أنت متأكد من حذف كافة البضائع القديمة وتحميل البضاعة الجديدة (24 صنفاً) متسلسلة؟')) {
-                // حذف جميع المنتجات الموجودة حالياً
-                db.collection("products").get().then(snapshot => {
-                    const batch = db.batch();
-                    snapshot.docs.forEach(doc => {
-                        batch.delete(doc.ref);
-                    });
-                    return batch.commit();
-                }).then(() => {
-                    // إضافة الفئات الجديدة
-                    db.collection("settings").doc("categories").set({ list: state.categories });
-                    
-                    // إضافة 24 منتجاً بالدفعة الجديدة
-                    const batch = db.batch();
-                    defaultNewProducts.forEach(prod => {
-                        const ref = db.collection("products").doc(prod.id);
-                        batch.set(ref, prod);
-                    });
-                    return batch.commit();
-                }).then(() => {
-                    alert('تم مسح البضاعة القديمة وتحديث المخزون بـ 24 صنفاً جديداً بنجاح!');
-                }).catch(err => {
-                    alert('حدث خطأ أثناء التحديث سحابياً: ' + err.message);
-                });
-            }
         }
 
         function renderAll() {
@@ -1048,7 +1021,6 @@
             const tbody = document.getElementById('inventory-view-body');
             if(!tbody) return;
             tbody.innerHTML = '';
-            // ترتيب المنتجات حسب الكود للتأكد من المظهر المتسلسل
             const sortedProducts = [...state.products].sort((a,b) => (a.code || '').localeCompare(b.code || ''));
             sortedProducts.forEach(p => {
                 tbody.innerHTML += `
@@ -1354,7 +1326,6 @@
             document.getElementById('modal-title').innerText = 'إضافة هدية جديدة للمخزن';
             document.getElementById('edit-prod-id').value = '';
             
-            // حساب الكود التالي التلقائي بناءً على أعلى كود موجود
             let maxCode = 0;
             state.products.forEach(p => {
                 if (p.code && p.code.startsWith('G-')) {
