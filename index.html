@@ -432,10 +432,6 @@
                     <span id="view-ord-date" class="font-semibold text-slate-600"></span>
                 </div>
                 <div class="flex justify-between">
-                    <span class="text-slate-500 font-bold">بواسطة:</span>
-                    <span id="view-ord-user" class="font-bold text-rose-600"></span>
-                </div>
-                <div class="flex justify-between">
                     <span class="text-slate-500 font-bold">حالة الفاتورة:</span>
                     <span id="view-ord-status" class="font-bold"></span>
                 </div>
@@ -585,15 +581,17 @@
             <p class="text-xs font-bold text-rose-600">فاتورة مبيعات معتمدة</p>
         </div>
 
+        <!-- التعديل الجديد: بيانات الفاتورة فوق على الشمال، واسم العميل والهاتف على اليمين -->
         <div class="grid grid-cols-2 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200 text-slate-700 text-[11px]">
+            <!-- يمين الفاتورة: اسم العميل ورقم الهاتف -->
             <div class="space-y-1">
-                <p><b>رقم الفاتورة:</b> <span id="rec-id" class="font-bold text-slate-900"></span></p>
-                <p><b>تاريخ الإصدار:</b> <span id="rec-date"></span></p>
-                <p><b>بواسطة:</b> <span id="rec-user" class="font-bold text-rose-600"></span></p>
-            </div>
-            <div class="space-y-1 text-left dir-rtl">
                 <p><b>اسم العميل:</b> <span id="rec-cust-name" class="font-bold text-slate-900"></span></p>
                 <p><b>رقم الهاتف:</b> <span id="rec-cust-phone"></span></p>
+            </div>
+            <!-- شمال الفاتورة: رقم الفاتورة (مسلسل إجباري) وتحته التاريخ -->
+            <div class="space-y-1 text-left">
+                <p><b>رقم الفاتورة:</b> <span id="rec-id" class="font-bold text-rose-600"></span></p>
+                <p><b>تاريخ الإصدار:</b> <span id="rec-date"></span></p>
             </div>
         </div>
 
@@ -604,6 +602,7 @@
                     <tr class="bg-slate-100 text-slate-600 font-bold border-b">
                         <th class="p-2">الصنف</th>
                         <th class="p-2 text-center">الكمية</th>
+                        <th class="p-2 text-center">السعر</th>
                         <th class="p-2 text-left">الإجمالي</th>
                     </tr>
                 </thead>
@@ -1035,11 +1034,11 @@
                 list.innerHTML += `
                     <div class="bg-slate-50 hover:bg-slate-100 border p-2.5 rounded-xl text-xs space-y-1.5 transition-all shadow-sm ${isCancelled ? 'opacity-60 bg-amber-50/20' : ''}">
                         <div class="flex justify-between items-center cursor-pointer" onclick="openPOSOrderDetails('${o.firebaseId}')">
-                            <b class="text-slate-900">#${o.id} ${isCancelled ? '<span class="text-amber-600 text-[9px]">(ملغية)</span>' : ''}</b>
+                            <b class="text-slate-900">${o.id} ${isCancelled ? '<span class="text-amber-600 text-[9px]">(ملغية)</span>' : ''}</b>
                             <span class="font-black ${isCancelled ? 'text-slate-400 line-through' : 'text-rose-600'}">${o.total} EGP</span>
                         </div>
                         <div class="flex justify-between items-center text-[10px]">
-                            <span class="text-slate-600">بواسطة: ${o.cashierEmail || 'المدير'} | العميل: ${o.customerName}</span>
+                            <span class="text-slate-600">العميل: ${o.customerName}</span>
                             <button onclick="printDirectOrder('${o.firebaseId}')" title="طباعة الفاتورة" class="bg-slate-800 hover:bg-slate-900 text-white font-bold px-2 py-0.5 rounded-md flex items-center space-x-1 space-x-reverse transition-all">
                                 <i class="fa-solid fa-print"></i>
                                 <span>طباعة / PDF</span>
@@ -1054,7 +1053,7 @@
             if (!order) return;
             state.posActiveModalOrder = order;
 
-            document.getElementById('pos-view-ord-id').innerText = '#' + order.id;
+            document.getElementById('pos-view-ord-id').innerText = order.id;
             document.getElementById('pos-view-ord-cust-name').innerText = order.customerName;
             document.getElementById('pos-view-ord-cust-phone').innerText = order.customerPhone;
             document.getElementById('pos-view-ord-date').innerText = order.date;
@@ -1065,7 +1064,7 @@
             order.detailedItems.forEach(item => {
                 itemsContainer.innerHTML += `
                     <div class="flex justify-between items-center py-1">
-                        <span class="font-bold text-slate-800">${item.name} × ${item.qty}</span>
+                        <span class="font-bold text-slate-800">${item.name} (سعر: ${item.price} × ${item.qty})</span>
                         <span class="font-black text-rose-600">${item.price * item.qty} EGP</span>
                     </div>
                 `;
@@ -1073,7 +1072,6 @@
 
             const extrasContainer = document.getElementById('pos-view-ord-extras');
             extrasContainer.innerHTML = `
-                <div class="flex justify-between"><span>بواسطة:</span> <span class="font-bold text-rose-600">${order.cashierEmail || 'مدير المحل'}</span></div>
                 <div class="flex justify-between"><span>الخصم:</span> <span class="text-rose-600 font-bold">- ${order.discount || 0} EGP</span></div>
                 <div class="flex justify-between"><span>مصاريف التغليف:</span> <span class="font-bold">+ ${order.packaging || 0} EGP</span></div>
                 <div class="flex justify-between"><span>مصاريف الشحن:</span> <span class="font-bold">+ ${order.shipping || 0} EGP</span></div>
@@ -1089,13 +1087,13 @@
         function printPOSOrderFromModal() {
             if (!state.posActiveModalOrder) return;
             const o = state.posActiveModalOrder;
-            generateReceiptPDF(o.detailedItems, o.customerName, o.customerPhone, o.total, o.id, o.date, o.discount, o.packaging, o.shipping, o.cashierEmail);
+            generateReceiptPDF(o.detailedItems, o.customerName, o.customerPhone, o.total, o.id, o.date, o.discount, o.packaging, o.shipping);
         }
 
         function printDirectOrder(firebaseId) {
             const o = state.orders.find(x => x.firebaseId === firebaseId);
             if (!o) return;
-            generateReceiptPDF(o.detailedItems, o.customerName, o.customerPhone, o.total, o.id, o.date, o.discount, o.packaging, o.shipping, o.cashierEmail);
+            generateReceiptPDF(o.detailedItems, o.customerName, o.customerPhone, o.total, o.id, o.date, o.discount, o.packaging, o.shipping);
         }
 
         function addToPOS(id) {
@@ -1227,10 +1225,10 @@
                     ordersList.innerHTML += `
                         <div onclick="openOrderDetails('${o.firebaseId}')" class="bg-slate-50 hover:bg-rose-50 border p-3 rounded-2xl text-xs space-y-1 cursor-pointer transition-all shadow-sm ${isCancelled ? 'opacity-60 border-amber-300 bg-amber-50/30' : ''}">
                             <div class="flex justify-between items-center">
-                                <b class="text-slate-900">#${o.id} ${isCancelled ? '<span class="text-amber-600 text-[10px]">(ملغية)</span>' : ''}</b>
+                                <b class="text-slate-900">${o.id} ${isCancelled ? '<span class="text-amber-600 text-[10px]">(ملغية)</span>' : ''}</b>
                                 <span class="font-black ${isCancelled ? 'text-slate-400 line-through' : 'text-rose-600'}">${o.total} EGP</span>
                             </div>
-                            <p class="text-slate-600 text-[11px] font-semibold">بواسطة: ${o.cashierEmail || 'مدير المحل'} | العميل: ${o.customerName}</p>
+                            <p class="text-slate-600 text-[11px] font-semibold">العميل: ${o.customerName}</p>
                             <p class="text-slate-400 text-[10px]">${o.date}</p>
                         </div>`;
                 });
@@ -1242,11 +1240,10 @@
             if (!order) return;
             state.currentActiveModalOrder = order;
 
-            document.getElementById('view-ord-id').innerText = '#' + order.id;
+            document.getElementById('view-ord-id').innerText = order.id;
             document.getElementById('view-ord-cust-name').innerText = order.customerName;
             document.getElementById('view-ord-cust-phone').innerText = order.customerPhone;
             document.getElementById('view-ord-date').innerText = order.date;
-            document.getElementById('view-ord-user').innerText = order.cashierEmail || 'مدير المحل';
             document.getElementById('view-ord-total').innerText = order.total;
 
             const statusEl = document.getElementById('view-ord-status');
@@ -1265,7 +1262,7 @@
             order.detailedItems.forEach(item => {
                 itemsContainer.innerHTML += `
                     <div class="flex justify-between items-center py-1">
-                        <span class="font-bold text-slate-800">${item.name} × ${item.qty}</span>
+                        <span class="font-bold text-slate-800">${item.name} (سعر: ${item.price} × ${item.qty})</span>
                         <span class="font-black text-rose-600">${item.price * item.qty} EGP</span>
                     </div>
                 `;
@@ -1285,7 +1282,7 @@
             const o = state.currentActiveModalOrder;
             if (!o || o.status === 'cancelled') return;
 
-            if (confirm(`هل أنت متأكد من إلغاء الفاتورة #${o.id}؟ سيتم إرجاع الكميات للمخزن السحابي.`)) {
+            if (confirm(`هل أنت متأكد من إلغاء الفاتورة ${o.id}؟ سيتم إرجاع الكميات للمخزن السحابي.`)) {
                 o.status = 'cancelled';
 
                 o.detailedItems.forEach(item => {
@@ -1297,7 +1294,7 @@
                 });
 
                 db.collection("orders").doc(o.firebaseId).update({ status: 'cancelled' });
-                logActivity('إلغاء فاتورة', `قام (مدير المحل) بإلغاء الفاتورة #${o.id}`);
+                logActivity('إلغاء فاتورة', `قام (مدير المحل) بإلغاء الفاتورة ${o.id}`);
                 closeOrderModal();
             }
         }
@@ -1309,7 +1306,7 @@
         function printCurrentModalOrder() {
             if (!state.currentActiveModalOrder) return;
             const o = state.currentActiveModalOrder;
-            generateReceiptPDF(o.detailedItems, o.customerName, o.customerPhone, o.total, o.id, o.date, o.discount, o.packaging, o.shipping, o.cashierEmail);
+            generateReceiptPDF(o.detailedItems, o.customerName, o.customerPhone, o.total, o.id, o.date, o.discount, o.packaging, o.shipping);
         }
 
         function increaseStock(id) {
@@ -1329,10 +1326,12 @@
             const packaging = parseFloat(document.getElementById('pos-packaging').value) || 0;
             const shipping = parseFloat(document.getElementById('pos-shipping').value) || 0;
             const total = parseFloat(document.getElementById('pos-grand-total').innerText) || 0;
-            const previewId = 'PREV-' + Math.floor(1000 + Math.random() * 9000);
+            
+            // توليد رقم معاينة مؤقت
+            const previewId = 'ORD-' + String(state.orders.length + 1).padStart(4, '0');
             const dateStr = new Date().toLocaleString('ar-EG');
 
-            generateReceiptPDF(state.posCart, custName, custPhone, total, previewId, dateStr, discount, packaging, shipping, currentAuthUser);
+            generateReceiptPDF(state.posCart, custName, custPhone, total, previewId, dateStr, discount, packaging, shipping);
         }
 
         function checkoutPOS() {
@@ -1351,7 +1350,9 @@
             const shipping = parseFloat(document.getElementById('pos-shipping').value) || 0;
             const total = parseFloat(document.getElementById('pos-grand-total').innerText) || 0;
             
-            const orderId = 'ORD-' + Math.floor(1000 + Math.random() * 9000);
+            // مسلسل تلقائي إجباري يبدأ من ORD-0001 إلى مالا نهاية
+            const nextSeqNum = state.orders.length + 1;
+            const orderId = 'ORD-' + String(nextSeqNum).padStart(4, '0');
             const dateStr = new Date().toLocaleString('ar-EG');
 
             state.posCart.forEach(item => {
@@ -1372,7 +1373,6 @@
                 shipping: shipping,
                 customerName: custName,
                 customerPhone: custPhone,
-                cashierEmail: currentAuthUser,
                 status: 'active',
                 detailedItems: JSON.parse(JSON.stringify(state.posCart))
             };
@@ -1402,7 +1402,7 @@
                     }
                 });
 
-                logActivity('إصدار فاتورة مبيعات', `قام (مدير المحل) بإصدار الفاتورة #${orderId} للعميل (${custName}) بقيمة ${total} EGP`);
+                logActivity('إصدار فاتورة مبيعات', `قام (مدير المحل) بإصدار الفاتورة ${orderId} للعميل (${custName}) بقيمة ${total} EGP`);
                 alert('تم تأكيد الطلب وخصم المخزون وتسجيل العميل بنجاح!');
                 clearPOSCart();
             }).catch((err) => {
@@ -1410,10 +1410,9 @@
             });
         }
 
-        function generateReceiptPDF(items, custName, custPhone, total, orderId, dateStr, discount, packaging, shipping, userEmail) {
+        function generateReceiptPDF(items, custName, custPhone, total, orderId, dateStr, discount, packaging, shipping) {
             document.getElementById('rec-id').innerText = orderId;
             document.getElementById('rec-date').innerText = dateStr;
-            document.getElementById('rec-user').innerText = userEmail || currentAuthUser;
             document.getElementById('rec-cust-name').innerText = custName;
             document.getElementById('rec-cust-phone').innerText = custPhone;
             
@@ -1424,6 +1423,7 @@
                     <tr>
                         <td class="p-2 font-bold text-slate-800">${i.name}</td>
                         <td class="p-2 text-center font-bold">${i.qty}</td>
+                        <td class="p-2 text-center font-semibold text-slate-600">${i.price} EGP</td>
                         <td class="p-2 text-left font-black text-slate-900">${i.price * i.qty} EGP</td>
                     </tr>
                 `;
@@ -1551,7 +1551,6 @@
             });
             
             const targetTab = document.getElementById('tab-' + tab);
-            if(targetTab) targetTab.nested = false; // dummy
             if(targetTab) targetTab.classList.remove('hidden');
             const activeBtn = document.getElementById('nav-' + tab);
             if(activeBtn) {
