@@ -100,7 +100,6 @@
                 
                 <input type="text" id="catalog-search" oninput="renderCatalogDashboard()" placeholder="ابحث في الهدايا أو الأكواد..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-rose-500">
 
-                <!-- حاوية بنود الفئات -->
                 <div id="catalog-categories-container" class="space-y-4 max-h-[600px] overflow-y-auto custom-scrollbar p-1"></div>
             </div>
         </div>
@@ -153,11 +152,11 @@
                                     <input type="number" id="pos-discount" value="0" oninput="renderPOSCart()" class="w-full bg-white border border-slate-200 rounded-xl px-2 py-1.5 font-bold text-center focus:outline-none focus:border-rose-500">
                                 </div>
                                 <div>
-                                    <label class="text-[10px] font-bold text-rose-600 mb-1 block">مصاريف التغليف (+):</label>
+                                    <label class="text-[10px] font-bold text-slate-600 mb-1 block">مصاريف التغليف (+):</label>
                                     <input type="number" id="pos-packaging" value="0" oninput="renderPOSCart()" class="w-full bg-white border border-slate-200 rounded-xl px-2 py-1.5 font-bold text-center focus:outline-none focus:border-rose-500">
                                 </div>
                                 <div>
-                                    <label class="text-[10px] font-bold text-rose-600 mb-1 block">مصاريف الشحن (+):</label>
+                                    <label class="text-[10px] font-bold text-slate-600 mb-1 block">مصاريف الشحن (+):</label>
                                     <input type="number" id="pos-shipping" value="0" oninput="renderPOSCart()" class="w-full bg-white border border-slate-200 rounded-xl px-2 py-1.5 font-bold text-center focus:outline-none focus:border-rose-500">
                                 </div>
                             </div>
@@ -181,7 +180,7 @@
                         </div>
                     </div>
 
-                    <!-- سجل الفواتير الصادرة في قسم الحسابات (يتيح الاستعراض والطباعة المباشرة) -->
+                    <!-- سجل الفواتير الصادرة في قسم الحسابات -->
                     <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-3">
                         <div class="border-b pb-2 flex justify-between items-center">
                             <h4 class="font-black text-slate-900 text-sm flex items-center">
@@ -289,6 +288,19 @@
                     <h4 class="text-2xl font-black text-slate-900"><span id="dash-total-pieces">0</span> قطعة</h4>
                     <p class="text-[10px] text-slate-500 font-semibold">مجموع القطع لكل الأصناف</p>
                 </div>
+            </div>
+
+            <!-- إدارة فئات الهدايا (إضافة، تعديل، حذف) -->
+            <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-4">
+                <div class="flex justify-between items-center border-b pb-3">
+                    <h3 class="text-lg font-black text-slate-900 flex items-center">
+                        <i class="fa-solid fa-folder-tree text-rose-600 ml-2"></i> إدارة فئات وبنود الهدايا
+                    </h3>
+                    <button onclick="openAddCategoryModal()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md">
+                        <i class="fa-solid fa-plus ml-1"></i> إضافة فئة جديدة
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" id="admin-categories-grid"></div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -487,13 +499,8 @@
                     <input type="number" id="prod-stock" placeholder="الكمية..." class="w-full border p-2.5 rounded-xl">
                 </div>
                 <div>
-                    <label class="text-slate-600 block mb-1">القسم:</label>
-                    <select id="prod-category" class="w-full border p-2.5 rounded-xl">
-                        <option value="ملابس وهدايا">ملابس وهدايا</option>
-                        <option value="إكسسوارات">إكسسوارات</option>
-                        <option value="صناديق وتغليف">صناديق وتغليف</option>
-                        <option value="عطور">عطور</option>
-                    </select>
+                    <label class="text-slate-600 block mb-1">القسم (الفئة):</label>
+                    <select id="prod-category" class="w-full border p-2.5 rounded-xl"></select>
                 </div>
                 <div>
                     <label class="text-slate-600 block mb-1">رابط الصورة (URL):</label>
@@ -503,6 +510,19 @@
             <div class="flex space-x-2 space-x-reverse pt-2">
                 <button onclick="closeProductModal()" class="w-1/2 bg-slate-100 py-3 rounded-xl font-bold">إلغاء</button>
                 <button onclick="saveProductData()" class="w-1/2 bg-rose-600 text-white py-3 rounded-xl font-bold shadow-md">حفظ البيانات</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADD / EDIT CATEGORY MODAL -->
+    <div id="category-modal" class="fixed inset-0 z-50 hidden bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl w-full max-w-xs p-6 shadow-2xl space-y-4 text-center">
+            <h3 id="cat-modal-title" class="font-black text-base text-slate-900">إضافة فئة جديدة</h3>
+            <input type="hidden" id="edit-old-cat-name">
+            <input type="text" id="cat-name-input" placeholder="اسم الفئة..." class="w-full border border-slate-200 bg-slate-50 p-3 rounded-xl text-center text-sm font-bold focus:outline-none focus:border-rose-500">
+            <div class="flex space-x-2 space-x-reverse pt-1">
+                <button onclick="closeCategoryModal()" class="w-1/2 bg-slate-100 py-2.5 rounded-xl text-xs font-bold text-slate-600">إلغاء</button>
+                <button onclick="saveCategoryData()" class="w-1/2 bg-rose-600 text-white py-2.5 rounded-xl text-xs font-bold shadow-md">حفظ</button>
             </div>
         </div>
     </div>
@@ -571,7 +591,7 @@
         const db = firebase.firestore();
 
         const ADMIN_PIN = "2580";
-        let state = { products: [], orders: [], customers: [], posCart: [], currentActiveModalOrder: null, posActiveModalOrder: null, lastCheckoutOrder: null, openCategory: null };
+        let state = { products: [], orders: [], customers: [], categories: ["ملابس وهدايا", "إكسسوارات", "صناديق وتغليف", "عطور"], posCart: [], currentActiveModalOrder: null, posActiveModalOrder: null, lastCheckoutOrder: null, openCategory: null };
 
         const defaultProducts = [
             { id: "p1", code: "G-001", name: "دبدوب أحمر كبير", category: "ملابس وهدايا", cost: 250, price: 350, stock: 20, image: "https://images.unsplash.com/photo-1582293041079-7814c2f12063?w=500&q=80" },
@@ -581,6 +601,16 @@
         ];
 
         function initApp() {
+            // مزامنة الفئات سحابياً
+            db.collection("settings").doc("categories").onSnapshot((doc) => {
+                if (doc.exists && doc.data().list) {
+                    state.categories = doc.data().list;
+                } else {
+                    db.collection("settings").doc("categories").set({ list: state.categories });
+                }
+                renderAll();
+            });
+
             db.collection("products").onSnapshot((snapshot) => {
                 if (snapshot.empty) {
                     defaultProducts.forEach(p => {
@@ -622,6 +652,8 @@
             renderDashboard();
             renderPOSRecentOrders();
             renderCustomersPage();
+            renderAdminCategories();
+            populateCategoryDropdown();
         }
 
         function renderPOSProducts() {
@@ -657,12 +689,10 @@
             const search = searchInput ? searchInput.value.toLowerCase() : '';
             container.innerHTML = '';
 
-            const categories = ["ملابس وهدايا", "إكسسوارات", "صناديق وتغليف", "عطور"];
-
-            categories.forEach(cat => {
+            state.categories.forEach(cat => {
                 const filteredProducts = state.products.filter(p => (p.category === cat || (!p.category && cat === "ملابس وهدايا")) && (p.name.toLowerCase().includes(search) || (p.code && p.code.toLowerCase().includes(search))));
                 
-                if (filteredProducts.length > 0) {
+                if (filteredProducts.length > 0 || search === '') {
                     const isOpen = state.openCategory === cat || search !== '';
                     
                     let productsHtml = '';
@@ -698,17 +728,13 @@
                                 </div>
                                 <i class="fa-solid fa-chevron-${isOpen ? 'up' : 'down'} text-slate-400 text-xs"></i>
                             </button>
-                            <div id="cat-content-${cat.replace(/\s+/g, '')}" class="${isOpen ? 'block' : 'hidden'} p-4 border-t bg-slate-50 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                                ${productsHtml}
+                            <div class="${isOpen ? 'block' : 'hidden'} p-4 border-t bg-slate-50 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                ${productsHtml || '<p class="col-span-full text-center text-slate-400 py-4">لا توجد هدايا في هذه الفئة حالياً</p>'}
                             </div>
                         </div>
                     `;
                 }
             });
-
-            if (container.innerHTML === '') {
-                container.innerHTML = '<p class="text-center text-slate-400 py-8">لا توجد هدايا مطابقة للبحث</p>';
-            }
         }
 
         function toggleCategory(catName) {
@@ -718,6 +744,84 @@
                 state.openCategory = catName;
             }
             renderCatalogDashboard();
+        }
+
+        // عرض وإدارة الفئات في لوحة التحكم
+        function renderAdminCategories() {
+            const grid = document.getElementById('admin-categories-grid');
+            if(!grid) return;
+            grid.innerHTML = '';
+            state.categories.forEach(cat => {
+                grid.innerHTML += `
+                    <div class="bg-slate-50 border p-3 rounded-2xl flex justify-between items-center text-xs">
+                        <span class="font-black text-slate-900">${cat}</span>
+                        <div class="flex space-x-1 space-x-reverse">
+                            <button onclick="openEditCategoryModal('${cat}')" class="bg-sky-50 text-sky-600 px-2.5 py-1 rounded-xl font-bold shadow-sm">تعديل</button>
+                            <button onclick="deleteCategory('${cat}')" class="bg-rose-50 text-rose-600 px-2.5 py-1 rounded-xl font-bold shadow-sm">حذف</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function populateCategoryDropdown() {
+            const select = document.getElementById('prod-category');
+            if(!select) return;
+            select.innerHTML = '';
+            state.categories.forEach(cat => {
+                select.innerHTML += `<option value="${cat}">${cat}</option>`;
+            });
+        }
+
+        function openAddCategoryModal() {
+            document.getElementById('cat-modal-title').innerText = 'إضافة فئة جديدة';
+            document.getElementById('edit-old-cat-name').value = '';
+            document.getElementById('cat-name-input').value = '';
+            document.getElementById('category-modal').classList.remove('hidden');
+        }
+
+        function openEditCategoryModal(oldName) {
+            document.getElementById('cat-modal-title').innerText = 'تعديل اسم الفئة';
+            document.getElementById('edit-old-cat-name').value = oldName;
+            document.getElementById('cat-name-input').value = oldName;
+            document.getElementById('category-modal').classList.remove('hidden');
+        }
+
+        function closeCategoryModal() {
+            document.getElementById('category-modal').classList.add('hidden');
+        }
+
+        function saveCategoryData() {
+            const oldName = document.getElementById('edit-old-cat-name').value;
+            const newName = document.getElementById('cat-name-input').value.trim();
+            if (!newName) return alert('برجاء كتابة اسم الفئة!');
+
+            if (oldName) {
+                // تعديل اسم الفئة
+                const index = state.categories.indexOf(oldName);
+                if (index !== -1) state.categories[index] = newName;
+                // تحديث المنتجات التابعة لها
+                state.products.forEach(p => {
+                    if (p.category === oldName) {
+                        db.collection("products").doc(p.id).update({ category: newName });
+                    }
+                });
+            } else {
+                // إضافة فئة جديدة
+                if (state.categories.includes(newName)) return alert('هذه الفئة موجودة بالفعل!');
+                state.categories.push(newName);
+            }
+
+            db.collection("settings").doc("categories").set({ list: state.categories }).then(() => {
+                closeCategoryModal();
+            });
+        }
+
+        function deleteCategory(catName) {
+            if (confirm(`هل أنت متأكد من حذف الفئة "${catName}"؟`)) {
+                state.categories = state.categories.filter(c => c !== catName);
+                db.collection("settings").doc("categories").set({ list: state.categories });
+            }
         }
 
         function renderCustomersPage() {
@@ -747,7 +851,6 @@
             });
         }
 
-        // إمكانية استعراض وطباعة الفواتير القديمة مباشرة من قسم الحسابات
         function renderPOSRecentOrders() {
             const list = document.getElementById('pos-recent-orders-list');
             if(!list) return;
@@ -1178,6 +1281,7 @@
             document.getElementById('prod-price').value = '';
             document.getElementById('prod-stock').value = '';
             document.getElementById('prod-image').value = '';
+            populateCategoryDropdown();
             document.getElementById('product-modal').classList.remove('hidden');
         }
 
@@ -1191,6 +1295,7 @@
             document.getElementById('prod-cost').value = p.cost || 0;
             document.getElementById('prod-price').value = p.price;
             document.getElementById('prod-stock').value = p.stock;
+            populateCategoryDropdown();
             document.getElementById('prod-category').value = p.category;
             document.getElementById('prod-image').value = p.image;
             document.getElementById('product-modal').classList.remove('hidden');
