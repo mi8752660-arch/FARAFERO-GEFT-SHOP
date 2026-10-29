@@ -50,7 +50,7 @@
             z-index: -1;
         }
 
-        /* تنسيق طباعة الفاتورة النظيف تماماً مثل الصورة */
+        /* تنسيق طباعة الفاتورة النظيف تماماً مثل الصورة الاصلية */
         @media print {
             body * { visibility: hidden !important; }
             #printable-receipt, #printable-receipt * { visibility: visible !important; }
@@ -574,14 +574,9 @@
         </div>
     </div>
 
-    <!-- PRINTABLE RECEIPT TEMPLATE (مصمم بدقة تامة مثل الصورة المطلوبة) -->
+    <!-- PRINTABLE RECEIPT TEMPLATE (مطابق تماماً للصورة الأصلية وبدون كلمة Draft) -->
     <div id="printable-receipt" class="hidden max-w-2xl mx-auto p-8 bg-white text-xs space-y-6">
-        <!-- الحالة فوق -->
-        <div class="text-center font-bold text-[10px] text-amber-800 tracking-wider">
-            DRAFT - NOT POSTED
-        </div>
-
-        <!-- رأس الفاتورة: اللوجو يسار، وكلمة INVOICE Draft يمين -->
+        <!-- رأس الفاتورة: اللوجو يسار، وكلمة INVOICE يمين -->
         <div class="flex justify-between items-start border-b border-slate-300 pb-5">
             <div class="space-y-1">
                 <div class="flex items-center space-x-2 space-x-reverse">
@@ -599,7 +594,7 @@
             </div>
             <div class="text-left space-y-0.5">
                 <p class="text-[10px] text-slate-400 tracking-widest uppercase">INVOICE</p>
-                <p class="font-bold text-slate-800 text-sm">Draft</p>
+                <p class="font-bold text-slate-800 text-sm">Official</p>
             </div>
         </div>
 
@@ -1459,7 +1454,6 @@
 
             document.getElementById('rec-subtotal').innerText = subtotal.toFixed(2) + ' EGP';
 
-            // إظهار أو إخفاء الخصم
             const discRow = document.getElementById('rec-discount-row');
             if (discount > 0) {
                 discRow.classList.remove('hidden');
@@ -1469,7 +1463,6 @@
                 discRow.classList.add('hidden');
             }
 
-            // إظهار التغليف والشحن إذا وجدا
             const packRow = document.getElementById('rec-packaging-row');
             if (packaging > 0) {
                 packRow.classList.remove('hidden');
