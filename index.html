@@ -6,7 +6,7 @@
     <title>FARAFERO GIFTS - نظام إدارة المحل والمخزون السحابي</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&family=Cinzel:wght@500;600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Firebase SDKs -->
@@ -18,10 +18,10 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Cairo', 'sans-serif'] },
+                    fontFamily: { sans: ['Cairo', 'sans-serif'], cinzel: ['Cinzel', 'serif'], montserrat: ['Montserrat', 'sans-serif'] },
                     colors: {
                         blush: { 50: '#fdf2f4', 100: '#fbe7eb', 500: '#e07a93', 600: '#cf5d78', 700: '#b0455f' },
-                        rosegold: { 500: '#b76e79', 600: '#9e5863' }
+                        rosegold: { 500: '#b76e79', 600: '#9e5863', gold: '#C5A059' }
                     }
                 }
             }
@@ -41,11 +41,11 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><g fill="none" stroke="%23ff69b4" stroke-width="3"><path d="M110,60 C80,20 40,50 80,80 C110,100 150,80 150,80 C150,80 190,100 220,80 C260,50 220,20 190,60 C170,80 150,80 150,80 C150,80 130,80 110,60 Z" fill="%23ffb6c1" fill-opacity="0.3"/><circle cx="70" cy="50" r="3" fill="%23ff1493"/><circle cx="230" cy="50" r="3" fill="%23ff1493"/></g><text x="150" y="125" font-family="Cairo, sans-serif" font-weight="900" font-size="28" fill="%23e07a93" text-anchor="middle">FARAFERO</text><text x="150" y="155" font-family="Cairo, sans-serif" font-weight="800" font-size="24" fill="%23e07a93" text-anchor="middle">GIFTS</text></svg>');
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><g fill="none" stroke="%23C5A059" stroke-width="2"><path d="M50 32C42 22 30 22 33 32C35.5 38.5 48 35 50 32Z"/><path d="M50 32C58 22 70 22 67 32C64.5 38.5 52 35 50 32Z"/><rect x="25" y="32" width="50" height="12"/><rect x="28" y="44" width="44" height="34"/><line x1="50" y1="32" x2="50" y2="78"/></g><text x="150" y="130" font-family="Cinzel, serif" font-weight="700" font-size="26" fill="%23C5A059" letter-spacing="4" text-anchor="middle">FARAFERO</text><text x="150" y="155" font-family="Montserrat, sans-serif" font-weight="600" font-size="14" fill="%23333333" letter-spacing="5" text-anchor="middle">GIFT SHOP</text></svg>');
             background-repeat: repeat;
             background-position: center;
             background-size: 350px 250px;
-            opacity: 0.03;
+            opacity: 0.035;
             pointer-events: none;
             z-index: -1;
         }
@@ -64,22 +64,29 @@
 <body class="bg-slate-50/90 text-slate-800 font-sans antialiased min-h-screen flex flex-col pb-24 md:pb-0">
 
     <!-- TOP HEADER -->
-    <header class="bg-white/90 backdrop-blur-md sticky top-0 z-40 border-b border-blush-100 shadow-sm">
+    <header class="bg-white/90 backdrop-blur-md sticky top-0 z-40 border-b border-slate-200 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <div class="flex items-center space-x-3 space-x-reverse">
-                <div class="w-12 h-12 bg-gradient-to-tr from-rose-100 to-blush-50 rounded-2xl flex items-center justify-center border border-rose-200 shadow-sm">
-                    <i class="fa-solid fa-gift text-rose-600 text-xl animate-pulse"></i>
+                <!-- اللوجو الرئيسي الجديد في الهيدر -->
+                <div class="w-12 h-12 flex items-center justify-center bg-white rounded-2xl border border-[#C5A059]/40 shadow-sm p-1">
+                    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+                        <path d="M50 32C42 22 30 22 33 32C35.5 38.5 48 35 50 32Z" stroke="#C5A059" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M50 32C58 22 70 22 67 32C64.5 38.5 52 35 50 32Z" stroke="#C5A059" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        <rect x="25" y="32" width="50" height="12" fill="white" stroke="#C5A059" stroke-width="3" stroke-linejoin="round"/>
+                        <rect x="28" y="44" width="44" height="34" fill="white" stroke="#C5A059" stroke-width="3" stroke-linejoin="round"/>
+                        <line x1="50" y1="32" x2="50" y2="78" stroke="#C5A059" stroke-width="3"/>
+                    </svg>
                 </div>
                 <div>
-                    <h1 class="text-lg font-black tracking-wide text-slate-900 leading-tight">FARAFERO GIFTS</h1>
-                    <p class="text-[10px] text-rose-500 font-bold tracking-widest uppercase">متجر الهدايا الحصرية</p>
+                    <h1 class="text-base font-bold tracking-[3px] text-slate-900 leading-tight font-cinzel">FARAFERO</h1>
+                    <p class="text-[9px] text-[#C5A059] font-semibold tracking-[4px] uppercase font-montserrat">GIFT SHOP</p>
                 </div>
             </div>
 
             <div class="flex items-center space-x-3 space-x-reverse">
                 <div class="flex items-center space-x-1.5 space-x-reverse bg-slate-100 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700">
-                    <i class="fa-solid fa-user-check text-rose-600"></i>
-                    <span class="text-rose-600">Manger</span>
+                    <i class="fa-solid fa-user-check text-[#C5A059]"></i>
+                    <span class="text-slate-800">Manger</span>
                 </div>
                 <div class="flex items-center space-x-1 space-x-reverse bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
                     <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
@@ -91,7 +98,7 @@
 
     <!-- NAVIGATION BAR -->
     <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-2 py-3 flex justify-around shadow-2xl z-50 max-w-xl mx-auto md:max-w-7xl">
-        <button onclick="switchTab('catalog')" id="nav-catalog" class="nav-btn text-xs font-bold text-rose-600 flex flex-col items-center transition-all">
+        <button onclick="switchTab('catalog')" id="nav-catalog" class="nav-btn text-xs font-bold text-[#C5A059] flex flex-col items-center transition-all">
             <i class="fa-solid fa-gift text-base mb-1"></i> الهدايا
         </button>
         <button onclick="switchTab('bestseller')" id="nav-bestseller" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center transition-all">
@@ -122,10 +129,10 @@
                         <h3 class="text-xl font-black text-slate-900">فئات وبنود الهدايا</h3>
                         <p class="text-xs text-slate-500 mt-1">اضغط على أي بند أو فئة لعرض وعزل البضاعة التابعة لها</p>
                     </div>
-                    <span class="bg-blush-50 text-blush-600 text-xs font-bold px-3 py-1.5 rounded-xl border border-blush-200">بنود الفئات</span>
+                    <span class="bg-amber-50 text-[#C5A059] text-xs font-bold px-3 py-1.5 rounded-xl border border-amber-200">بنود الفئات</span>
                 </div>
                 
-                <input type="text" id="catalog-search" oninput="renderCatalogDashboard()" placeholder="ابحث في الهدايا أو الأكواد..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-rose-500">
+                <input type="text" id="catalog-search" oninput="renderCatalogDashboard()" placeholder="ابحث في الهدايا أو الأكواد..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-[#C5A059]">
 
                 <div id="catalog-categories-container" class="space-y-4 max-h-[600px] overflow-y-auto custom-scrollbar p-1"></div>
             </div>
@@ -154,11 +161,11 @@
                 <div class="lg:col-span-7 bg-white/90 backdrop-blur-sm rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
                     <div class="flex items-center justify-between border-b pb-3">
                         <h3 class="text-xl font-black text-slate-900 flex items-center">
-                            <i class="fa-solid fa-boxes-packing text-blush-600 ml-2"></i> الهدايا المتاحة في المحل
+                            <i class="fa-solid fa-boxes-packing text-[#C5A059] ml-2"></i> الهدايا المتاحة في المحل
                         </h3>
                         <span class="text-xs font-bold bg-slate-100 px-3 py-1 rounded-xl">اضغط لإضافة صنف</span>
                     </div>
-                    <input type="text" id="pos-search" oninput="renderPOSProducts()" placeholder="ابحث عن هدية أو كود..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-rose-500">
+                    <input type="text" id="pos-search" oninput="renderPOSProducts()" placeholder="ابحث عن هدية أو كود..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-[#C5A059]">
                     <div id="pos-product-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[480px] overflow-y-auto custom-scrollbar p-1"></div>
                 </div>
 
@@ -167,7 +174,7 @@
                         <div class="space-y-3">
                             <div class="flex items-center justify-between border-b pb-3">
                                 <h4 class="font-black text-slate-900 flex items-center">
-                                    <i class="fa-solid fa-file-invoice text-rose-600 ml-2"></i> فاتورة العميل (معاينة)
+                                    <i class="fa-solid fa-file-invoice text-[#C5A059] ml-2"></i> فاتورة العميل (معاينة)
                                 </h4>
                                 <button onclick="clearPOSCart()" class="text-xs text-rose-500 font-bold hover:underline">إفراغ الفاتورة</button>
                             </div>
@@ -175,11 +182,11 @@
                             <div class="grid grid-cols-2 gap-2 bg-slate-50 p-3 rounded-2xl border border-slate-100">
                                 <div>
                                     <label class="text-[10px] font-bold text-slate-600 mb-1 block">رقم الهاتف (اكتبه أولاً):</label>
-                                    <input type="tel" id="cust-phone" oninput="lookupCustomerByPhone()" placeholder="رقم الموبايل..." class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold focus:outline-none focus:border-rose-500">
+                                    <input type="tel" id="cust-phone" oninput="lookupCustomerByPhone()" placeholder="رقم الموبايل..." class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold focus:outline-none focus:border-[#C5A059]">
                                 </div>
                                 <div>
                                     <label class="text-[10px] font-bold text-slate-600 mb-1 block">اسم العميل (تلقائي/يدوي):</label>
-                                    <input type="text" id="cust-name" placeholder="اسم العميل..." class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold focus:outline-none focus:border-rose-500">
+                                    <input type="text" id="cust-name" placeholder="اسم العميل..." class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold focus:outline-none focus:border-[#C5A059]">
                                 </div>
                             </div>
 
@@ -190,16 +197,16 @@
 
                             <div class="grid grid-cols-3 gap-2 bg-slate-50 p-2.5 rounded-2xl border border-slate-100 text-xs">
                                 <div>
-                                    <label class="text-[10px] font-bold text-rose-600 mb-1 block">خصم الفاتورة (-):</label>
-                                    <input type="number" id="pos-discount" value="0" oninput="renderPOSCart()" class="w-full bg-white border border-slate-200 rounded-xl px-2 py-1.5 font-bold text-center focus:outline-none focus:border-rose-500">
+                                    <label class="text-[10px] font-bold text-[#C5A059] mb-1 block">خصم الفاتورة (-):</label>
+                                    <input type="number" id="pos-discount" value="0" oninput="renderPOSCart()" class="w-full bg-white border border-slate-200 rounded-xl px-2 py-1.5 font-bold text-center focus:outline-none focus:border-[#C5A059]">
                                 </div>
                                 <div>
-                                    <label class="text-[10px] font-bold text-rose-600 mb-1 block">مصاريف التغليف (+):</label>
-                                    <input type="number" id="pos-packaging" value="0" oninput="renderPOSCart()" class="w-full bg-white border border-slate-200 rounded-xl px-2 py-1.5 font-bold text-center focus:outline-none focus:border-rose-500">
+                                    <label class="text-[10px] font-bold text-[#C5A059] mb-1 block">مصاريف التغليف (+):</label>
+                                    <input type="number" id="pos-packaging" value="0" oninput="renderPOSCart()" class="w-full bg-white border border-slate-200 rounded-xl px-2 py-1.5 font-bold text-center focus:outline-none focus:border-[#C5A059]">
                                 </div>
                                 <div>
-                                    <label class="text-[10px] font-bold text-rose-600 mb-1 block">مصاريف الشحن (+):</label>
-                                    <input type="number" id="pos-shipping" value="0" oninput="renderPOSCart()" class="w-full bg-white border border-slate-200 rounded-xl px-2 py-1.5 font-bold text-center focus:outline-none focus:border-rose-500">
+                                    <label class="text-[10px] font-bold text-[#C5A059] mb-1 block">مصاريف الشحن (+):</label>
+                                    <input type="number" id="pos-shipping" value="0" oninput="renderPOSCart()" class="w-full bg-white border border-slate-200 rounded-xl px-2 py-1.5 font-bold text-center focus:outline-none focus:border-[#C5A059]">
                                 </div>
                             </div>
                         </div>
@@ -207,14 +214,14 @@
                         <div class="space-y-3 pt-2 border-t">
                             <div class="flex justify-between font-black text-base">
                                 <span>الإجمالي النهائي:</span>
-                                <span class="text-blush-600"><span id="pos-grand-total">0</span> EGP</span>
+                                <span class="text-[#C5A059]"><span id="pos-grand-total">0</span> EGP</span>
                             </div>
                             <div class="grid grid-cols-2 gap-2">
                                 <button onclick="previewPOSReceiptBeforeCheckout()" class="bg-slate-800 hover:bg-slate-900 text-white font-black py-3 rounded-2xl shadow-md text-xs transition-all flex items-center justify-center space-x-1.5 space-x-reverse">
                                     <i class="fa-solid fa-eye"></i>
                                     <span>معاينة الفاتورة</span>
                                 </button>
-                                <button onclick="checkoutPOS()" class="bg-rose-600 hover:bg-rose-700 text-white font-black py-3 rounded-2xl shadow-md text-xs transition-all flex items-center justify-center space-x-1.5 space-x-reverse">
+                                <button onclick="checkoutPOS()" class="bg-[#C5A059] hover:bg-[#b08b49] text-white font-black py-3 rounded-2xl shadow-md text-xs transition-all flex items-center justify-center space-x-1.5 space-x-reverse">
                                     <i class="fa-solid fa-check-circle"></i>
                                     <span>تأكيد وخصم المخزون</span>
                                 </button>
@@ -225,7 +232,7 @@
                     <div class="bg-white/90 backdrop-blur-sm rounded-3xl p-6 border border-slate-200 shadow-sm space-y-3">
                         <div class="border-b pb-2 flex justify-between items-center">
                             <h4 class="font-black text-slate-900 text-sm flex items-center">
-                                <i class="fa-solid fa-receipt text-rose-600 ml-2"></i> سجل الفواتير الصادرة والقديمة
+                                <i class="fa-solid fa-receipt text-[#C5A059] ml-2"></i> سجل الفواتير الصادرة والقديمة
                             </h4>
                             <span class="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-md font-bold">طباعة واطلاع</span>
                         </div>
@@ -246,7 +253,7 @@
                     <span class="bg-emerald-50 text-emerald-700 text-xs font-bold px-3 py-1.5 rounded-xl border border-emerald-200">حفظ دائم</span>
                 </div>
                 
-                <input type="text" id="customers-search" oninput="renderCustomersPage()" placeholder="ابحث باسم العميل أو رقم الهاتف..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-rose-500">
+                <input type="text" id="customers-search" oninput="renderCustomersPage()" placeholder="ابحث باسم العميل أو رقم الهاتف..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-[#C5A059]">
 
                 <div class="overflow-x-auto">
                     <table class="w-full text-right text-xs">
@@ -273,7 +280,7 @@
                         <h3 class="text-xl font-black text-slate-900">متابعة حركة المخزون والكميات</h3>
                         <p class="text-xs text-slate-500 mt-1">عرض جميع الأصناف والأكواد والكميات المتاحة في المحل</p>
                     </div>
-                    <button onclick="requestAdminAccess()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md">
+                    <button onclick="requestAdminAccess()" class="bg-[#C5A059] hover:bg-[#b08b49] text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md">
                         <i class="fa-solid fa-lock ml-1"></i> لوحة الإدارة الكاملة
                     </button>
                 </div>
@@ -299,19 +306,19 @@
 
         <!-- TAB 5: ADMIN / DASHBOARD -->
         <div id="tab-admin" class="app-tab hidden space-y-6">
-            <div class="flex justify-between items-center bg-rose-50 border border-rose-200 p-4 rounded-2xl">
+            <div class="flex justify-between items-center bg-amber-50 border border-amber-200 p-4 rounded-2xl">
                 <div class="flex items-center space-x-2 space-x-reverse">
-                    <i class="fa-solid fa-shield-halved text-rose-600 text-lg"></i>
-                    <span class="text-xs font-bold text-rose-900">أنت الآن في لوحة التحكم الإدارية السحابية</span>
+                    <i class="fa-solid fa-shield-halved text-[#C5A059] text-lg"></i>
+                    <span class="text-xs font-bold text-amber-900">أنت الآن في لوحة التحكم الإدارية السحابية</span>
                 </div>
-                <button onclick="switchTab('catalog')" class="text-xs font-bold bg-white text-rose-600 border border-rose-300 px-3 py-1.5 rounded-xl shadow-sm">العودة للرئيسية</button>
+                <button onclick="switchTab('catalog')" class="text-xs font-bold bg-white text-[#C5A059] border border-amber-300 px-3 py-1.5 rounded-xl shadow-sm">العودة للرئيسية</button>
             </div>
 
             <!-- الملخص العام -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="bg-white/90 backdrop-blur-sm rounded-3xl p-6 border shadow-sm space-y-1">
                     <p class="text-xs font-bold text-slate-400">إجمالي مبيعات المحل</p>
-                    <h4 class="text-2xl font-black text-rose-600"><span id="dash-total-revenue">0</span> EGP</h4>
+                    <h4 class="text-2xl font-black text-[#C5A059]"><span id="dash-total-revenue">0</span> EGP</h4>
                     <p class="text-[10px] text-slate-500 font-semibold" id="dash-total-orders">عدد الطلبات: 0</p>
                 </div>
                 <div class="bg-white/90 backdrop-blur-sm rounded-3xl p-6 border shadow-sm space-y-1">
@@ -335,9 +342,9 @@
             <div class="bg-white/90 backdrop-blur-sm rounded-3xl p-6 border shadow-sm space-y-4">
                 <div class="flex justify-between items-center border-b pb-3">
                     <h3 class="text-lg font-black text-slate-900 flex items-center">
-                        <i class="fa-solid fa-folder-tree text-rose-600 ml-2"></i> إدارة فئات وبنود الهدايا
+                        <i class="fa-solid fa-folder-tree text-[#C5A059] ml-2"></i> إدارة فئات وبنود الهدايا
                     </h3>
-                    <button onclick="openAddCategoryModal()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md">
+                    <button onclick="openAddCategoryModal()" class="bg-[#C5A059] hover:bg-[#b08b49] text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md">
                         <i class="fa-solid fa-plus ml-1"></i> إضافة فئة جديدة
                     </button>
                 </div>
@@ -348,7 +355,7 @@
                 <div class="lg:col-span-8 bg-white/90 backdrop-blur-sm rounded-3xl p-6 border shadow-sm space-y-4">
                     <div class="flex justify-between items-center border-b pb-3">
                         <h3 class="text-lg font-black text-slate-900">إدارة وتعديل المخزون والأسعار</h3>
-                        <button onclick="openAddProductModal()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md">
+                        <button onclick="openAddProductModal()" class="bg-[#C5A059] hover:bg-[#b08b49] text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md">
                             <i class="fa-solid fa-plus ml-1"></i> إضافة هدية جديدة للمحل
                         </button>
                     </div>
@@ -385,18 +392,18 @@
     <!-- ADMIN PIN CODE MODAL -->
     <div id="admin-pin-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl w-full max-w-xs p-6 shadow-2xl space-y-4 text-center">
-            <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto text-xl shadow-inner">
+            <div class="w-12 h-12 bg-amber-50 text-[#C5A059] rounded-2xl flex items-center justify-center mx-auto text-xl shadow-inner">
                 <i class="fa-solid fa-lock"></i>
             </div>
             <div>
                 <h3 class="font-black text-base text-slate-900">لوحة تحكم المدير</h3>
                 <p class="text-[11px] text-slate-400 mt-1">أدخل كلمة المرور للمتابعة</p>
             </div>
-            <input type="password" id="admin-pin-input" placeholder="كلمة المرور..." class="w-full border border-slate-200 bg-slate-50 p-3 rounded-xl text-center text-sm font-bold focus:outline-none focus:border-rose-500">
+            <input type="password" id="admin-pin-input" placeholder="كلمة المرور..." class="w-full border border-slate-200 bg-slate-50 p-3 rounded-xl text-center text-sm font-bold focus:outline-none focus:border-[#C5A059]">
             <p id="pin-error-msg" class="text-rose-500 text-[11px] font-bold hidden">كلمة المرور غير صحيحة!</p>
             <div class="flex space-x-2 space-x-reverse pt-1">
                 <button onclick="closePinModal()" class="w-1/2 bg-slate-100 py-2.5 rounded-xl text-xs font-bold text-slate-600">إلغاء</button>
-                <button onclick="verifyAdminPin()" class="w-1/2 bg-rose-600 text-white py-2.5 rounded-xl text-xs font-bold shadow-md">دخول</button>
+                <button onclick="verifyAdminPin()" class="w-1/2 bg-[#C5A059] text-white py-2.5 rounded-xl text-xs font-bold shadow-md">دخول</button>
             </div>
         </div>
     </div>
@@ -406,8 +413,8 @@
         <div class="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
                 <h3 class="font-black text-lg text-slate-900 flex items-center">
-                    <i class="fa-solid fa-file-invoice text-rose-600 ml-2"></i>
-                    تفاصيل الفاتورة <span id="view-ord-id" class="mr-1 text-rose-600"></span>
+                    <i class="fa-solid fa-file-invoice text-[#C5A059] ml-2"></i>
+                    تفاصيل الفاتورة <span id="view-ord-id" class="mr-1 text-[#C5A059]"></span>
                 </h3>
                 <button onclick="closeOrderModal()" class="w-8 h-8 rounded-full bg-slate-100 font-bold text-slate-500">✕</button>
             </div>
@@ -436,17 +443,17 @@
                 <div id="view-ord-items" class="bg-slate-50/50 rounded-2xl border p-3 divide-y text-xs max-h-[130px] overflow-y-auto custom-scrollbar"></div>
             </div>
 
-            <div id="view-ord-extras" class="space-y-1 bg-rose-50/50 p-3 rounded-xl border border-rose-100 text-xs font-bold text-slate-700"></div>
+            <div id="view-ord-extras" class="space-y-1 bg-amber-50/50 p-3 rounded-xl border border-amber-100 text-xs font-bold text-slate-700"></div>
 
             <div class="flex justify-between items-center border-t pt-3 font-black text-base">
                 <span>الإجمالي الكلي:</span>
-                <span class="text-rose-600 text-lg"><span id="view-ord-total">0</span> EGP</span>
+                <span class="text-[#C5A059] text-lg"><span id="view-ord-total">0</span> EGP</span>
             </div>
 
             <div id="modal-actions-container" class="flex flex-col gap-2 pt-2">
                 <div class="flex space-x-2 space-x-reverse">
                     <button onclick="closeOrderModal()" class="w-1/3 bg-slate-100 py-3 rounded-xl font-bold text-xs text-slate-600">إغلاق</button>
-                    <button onclick="printCurrentModalOrder()" class="w-2/3 bg-rose-600 hover:bg-rose-700 text-white py-3 rounded-xl font-bold text-xs shadow-md flex items-center justify-center space-x-1.5 space-x-reverse">
+                    <button onclick="printCurrentModalOrder()" class="w-2/3 bg-[#C5A059] hover:bg-[#b08b49] text-white py-3 rounded-xl font-bold text-xs shadow-md flex items-center justify-center space-x-1.5 space-x-reverse">
                         <i class="fa-solid fa-print"></i>
                         <span>طباعة / حفظ PDF</span>
                     </button>
@@ -464,8 +471,8 @@
         <div class="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
                 <h3 class="font-black text-lg text-slate-900 flex items-center">
-                    <i class="fa-solid fa-receipt text-rose-600 ml-2"></i>
-                    استعراض الفاتورة <span id="pos-view-ord-id" class="mr-1 text-rose-600"></span>
+                    <i class="fa-solid fa-receipt text-[#C5A059] ml-2"></i>
+                    استعراض الفاتورة <span id="pos-view-ord-id" class="mr-1 text-[#C5A059]"></span>
                 </h3>
                 <button onclick="closePOSOrderModal()" class="w-8 h-8 rounded-full bg-slate-100 font-bold text-slate-500">✕</button>
             </div>
@@ -494,12 +501,12 @@
 
             <div class="flex justify-between items-center border-t pt-3 font-black text-base">
                 <span>الإجمالي الكلي:</span>
-                <span class="text-rose-600 text-lg"><span id="pos-view-ord-total">0</span> EGP</span>
+                <span class="text-[#C5A059] text-lg"><span id="pos-view-ord-total">0</span> EGP</span>
             </div>
 
             <div class="flex space-x-2 space-x-reverse">
                 <button onclick="closePOSOrderModal()" class="w-1/3 bg-slate-100 hover:bg-slate-200 text-slate-700 py-3 rounded-xl font-bold text-xs">إغلاق</button>
-                <button onclick="printPOSOrderFromModal()" class="w-2/3 bg-rose-600 hover:bg-rose-700 text-white py-3 rounded-xl font-bold text-xs shadow-md flex items-center justify-center space-x-1.5 space-x-reverse">
+                <button onclick="printPOSOrderFromModal()" class="w-2/3 bg-[#C5A059] hover:bg-[#b08b49] text-white py-3 rounded-xl font-bold text-xs shadow-md flex items-center justify-center space-x-1.5 space-x-reverse">
                     <i class="fa-solid fa-print"></i>
                     <span>طباعة / حفظ PDF</span>
                 </button>
@@ -518,7 +525,7 @@
             <div class="space-y-3 text-xs font-bold">
                 <div>
                     <label class="text-slate-600 block mb-1">كود الهدية (متسلسل تلقائياً):</label>
-                    <input type="text" id="prod-code" readonly class="w-full border p-2.5 rounded-xl bg-slate-100 text-rose-600 font-black cursor-not-allowed">
+                    <input type="text" id="prod-code" readonly class="w-full border p-2.5 rounded-xl bg-slate-100 text-[#C5A059] font-black cursor-not-allowed">
                 </div>
                 <div>
                     <label class="text-slate-600 block mb-1">اسم الهدية / الموديل:</label>
@@ -549,7 +556,7 @@
             </div>
             <div class="flex space-x-2 space-x-reverse pt-2">
                 <button onclick="closeProductModal()" class="w-1/2 bg-slate-100 py-3 rounded-xl font-bold">إلغاء</button>
-                <button onclick="saveProductData()" class="w-1/2 bg-rose-600 text-white py-3 rounded-xl font-bold shadow-md">حفظ البيانات</button>
+                <button onclick="saveProductData()" class="w-1/2 bg-[#C5A059] text-white py-3 rounded-xl font-bold shadow-md">حفظ البيانات</button>
             </div>
         </div>
     </div>
@@ -559,20 +566,29 @@
         <div class="bg-white rounded-3xl w-full max-w-xs p-6 shadow-2xl space-y-4 text-center">
             <h3 id="cat-modal-title" class="font-black text-base text-slate-900">إضافة فئة جديدة</h3>
             <input type="hidden" id="edit-old-cat-name">
-            <input type="text" id="cat-name-input" placeholder="اسم الفئة..." class="w-full border border-slate-200 bg-slate-50 p-3 rounded-xl text-center text-sm font-bold focus:outline-none focus:border-rose-500">
+            <input type="text" id="cat-name-input" placeholder="اسم الفئة..." class="w-full border border-slate-200 bg-slate-50 p-3 rounded-xl text-center text-sm font-bold focus:outline-none focus:border-[#C5A059]">
             <div class="flex space-x-2 space-x-reverse pt-1">
                 <button onclick="closeCategoryModal()" class="w-1/2 bg-slate-100 py-2.5 rounded-xl text-xs font-bold text-slate-600">إلغاء</button>
-                <button onclick="saveCategoryData()" class="w-1/2 bg-rose-600 text-white py-2.5 rounded-xl text-xs font-bold shadow-md">حفظ</button>
+                <button onclick="saveCategoryData()" class="w-1/2 bg-[#C5A059] text-white py-2.5 rounded-xl text-xs font-bold shadow-md">حفظ</button>
             </div>
         </div>
     </div>
 
-    <!-- PRINTABLE RECEIPT TEMPLATE -->
+    <!-- PRINTABLE RECEIPT TEMPLATE (اللوجو الجديد في الفاتورة في المنتصف بدقة عالية) -->
     <div id="printable-receipt" class="hidden max-w-xl mx-auto p-8 bg-white border border-slate-200 rounded-2xl text-xs space-y-4">
-        <div class="text-center space-y-2 border-b border-slate-200 pb-4">
-            <div class="w-12 h-12 bg-rose-600 rounded-2xl text-white font-black text-xl flex items-center justify-center mx-auto shadow-md">F</div>
-            <h1 class="text-2xl font-black text-slate-900 tracking-wider">FARAFERO GIFTS</h1>
-            <p class="text-xs font-bold text-rose-600">فاتورة مبيعات معتمدة</p>
+        <div class="text-center space-y-2 border-b border-slate-200 pb-4 flex flex-col items-center">
+            <div class="w-16 h-16 flex items-center justify-center mb-1">
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+                    <path d="M50 32C42 22 30 22 33 32C35.5 38.5 48 35 50 32Z" stroke="#C5A059" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M50 32C58 22 70 22 67 32C64.5 38.5 52 35 50 32Z" stroke="#C5A059" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                    <rect x="25" y="32" width="50" height="12" fill="white" stroke="#C5A059" stroke-width="3" stroke-linejoin="round"/>
+                    <rect x="28" y="44" width="44" height="34" fill="white" stroke="#C5A059" stroke-width="3" stroke-linejoin="round"/>
+                    <line x1="50" y1="32" x2="50" y2="78" stroke="#C5A059" stroke-width="3"/>
+                </svg>
+            </div>
+            <h1 class="text-2xl font-bold tracking-[4px] text-slate-900 font-cinzel">FARAFERO</h1>
+            <p class="text-xs font-semibold text-[#C5A059] tracking-[5px] uppercase font-montserrat">GIFT SHOP</p>
+            <p class="text-[11px] font-bold text-slate-500 pt-1">فاتورة مبيعات معتمدة</p>
         </div>
 
         <div class="grid grid-cols-2 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200 text-slate-700 text-[11px]">
@@ -581,7 +597,7 @@
                 <p><b>رقم الهاتف:</b> <span id="rec-cust-phone"></span></p>
             </div>
             <div class="space-y-1 text-left">
-                <p><b>رقم الفاتورة:</b> <span id="rec-id" class="font-bold text-rose-600"></span></p>
+                <p><b>رقم الفاتورة:</b> <span id="rec-id" class="font-bold text-[#C5A059]"></span></p>
                 <p><b>تاريخ الإصدار:</b> <span id="rec-date"></span></p>
             </div>
         </div>
@@ -603,9 +619,9 @@
 
         <div id="rec-extras-section" class="space-y-1 border-t pt-2 text-[11px] font-bold text-slate-700"></div>
 
-        <div class="border-t-2 border-rose-600 pt-3 flex justify-between items-center text-base font-black text-slate-900">
+        <div class="border-t-2 border-[#C5A059] pt-3 flex justify-between items-center text-base font-black text-slate-900">
             <span>الإجمالي النهائي المستحق:</span>
-            <span class="text-rose-600 text-xl"><span id="rec-grand-total">0</span> EGP</span>
+            <span class="text-[#C5A059] text-xl"><span id="rec-grand-total">0</span> EGP</span>
         </div>
 
         <div class="text-center pt-6 border-t border-slate-100 text-[10px] text-slate-400 space-y-1 font-bold">
@@ -733,7 +749,6 @@
             populateCategoryDropdown();
         }
 
-        /* خاصية البحث التلقائي عن العميل برقم الموبايل */
         function lookupCustomerByPhone() {
             const phoneInput = document.getElementById('cust-phone').value.trim();
             const nameInput = document.getElementById('cust-name');
@@ -774,7 +789,7 @@
                         <span class="absolute top-3 left-3 ${badgeColor} text-[10px] font-black px-2.5 py-1 rounded-xl shadow-sm">المركز #${idx + 1}</span>
                         <div class="h-36 rounded-2xl overflow-hidden bg-slate-100 relative mt-2">
                             <img src="${p.image}" class="w-full h-full object-cover">
-                            <span class="absolute bottom-2 right-2 bg-rose-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-lg">${p.code}</span>
+                            <span class="absolute bottom-2 right-2 bg-[#C5A059] text-white text-[10px] font-bold px-2 py-0.5 rounded-lg">${p.code}</span>
                         </div>
                         <div class="space-y-1">
                             <h4 class="font-black text-slate-900 text-sm line-clamp-1">${p.name}</h4>
@@ -784,7 +799,7 @@
                             </div>
                             <div class="flex justify-between items-center text-xs">
                                 <span class="text-slate-500 font-bold">السعر:</span>
-                                <span class="font-black text-rose-600">${p.price} EGP</span>
+                                <span class="font-black text-[#C5A059]">${p.price} EGP</span>
                             </div>
                         </div>
                     </div>
@@ -801,16 +816,16 @@
 
             state.products.filter(p => p.name.toLowerCase().includes(search) || (p.code && p.code.toLowerCase().includes(search))).forEach(p => {
                 grid.innerHTML += `
-                    <div onclick="addToPOS('${p.id}')" class="bg-white/80 hover:bg-rose-50 border p-2.5 rounded-2xl cursor-pointer text-xs space-y-1 transition-all flex flex-col justify-between">
+                    <div onclick="addToPOS('${p.id}')" class="bg-white/80 hover:bg-amber-50 border p-2.5 rounded-2xl cursor-pointer text-xs space-y-1 transition-all flex flex-col justify-between">
                         <div class="flex items-center space-x-2 space-x-reverse">
                             <img src="${p.image}" class="w-8 h-8 rounded-xl object-cover">
                             <div>
-                                <p class="text-[9px] text-rose-600 font-bold">${p.code || 'بدون كود'}</p>
+                                <p class="text-[9px] text-[#C5A059] font-bold">${p.code || 'بدون كود'}</p>
                                 <p class="font-bold line-clamp-1">${p.name}</p>
                             </div>
                         </div>
                         <div class="flex justify-between items-center mt-1">
-                            <span class="font-black text-rose-600">${p.price} EGP</span>
+                            <span class="font-black text-[#C5A059]">${p.price} EGP</span>
                             <span class="text-[9px] ${p.stock > 0 ? 'bg-slate-200 text-slate-700' : 'bg-rose-100 text-rose-600'} px-1.5 py-0.5 rounded-md font-bold">المخزون: ${p.stock}</span>
                         </div>
                     </div>
@@ -837,13 +852,13 @@
                             <div class="bg-white/90 backdrop-blur-sm rounded-3xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between space-y-3">
                                 <div class="h-36 rounded-2xl overflow-hidden bg-slate-100 relative">
                                     <img src="${p.image}" class="w-full h-full object-cover">
-                                    <span class="absolute bottom-2 right-2 bg-rose-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-lg">${p.code || 'بدون كود'}</span>
+                                    <span class="absolute bottom-2 right-2 bg-[#C5A059] text-white text-[10px] font-bold px-2 py-0.5 rounded-lg">${p.code || 'بدون كود'}</span>
                                 </div>
                                 <div class="space-y-1">
                                     <h4 class="font-black text-slate-900 text-sm line-clamp-1">${p.name}</h4>
                                     <div class="flex justify-between items-center text-xs pt-1">
                                         <span class="text-slate-500 font-bold">السعر:</span>
-                                        <span class="font-black text-rose-600 text-sm">${p.price} EGP</span>
+                                        <span class="font-black text-[#C5A059] text-sm">${p.price} EGP</span>
                                     </div>
                                     <div class="flex justify-between items-center text-xs">
                                         <span class="text-slate-500 font-bold">الكمية المتاحة:</span>
@@ -858,9 +873,9 @@
                         <div class="border rounded-2xl overflow-hidden shadow-sm bg-white/50 backdrop-blur-sm">
                             <button onclick="toggleCategory('${cat}')" class="w-full flex justify-between items-center p-4 bg-white/90 hover:bg-slate-50 font-black text-slate-900 text-sm transition-all">
                                 <div class="flex items-center space-x-2 space-x-reverse">
-                                    <i class="fa-solid fa-folder-tree text-rose-600 text-base"></i>
+                                    <i class="fa-solid fa-folder-tree text-[#C5A059] text-base"></i>
                                     <span>${cat}</span>
-                                    <span class="text-xs bg-rose-50 text-rose-600 px-2.5 py-0.5 rounded-full font-bold">(${filteredProducts.length} صنف)</span>
+                                    <span class="text-xs bg-amber-50 text-[#C5A059] px-2.5 py-0.5 rounded-full font-bold">(${filteredProducts.length} صنف)</span>
                                 </div>
                                 <i class="fa-solid fa-chevron-${isOpen ? 'up' : 'down'} text-slate-400 text-xs"></i>
                             </button>
@@ -975,7 +990,7 @@
                     <tr>
                         <td class="p-3 font-bold text-slate-400">${idx + 1}</td>
                         <td class="p-3 font-black text-slate-900">${c.name}</td>
-                        <td class="p-3 font-bold text-rose-600 dir-ltr text-right">${c.phone}</td>
+                        <td class="p-3 font-bold text-[#C5A059] dir-ltr text-right">${c.phone}</td>
                         <td class="p-3 font-bold text-slate-700">${c.ordersCount || 1} طلبات</td>
                         <td class="p-3 text-left font-semibold text-slate-500">${c.lastDate || 'سجل دائم'}</td>
                     </tr>
@@ -994,7 +1009,7 @@
                     <div class="bg-white/80 hover:bg-slate-100 border p-2.5 rounded-xl text-xs space-y-1.5 transition-all shadow-sm ${isCancelled ? 'opacity-60 bg-amber-50/20' : ''}">
                         <div class="flex justify-between items-center cursor-pointer" onclick="openPOSOrderDetails('${o.firebaseId}')">
                             <b class="text-slate-900">${o.id} ${isCancelled ? '<span class="text-amber-600 text-[9px]">(ملغية)</span>' : ''}</b>
-                            <span class="font-black ${isCancelled ? 'text-slate-400 line-through' : 'text-rose-600'}">${o.total} EGP</span>
+                            <span class="font-black ${isCancelled ? 'text-slate-400 line-through' : 'text-[#C5A059]'}">${o.total} EGP</span>
                         </div>
                         <div class="flex justify-between items-center text-[10px]">
                             <span class="text-slate-600">العميل: ${o.customerName}</span>
@@ -1024,14 +1039,14 @@
                 itemsContainer.innerHTML += `
                     <div class="flex justify-between items-center py-1">
                         <span class="font-bold text-slate-800">${item.name} (سعر: ${item.price} × ${item.qty})</span>
-                        <span class="font-black text-rose-600">${item.price * item.qty} EGP</span>
+                        <span class="font-black text-[#C5A059]">${item.price * item.qty} EGP</span>
                     </div>
                 `;
             });
 
             const extrasContainer = document.getElementById('pos-view-ord-extras');
             extrasContainer.innerHTML = `
-                <div class="flex justify-between"><span>الخصم:</span> <span class="text-rose-600 font-bold">- ${order.discount || 0} EGP</span></div>
+                <div class="flex justify-between"><span>الخصم:</span> <span class="text-[#C5A059] font-bold">- ${order.discount || 0} EGP</span></div>
                 <div class="flex justify-between"><span>مصاريف التغليف:</span> <span class="font-bold">+ ${order.packaging || 0} EGP</span></div>
                 <div class="flex justify-between"><span>مصاريف الشحن:</span> <span class="font-bold">+ ${order.shipping || 0} EGP</span></div>
             `;
@@ -1124,11 +1139,11 @@
                 tbody.innerHTML += `
                     <tr>
                         <td class="p-3"><img src="${p.image}" class="w-9 h-9 rounded-xl object-cover shadow-sm"></td>
-                        <td class="p-3 font-bold text-rose-600">${p.code || '-'}</td>
+                        <td class="p-3 font-bold text-[#C5A059]">${p.code || '-'}</td>
                         <td class="p-3 font-bold text-slate-800">${p.name}</td>
                         <td class="p-3 text-slate-500">${p.category}</td>
                         <td class="p-3 font-semibold text-slate-600">${p.cost || 0} EGP</td>
-                        <td class="p-3 font-black text-rose-600">${p.price} EGP</td>
+                        <td class="p-3 font-black text-[#C5A059]">${p.price} EGP</td>
                         <td class="p-3 font-bold ${p.stock <= 3 ? 'text-rose-600' : 'text-slate-700'}">${p.stock} قطعة</td>
                         <td class="p-3 text-left"><span class="${p.stock > 3 ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'} text-[10px] px-2.5 py-1 rounded-full font-bold">${p.stock > 3 ? 'متوفر' : 'منخفض'}</span></td>
                     </tr>`;
@@ -1161,10 +1176,10 @@
                     tbody.innerHTML += `
                         <tr>
                             <td class="p-2.5"><img src="${p.image}" class="w-8 h-8 rounded-lg object-cover"></td>
-                            <td class="p-2.5 font-bold text-rose-600">${p.code || '-'}</td>
+                            <td class="p-2.5 font-bold text-[#C5A059]">${p.code || '-'}</td>
                             <td class="p-2.5 font-bold text-slate-800">${p.name}</td>
                             <td class="p-2.5 font-semibold text-slate-600">${p.cost || 0} EGP</td>
-                            <td class="p-2.5 font-black text-rose-600">${p.price} EGP</td>
+                            <td class="p-2.5 font-black text-[#C5A059]">${p.price} EGP</td>
                             <td class="p-2.5 font-bold">${p.stock} قطعة</td>
                             <td class="p-2.5 text-left flex items-center justify-end space-x-1.5 space-x-reverse">
                                 <button onclick="increaseStock('${p.id}')" title="زيادة المخزون (+1)" class="bg-emerald-50 hover:bg-emerald-600 text-emerald-600 hover:text-white border px-2 py-1 rounded-lg font-bold text-[11px] shadow-sm">+</button>
@@ -1182,10 +1197,10 @@
                 sortedOrders.forEach(o => {
                     const isCancelled = o.status === 'cancelled';
                     ordersList.innerHTML += `
-                        <div onclick="openOrderDetails('${o.firebaseId}')" class="bg-white/80 hover:bg-rose-50 border p-3 rounded-2xl text-xs space-y-1 cursor-pointer transition-all shadow-sm ${isCancelled ? 'opacity-60 border-amber-300 bg-amber-50/30' : ''}">
+                        <div onclick="openOrderDetails('${o.firebaseId}')" class="bg-white/80 hover:bg-amber-50 border p-3 rounded-2xl text-xs space-y-1 cursor-pointer transition-all shadow-sm ${isCancelled ? 'opacity-60 border-amber-300 bg-amber-50/30' : ''}">
                             <div class="flex justify-between items-center">
                                 <b class="text-slate-900">${o.id} ${isCancelled ? '<span class="text-amber-600 text-[10px]">(ملغية)</span>' : ''}</b>
-                                <span class="font-black ${isCancelled ? 'text-slate-400 line-through' : 'text-rose-600'}">${o.total} EGP</span>
+                                <span class="font-black ${isCancelled ? 'text-slate-400 line-through' : 'text-[#C5A059]'}">${o.total} EGP</span>
                             </div>
                             <p class="text-slate-600 text-[11px] font-semibold">العميل: ${o.customerName}</p>
                             <p class="text-slate-400 text-[10px]">${o.date}</p>
@@ -1222,14 +1237,14 @@
                 itemsContainer.innerHTML += `
                     <div class="flex justify-between items-center py-1">
                         <span class="font-bold text-slate-800">${item.name} (سعر: ${item.price} × ${item.qty})</span>
-                        <span class="font-black text-rose-600">${item.price * item.qty} EGP</span>
+                        <span class="font-black text-[#C5A059]">${item.price * item.qty} EGP</span>
                     </div>
                 `;
             });
 
             const extrasContainer = document.getElementById('view-ord-extras');
             extrasContainer.innerHTML = `
-                <div class="flex justify-between"><span>الخصم:</span> <span class="text-rose-600 font-bold">- ${order.discount || 0} EGP</span></div>
+                <div class="flex justify-between"><span>الخصم:</span> <span class="text-[#C5A059] font-bold">- ${order.discount || 0} EGP</span></div>
                 <div class="flex justify-between"><span>مصاريف التغليف:</span> <span class="font-bold">+ ${order.packaging || 0} EGP</span></div>
                 <div class="flex justify-between"><span>مصاريف الشحن:</span> <span class="font-bold">+ ${order.shipping || 0} EGP</span></div>
             `;
@@ -1385,7 +1400,7 @@
 
             const extrasSection = document.getElementById('rec-extras-section');
             extrasSection.innerHTML = `
-                <div class="flex justify-between"><span>خصم الفاتورة:</span> <span class="text-rose-600">- ${discount || 0} EGP</span></div>
+                <div class="flex justify-between"><span>خصم الفاتورة:</span> <span class="text-[#C5A059]">- ${discount || 0} EGP</span></div>
                 <div class="flex justify-between"><span>مصاريف التغليف:</span> <span>+ ${packaging || 0} EGP</span></div>
                 <div class="flex justify-between"><span>مصاريف الشحن:</span> <span>+ ${shipping || 0} EGP</span></div>
             `;
@@ -1494,7 +1509,7 @@
                 if(el) el.classList.add('hidden');
                 const btn = document.getElementById('nav-' + t);
                 if(btn) {
-                    btn.classList.remove('text-rose-600');
+                    btn.classList.remove('text-[#C5A059]');
                     btn.classList.add('text-slate-400');
                 }
             });
@@ -1504,7 +1519,7 @@
             let activeBtn = document.getElementById('nav-' + tab);
             if(activeBtn) {
                 activeBtn.classList.remove('text-slate-400');
-                activeBtn.classList.add('text-rose-600');
+                activeBtn.classList.add('text-[#C5A059]');
             }
         }
 
