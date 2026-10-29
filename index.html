@@ -41,11 +41,11 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><g fill="none" stroke="%23ff69b4" stroke-width="3"><path d="M110,60 C80,20 40,50 80,80 C110,100 150,80 150,80 C150,80 190,100 220,80 C260,50 220,20 190,60 C170,80 150,80 150,80 C150,80 130,80 110,60 Z" fill="%23ffb6c1" fill-opacity="0.3"/><circle cx="70" cy="50" r="3" fill="%23ff1493"/><circle cx="230" cy="50" r="3" fill="%23ff1493"/></g><text x="150" y="125" font-family="Cairo, sans-serif" font-weight="900" font-size="28" fill="%23e07a93" text-anchor="middle">FARAFERO</text><text x="150" y="155" font-family="Cairo, sans-serif" font-weight="800" font-size="24" fill="%23e07a93" text-anchor="middle">GIFTS</text><text x="150" y="175" font-family="Cairo, sans-serif" font-weight="600" font-size="10" fill="%23b76e79" letter-spacing="4" text-anchor="middle">GIFT SHOP</text></svg>');
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><g fill="none" stroke="%23ff69b4" stroke-width="3"><path d="M110,60 C80,20 40,50 80,80 C110,100 150,80 150,80 C150,80 190,100 220,80 C260,50 220,20 190,60 C170,80 150,80 150,80 C150,80 130,80 110,60 Z" fill="%23ffb6c1" fill-opacity="0.3"/><circle cx="70" cy="50" r="3" fill="%23ff1493"/><circle cx="230" cy="50" r="3" fill="%23ff1493"/></g><text x="150" y="125" font-family="Cairo, sans-serif" font-weight="900" font-size="28" fill="%23e07a93" text-anchor="middle">FARAFERO</text><text x="150" y="155" font-family="Cairo, sans-serif" font-weight="800" font-size="24" fill="%23e07a93" text-anchor="middle">GIFTS</text></svg>');
             background-repeat: repeat;
             background-position: center;
             background-size: 350px 250px;
-            opacity: 0.035; /* درجة شفافة وباهتة جداً لا تعيق رؤية المحتوى */
+            opacity: 0.03;
             pointer-events: none;
             z-index: -1;
         }
@@ -67,16 +67,9 @@
     <header class="bg-white/90 backdrop-blur-md sticky top-0 z-40 border-b border-blush-100 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <div class="flex items-center space-x-3 space-x-reverse">
-                <div class="w-12 h-12 flex items-center justify-center">
-                    <svg viewBox="0 0 200 180" class="w-full h-full">
-                        <path d="M60,50 C30,10 -10,40 30,70 C60,90 100,70 100,70 C100,70 140,90 170,70 C210,40 170,10 140,50 C120,70 100,70 100,70 C100,70 80,70 60,50 Z" fill="#ffb6c1" stroke="#ff69b4" stroke-width="4"/>
-                        <path d="M100,70 L100,100" stroke="#ff1493" stroke-width="4"/>
-                        <polygon points="25,35 30,45 20,45" fill="#ff1493"/>
-                        <polygon points="175,35 180,45 170,45" fill="#ff1493"/>
-                        <text x="100" y="125" font-family="Cairo, sans-serif" font-weight="900" font-size="22" fill="#cf5d78" text-anchor="middle">FARAFERO</text>
-                        <text x="100" y="152" font-family="Cairo, sans-serif" font-weight="800" font-size="20" fill="#cf5d78" text-anchor="middle">GIFTS</text>
-                        <text x="100" y="170" font-family="Cairo, sans-serif" font-weight="600" font-size="9" fill="#b76e79" letter-spacing="3" text-anchor="middle">GIFT SHOP</text>
-                    </svg>
+                <!-- التعديل رقم 1: لوجو أنيق ومميز -->
+                <div class="w-12 h-12 bg-gradient-to-tr from-rose-100 to-blush-50 rounded-2xl flex items-center justify-center border border-rose-200 shadow-sm">
+                    <i class="fa-solid fa-gift text-rose-600 text-xl animate-pulse"></i>
                 </div>
                 <div>
                     <h1 class="text-lg font-black tracking-wide text-slate-900 leading-tight">FARAFERO GIFTS</h1>
@@ -85,13 +78,15 @@
             </div>
 
             <div class="flex items-center space-x-3 space-x-reverse">
+                <!-- التعديل رقم 2: Manger -->
                 <div class="flex items-center space-x-1.5 space-x-reverse bg-slate-100 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700">
                     <i class="fa-solid fa-user-check text-rose-600"></i>
-                    <span class="text-rose-600">مدير المحل (مباشر)</span>
+                    <span class="text-rose-600">Manger</span>
                 </div>
+                <!-- التعديل رقم 3: Online -->
                 <div class="flex items-center space-x-1 space-x-reverse bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
                     <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                    <span class="text-[11px] font-bold text-emerald-700">متصل سحابياً</span>
+                    <span class="text-[11px] font-bold text-emerald-700">Online</span>
                 </div>
             </div>
         </div>
@@ -124,7 +119,7 @@
 
         <!-- TAB 1: CATALOG -->
         <div id="tab-catalog" class="app-tab space-y-6">
-            <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-4">
+            <div class="bg-white/90 backdrop-blur-sm rounded-3xl p-6 border shadow-sm space-y-4">
                 <div class="flex items-center justify-between border-b pb-3">
                     <div>
                         <h3 class="text-xl font-black text-slate-900">فئات وبنود الهدايا</h3>
@@ -141,7 +136,7 @@
 
         <!-- TAB 1.5: BEST SELLER -->
         <div id="tab-bestseller" class="app-tab hidden space-y-6">
-            <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-4">
+            <div class="bg-white/90 backdrop-blur-sm rounded-3xl p-6 border shadow-sm space-y-4">
                 <div class="flex items-center justify-between border-b pb-3">
                     <div>
                         <h3 class="text-xl font-black text-slate-900 flex items-center">
@@ -159,7 +154,7 @@
         <!-- TAB 2: POS (الحسابات) -->
         <div id="tab-pos" class="app-tab hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <div class="lg:col-span-7 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+                <div class="lg:col-span-7 bg-white/90 backdrop-blur-sm rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
                     <div class="flex items-center justify-between border-b pb-3">
                         <h3 class="text-xl font-black text-slate-900 flex items-center">
                             <i class="fa-solid fa-boxes-packing text-blush-600 ml-2"></i> الهدايا المتاحة في المحل
@@ -171,7 +166,7 @@
                 </div>
 
                 <div class="lg:col-span-5 space-y-6">
-                    <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-lg flex flex-col justify-between space-y-4">
+                    <div class="bg-white/90 backdrop-blur-sm rounded-3xl p-6 border border-slate-200 shadow-lg flex flex-col justify-between space-y-4">
                         <div class="space-y-3">
                             <div class="flex items-center justify-between border-b pb-3">
                                 <h4 class="font-black text-slate-900 flex items-center">
@@ -230,7 +225,7 @@
                         </div>
                     </div>
 
-                    <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-3">
+                    <div class="bg-white/90 backdrop-blur-sm rounded-3xl p-6 border border-slate-200 shadow-sm space-y-3">
                         <div class="border-b pb-2 flex justify-between items-center">
                             <h4 class="font-black text-slate-900 text-sm flex items-center">
                                 <i class="fa-solid fa-receipt text-rose-600 ml-2"></i> سجل الفواتير الصادرة والقديمة
@@ -245,7 +240,7 @@
 
         <!-- TAB 3: CUSTOMERS -->
         <div id="tab-customers" class="app-tab hidden space-y-6">
-            <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-4">
+            <div class="bg-white/90 backdrop-blur-sm rounded-3xl p-6 border shadow-sm space-y-4">
                 <div class="flex justify-between items-center border-b pb-3">
                     <div>
                         <h3 class="text-xl font-black text-slate-900">سجل العملاء الدائم</h3>
@@ -275,7 +270,7 @@
 
         <!-- TAB 4: INVENTORY -->
         <div id="tab-inventory" class="app-tab hidden space-y-6">
-            <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-4">
+            <div class="bg-white/90 backdrop-blur-sm rounded-3xl p-6 border shadow-sm space-y-4">
                 <div class="flex justify-between items-center border-b pb-3">
                     <div>
                         <h3 class="text-xl font-black text-slate-900">متابعة حركة المخزون والكميات</h3>
@@ -317,22 +312,22 @@
 
             <!-- الملخص العام -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-1">
+                <div class="bg-white/90 backdrop-blur-sm rounded-3xl p-6 border shadow-sm space-y-1">
                     <p class="text-xs font-bold text-slate-400">إجمالي مبيعات المحل</p>
                     <h4 class="text-2xl font-black text-rose-600"><span id="dash-total-revenue">0</span> EGP</h4>
                     <p class="text-[10px] text-slate-500 font-semibold" id="dash-total-orders">عدد الطلبات: 0</p>
                 </div>
-                <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-1">
+                <div class="bg-white/90 backdrop-blur-sm rounded-3xl p-6 border shadow-sm space-y-1">
                     <p class="text-xs font-bold text-slate-400">إجمالي رأس مال المخزون (تكلفة)</p>
                     <h4 class="text-2xl font-black text-slate-900"><span id="dash-total-cost">0</span> EGP</h4>
                     <p class="text-[10px] text-slate-500 font-semibold">إجمالي تكلفة البضاعة الحالية</p>
                 </div>
-                <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-1">
+                <div class="bg-white/90 backdrop-blur-sm rounded-3xl p-6 border shadow-sm space-y-1">
                     <p class="text-xs font-bold text-slate-400">إجمالي قيمة بضاعة المخزون (بيع)</p>
                     <h4 class="text-2xl font-black text-emerald-600"><span id="dash-total-value">0</span> EGP</h4>
                     <p class="text-[10px] text-slate-500 font-semibold">القيمة البيعية المتوقعة</p>
                 </div>
-                <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-1">
+                <div class="bg-white/90 backdrop-blur-sm rounded-3xl p-6 border shadow-sm space-y-1">
                     <p class="text-xs font-bold text-slate-400">إجمالي عدد قطع الهدايا بالمخزن</p>
                     <h4 class="text-2xl font-black text-slate-900"><span id="dash-total-pieces">0</span> قطعة</h4>
                     <p class="text-[10px] text-slate-500 font-semibold">مجموع القطع لكل الأصناف</p>
@@ -340,7 +335,7 @@
             </div>
 
             <!-- إدارة فئات الهدايا -->
-            <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-4">
+            <div class="bg-white/90 backdrop-blur-sm rounded-3xl p-6 border shadow-sm space-y-4">
                 <div class="flex justify-between items-center border-b pb-3">
                     <h3 class="text-lg font-black text-slate-900 flex items-center">
                         <i class="fa-solid fa-folder-tree text-rose-600 ml-2"></i> إدارة فئات وبنود الهدايا
@@ -353,7 +348,7 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <div class="lg:col-span-8 bg-white rounded-3xl p-6 border shadow-sm space-y-4">
+                <div class="lg:col-span-8 bg-white/90 backdrop-blur-sm rounded-3xl p-6 border shadow-sm space-y-4">
                     <div class="flex justify-between items-center border-b pb-3">
                         <h3 class="text-lg font-black text-slate-900">إدارة وتعديل المخزون والأسعار</h3>
                         <button onclick="openAddProductModal()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md">
@@ -378,7 +373,7 @@
                     </div>
                 </div>
 
-                <div class="lg:col-span-4 bg-white rounded-3xl p-6 border shadow-sm space-y-4">
+                <div class="lg:col-span-4 bg-white/90 backdrop-blur-sm rounded-3xl p-6 border shadow-sm space-y-4">
                     <div class="border-b pb-3">
                         <h3 class="text-lg font-black text-slate-900">سجل الفواتير الصادرة (إدارة)</h3>
                         <p class="text-xs text-slate-500">اضغط على أي فاتورة لاستعراضها أو إلغائها</p>
@@ -575,20 +570,10 @@
         </div>
     </div>
 
-    <!-- PRINTABLE RECEIPT TEMPLATE (بدون علامة مائية وبشكل نظيف تماماً) -->
+    <!-- PRINTABLE RECEIPT TEMPLATE -->
     <div id="printable-receipt" class="hidden max-w-xl mx-auto p-8 bg-white border border-slate-200 rounded-2xl text-xs space-y-4">
         <div class="text-center space-y-2 border-b border-slate-200 pb-4">
-            <div class="w-16 h-16 mx-auto flex items-center justify-center">
-                <svg viewBox="0 0 200 180" class="w-full h-full">
-                    <path d="M60,50 C30,10 -10,40 30,70 C60,90 100,70 100,70 C100,70 140,90 170,70 C210,40 170,10 140,50 C120,70 100,70 100,70 C100,70 80,70 60,50 Z" fill="#ffb6c1" stroke="#ff69b4" stroke-width="4"/>
-                    <path d="M100,70 L100,100" stroke="#ff1493" stroke-width="4"/>
-                    <polygon points="25,35 30,45 20,45" fill="#ff1493"/>
-                    <polygon points="175,35 180,45 170,45" fill="#ff1493"/>
-                    <text x="100" y="125" font-family="Cairo, sans-serif" font-weight="900" font-size="22" fill="#cf5d78" text-anchor="middle">FARAFERO</text>
-                    <text x="100" y="152" font-family="Cairo, sans-serif" font-weight="800" font-size="20" fill="#cf5d78" text-anchor="middle">GIFTS</text>
-                    <text x="100" y="170" font-family="Cairo, sans-serif" font-weight="600" font-size="9" fill="#b76e79" letter-spacing="3" text-anchor="middle">GIFT SHOP</text>
-                </svg>
-            </div>
+            <div class="w-12 h-12 bg-rose-600 rounded-2xl text-white font-black text-xl flex items-center justify-center mx-auto shadow-md">F</div>
             <h1 class="text-2xl font-black text-slate-900 tracking-wider">FARAFERO GIFTS</h1>
             <p class="text-xs font-bold text-rose-600">فاتورة مبيعات معتمدة</p>
         </div>
