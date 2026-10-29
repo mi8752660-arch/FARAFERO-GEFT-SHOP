@@ -50,13 +50,13 @@
             z-index: -1;
         }
 
-        /* تنسيق طباعة الفاتورة النظيف تماماً مثل الصورة الاصلية */
+        /* تنسيق طباعة الفاتورة النظيف تماماً */
         @media print {
             body * { visibility: hidden !important; }
             #printable-receipt, #printable-receipt * { visibility: visible !important; }
             #printable-receipt { 
                 position: absolute !important; left: 0 !important; top: 0 !important; width: 100% !important; 
-                direction: rtl !important; font-family: 'Cairo', sans-serif !important; display: block !important;
+                direction: ltr !important; font-family: 'Cairo', sans-serif !important; display: block !important;
                 background-color: white !important; padding: 25px !important; box-shadow: none !important; border: none !important;
             }
         }
@@ -574,12 +574,17 @@
         </div>
     </div>
 
-    <!-- PRINTABLE RECEIPT TEMPLATE (مطابق تماماً للصورة الأصلية وبدون كلمة Draft) -->
-    <div id="printable-receipt" class="hidden max-w-2xl mx-auto p-8 bg-white text-xs space-y-6">
-        <!-- رأس الفاتورة: اللوجو يسار، وكلمة INVOICE يمين -->
+    <!-- PRINTABLE RECEIPT TEMPLATE (مرتب من الشمال لليسار، وبدء الأعمدة من الشمال، وإبدال 8 و9، وتعديل 7 والإجمالي) -->
+    <div id="printable-receipt" class="hidden max-w-2xl mx-auto p-8 bg-white text-xs space-y-6" dir="ltr">
+        <!-- رأس الفاتورة: Official يسار، واللوجو يمين -->
         <div class="flex justify-between items-start border-b border-slate-300 pb-5">
+            <div class="space-y-0.5">
+                <p class="text-[10px] text-slate-400 tracking-widest uppercase">INVOICE</p>
+                <p class="font-bold text-slate-800 text-sm">Official</p>
+            </div>
             <div class="space-y-1">
-                <div class="flex items-center space-x-2 space-x-reverse">
+                <div class="flex items-center space-x-2">
+                    <h1 class="text-xl font-bold tracking-[3px] text-slate-900 font-cinzel">FARAFERO</h1>
                     <div class="w-8 h-8 flex items-center justify-center bg-white rounded-xl border border-[#C5A059]/40 p-0.5">
                         <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
                             <path d="M50 32C42 22 30 22 33 32C35.5 38.5 48 35 50 32Z" stroke="#C5A059" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
@@ -589,23 +594,13 @@
                             <line x1="50" y1="32" x2="50" y2="78" stroke="#C5A059" stroke-width="3"/>
                         </svg>
                     </div>
-                    <h1 class="text-xl font-bold tracking-[3px] text-slate-900 font-cinzel">FARAFERO</h1>
                 </div>
-            </div>
-            <div class="text-left space-y-0.5">
-                <p class="text-[10px] text-slate-400 tracking-widest uppercase">INVOICE</p>
-                <p class="font-bold text-slate-800 text-sm">Official</p>
             </div>
         </div>
 
         <!-- قسم بيانات العميل وتواريخ الفاتورة -->
         <div class="grid grid-cols-2 gap-4 text-slate-700 text-[11px] pt-1">
-            <div class="space-y-1">
-                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">BILL TO</p>
-                <p id="rec-cust-name" class="font-bold text-slate-900 text-sm"></p>
-                <p id="rec-cust-phone" class="text-slate-600 font-semibold"></p>
-            </div>
-            <div class="space-y-1.5 text-left bg-slate-50/60 p-3 rounded-xl border border-slate-100">
+            <div class="space-y-1.5 bg-slate-50/60 p-3 rounded-xl border border-slate-100">
                 <div class="flex justify-between">
                     <span class="text-slate-400">Invoice date</span>
                     <span id="rec-date" class="font-semibold text-slate-800"></span>
@@ -619,58 +614,65 @@
                     <span id="rec-id" class="font-bold text-[#C5A059]"></span>
                 </div>
             </div>
+            <div class="space-y-1 text-right">
+                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">BILL TO</p>
+                <p id="rec-cust-name" class="font-bold text-slate-900 text-sm"></p>
+                <p id="rec-cust-phone" class="text-slate-600 font-semibold"></p>
+            </div>
         </div>
 
-        <!-- جدول المنتجات والأصناف -->
+        <!-- جدول المنتجات والأصناف (بداية الأعمدة من الشمال: Description -> SKU -> QTY -> UNIT PRICE -> TAX -> TOTAL) -->
         <div class="pt-2">
-            <table class="w-full text-right text-[11px]">
+            <table class="w-full text-left text-[11px]">
                 <thead>
                     <tr class="text-slate-400 font-bold border-b border-slate-200 uppercase text-[10px]">
-                        <th class="pb-2.5 pr-2">DESCRIPTION</th>
+                        <th class="pb-2.5 pl-2">DESCRIPTION</th>
                         <th class="pb-2.5 text-center">SKU</th>
                         <th class="pb-2.5 text-center">QTY</th>
                         <th class="pb-2.5 text-center">UNIT PRICE</th>
                         <th class="pb-2.5 text-center">TAX</th>
-                        <th class="pb-2.5 text-left pl-2">TOTAL</th>
+                        <th class="pb-2.5 text-right pr-2">TOTAL</th>
                     </tr>
                 </thead>
                 <tbody id="rec-items-list" class="divide-y divide-slate-100 font-medium text-slate-800"></tbody>
             </table>
         </div>
 
-        <!-- المجاميع والخصم والشحن -->
-        <div class="flex justify-end pt-4 border-t border-slate-200">
-            <div class="w-64 space-y-2 text-[11px]">
+        <!-- المجاميع والخصم والشحن (مع إبدال 8 و 9، و 7 على الشمال، وإجمالي الفاتورة على اليمين) -->
+        <div class="flex justify-between items-end pt-4 border-t border-slate-200">
+            <!-- 7 خليها على الشمال -->
+            <div class="text-[11px] text-slate-500 font-bold">
+                <p>Farafero Gift Shop</p>
+            </div>
+
+            <!-- الإجمالي والمجاميع (الإجمالي النهائي على اليمين) -->
+            <div class="w-64 space-y-2 text-[11px] text-right">
                 <div class="flex justify-between text-slate-600">
-                    <span>Subtotal</span>
+                    <span class="text-slate-400">Subtotal</span>
                     <span id="rec-subtotal" class="font-bold">0.00 EGP</span>
                 </div>
                 <div id="rec-discount-row" class="flex justify-between text-rose-600 hidden">
-                    <span id="rec-discount-label">Discount</span>
+                    <span id="rec-discount-label" class="text-slate-400">Discount</span>
                     <span id="rec-discount-val" class="font-bold">0.00 EGP</span>
                 </div>
                 <div id="rec-packaging-row" class="flex justify-between text-slate-600 hidden">
-                    <span>مصاريف التغليف</span>
+                    <span class="text-slate-400">مصاريف التغليف</span>
                     <span id="rec-packaging-val" class="font-bold">0.00 EGP</span>
                 </div>
                 <div id="rec-shipping-row" class="flex justify-between text-slate-600 hidden">
-                    <span>مصاريف الشحن</span>
+                    <span class="text-slate-400">مصاريف الشحن</span>
                     <span id="rec-shipping-val" class="font-bold">0.00 EGP</span>
                 </div>
                 <div class="flex justify-between text-slate-600">
-                    <span>Tax</span>
+                    <span class="text-slate-400">Tax</span>
                     <span class="font-bold">0.00 EGP</span>
                 </div>
+                <!-- تم التبديل بين 8 و 9 وجعل الإجمالي النهائي على اليمين -->
                 <div class="flex justify-between items-center text-sm font-black text-slate-900 border-t border-slate-300 pt-2.5">
-                    <span>Total</span>
-                    <span id="rec-grand-total" class="text-[#C5A059] text-base">0.00 EGP</span>
+                    <span class="text-[#C5A059] text-base" id="rec-grand-total">0.00 EGP</span>
+                    <span class="text-slate-800">Total</span>
                 </div>
             </div>
-        </div>
-
-        <!-- أسفل الفاتورة -->
-        <div class="text-left text-[10px] text-slate-400 pt-8">
-            <p>Farafero Gift Shop</p>
         </div>
     </div>
 
@@ -1439,7 +1441,7 @@
                 subtotal += itemTotal;
                 listContainer.innerHTML += `
                     <tr class="border-b border-slate-50">
-                        <td class="py-3 pr-2">
+                        <td class="py-3 pl-2">
                             <p class="font-bold text-slate-900">${i.name}</p>
                             <p class="text-[10px] text-slate-400">${i.code || '-'}</p>
                         </td>
@@ -1447,7 +1449,7 @@
                         <td class="py-3 text-center font-bold text-slate-800">${i.qty}.000</td>
                         <td class="py-3 text-center text-slate-600">${i.price.toFixed(2)} EGP</td>
                         <td class="py-3 text-center text-slate-500">0.00 EGP</td>
-                        <td class="py-3 text-left pl-2 font-bold text-slate-900">${itemTotal.toFixed(2)} EGP</td>
+                        <td class="py-3 text-right pr-2 font-bold text-slate-900">${itemTotal.toFixed(2)} EGP</td>
                     </tr>
                 `;
             });
