@@ -574,7 +574,7 @@
         </div>
     </div>
 
-    <!-- PRINTABLE RECEIPT TEMPLATE (اللوجو شمال، Bill to شمال، بدون ضريبة تماماً) -->
+    <!-- PRINTABLE RECEIPT TEMPLATE (اللوجو شمال، Bill to شمال، QTY بدون علامة عشرية، Farafero Gift Shop في المنتصف، و Discount مضاف) -->
     <div id="printable-receipt" class="hidden max-w-2xl mx-auto p-8 bg-white text-xs space-y-6" dir="ltr">
         <!-- رأس الفاتورة: اللجوء والاسم على الشمال، وكلمة Official على اليمين -->
         <div class="flex justify-between items-start border-b border-slate-300 pb-5">
@@ -621,7 +621,7 @@
             </div>
         </div>
 
-        <!-- جدول المنتجات والأصناف (بدون عمود TAX) -->
+        <!-- جدول المنتجات والأصناف -->
         <div class="pt-2">
             <table class="w-full text-left text-[11px]">
                 <thead>
@@ -637,9 +637,9 @@
             </table>
         </div>
 
-        <!-- المجاميع والخصم والشحن -->
+        <!-- المجاميع والخصم والشحن (مع Farafero Gift Shop في المنتصف) -->
         <div class="flex justify-between items-end pt-4 border-t border-slate-200">
-            <div class="text-[11px] text-slate-500 font-bold">
+            <div class="text-[11px] text-slate-500 font-bold mx-auto text-center">
                 <p>Farafero Gift Shop</p>
             </div>
 
@@ -648,9 +648,10 @@
                     <span class="font-bold" id="rec-subtotal">0.00 EGP</span>
                     <span class="text-slate-400">Subtotal</span>
                 </div>
+                <!-- خانة Discount المضافة -->
                 <div id="rec-discount-row" class="flex justify-between text-rose-600 hidden">
                     <span id="rec-discount-val" class="font-bold">0.00 EGP</span>
-                    <span id="rec-discount-label" class="text-slate-400">Discount</span>
+                    <span class="text-slate-400">Discount</span>
                 </div>
                 <div id="rec-packaging-row" class="flex justify-between text-slate-600 hidden">
                     <span id="rec-packaging-val" class="font-bold">0.00 EGP</span>
@@ -1438,7 +1439,7 @@
                             <p class="text-[10px] text-slate-400">${i.code || '-'}</p>
                         </td>
                         <td class="py-3 text-center text-slate-600">${i.code || '-'}</td>
-                        <td class="py-3 text-center font-bold text-slate-800">${i.qty}.000</td>
+                        <td class="py-3 text-center font-bold text-slate-800">${i.qty}</td>
                         <td class="py-3 text-center text-slate-600">${i.price.toFixed(2)} EGP</td>
                         <td class="py-3 text-right pr-2 font-bold text-slate-900">${itemTotal.toFixed(2)} EGP</td>
                     </tr>
@@ -1450,7 +1451,6 @@
             const discRow = document.getElementById('rec-discount-row');
             if (discount > 0) {
                 discRow.classList.remove('hidden');
-                document.getElementById('rec-discount-label').innerText = `Discount`;
                 document.getElementById('rec-discount-val').innerText = `- ${discount.toFixed(2)} EGP`;
             } else {
                 discRow.classList.add('hidden');
@@ -1533,7 +1533,6 @@
             populateCategoryDropdown();
             document.getElementById('prod-category').value = p.category;
             document.getElementById('prod-image').value = p.image;
-            document.getElementById('product-modal').classList.add('hidden'); // Fix modal toggle
             document.getElementById('product-modal').classList.remove('hidden');
         }
 
