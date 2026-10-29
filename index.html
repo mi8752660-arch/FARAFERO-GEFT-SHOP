@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FARAFERO GIFTS - نظام إدارة المحل والمخزون السحابي</title>
+    <title>FARAFERO GIFT SHOP - نظام إدارة المحل والمخزون السحابي</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&family=Cinzel:wght@500;600;700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
@@ -50,13 +50,14 @@
             z-index: -1;
         }
 
+        /* تنسيق طباعة الفاتورة النظيف تماماً مثل الصورة */
         @media print {
             body * { visibility: hidden !important; }
             #printable-receipt, #printable-receipt * { visibility: visible !important; }
             #printable-receipt { 
                 position: absolute !important; left: 0 !important; top: 0 !important; width: 100% !important; 
                 direction: rtl !important; font-family: 'Cairo', sans-serif !important; display: block !important;
-                background-color: white !important; padding: 20px !important;
+                background-color: white !important; padding: 25px !important; box-shadow: none !important; border: none !important;
             }
         }
     </style>
@@ -67,7 +68,6 @@
     <header class="bg-white/90 backdrop-blur-md sticky top-0 z-40 border-b border-slate-200 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <div class="flex items-center space-x-3 space-x-reverse">
-                <!-- اللوجو الرئيسي الجديد في الهيدر -->
                 <div class="w-12 h-12 flex items-center justify-center bg-white rounded-2xl border border-[#C5A059]/40 shadow-sm p-1">
                     <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
                         <path d="M50 32C42 22 30 22 33 32C35.5 38.5 48 35 50 32Z" stroke="#C5A059" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
@@ -574,58 +574,108 @@
         </div>
     </div>
 
-    <!-- PRINTABLE RECEIPT TEMPLATE (اللوجو الجديد في الفاتورة في المنتصف بدقة عالية) -->
-    <div id="printable-receipt" class="hidden max-w-xl mx-auto p-8 bg-white border border-slate-200 rounded-2xl text-xs space-y-4">
-        <div class="text-center space-y-2 border-b border-slate-200 pb-4 flex flex-col items-center">
-            <div class="w-16 h-16 flex items-center justify-center mb-1">
-                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
-                    <path d="M50 32C42 22 30 22 33 32C35.5 38.5 48 35 50 32Z" stroke="#C5A059" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M50 32C58 22 70 22 67 32C64.5 38.5 52 35 50 32Z" stroke="#C5A059" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                    <rect x="25" y="32" width="50" height="12" fill="white" stroke="#C5A059" stroke-width="3" stroke-linejoin="round"/>
-                    <rect x="28" y="44" width="44" height="34" fill="white" stroke="#C5A059" stroke-width="3" stroke-linejoin="round"/>
-                    <line x1="50" y1="32" x2="50" y2="78" stroke="#C5A059" stroke-width="3"/>
-                </svg>
-            </div>
-            <h1 class="text-2xl font-bold tracking-[4px] text-slate-900 font-cinzel">FARAFERO</h1>
-            <p class="text-xs font-semibold text-[#C5A059] tracking-[5px] uppercase font-montserrat">GIFT SHOP</p>
-            <p class="text-[11px] font-bold text-slate-500 pt-1">فاتورة مبيعات معتمدة</p>
+    <!-- PRINTABLE RECEIPT TEMPLATE (مصمم بدقة تامة مثل الصورة المطلوبة) -->
+    <div id="printable-receipt" class="hidden max-w-2xl mx-auto p-8 bg-white text-xs space-y-6">
+        <!-- الحالة فوق -->
+        <div class="text-center font-bold text-[10px] text-amber-800 tracking-wider">
+            DRAFT - NOT POSTED
         </div>
 
-        <div class="grid grid-cols-2 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200 text-slate-700 text-[11px]">
+        <!-- رأس الفاتورة: اللوجو يسار، وكلمة INVOICE Draft يمين -->
+        <div class="flex justify-between items-start border-b border-slate-300 pb-5">
             <div class="space-y-1">
-                <p><b>اسم العميل:</b> <span id="rec-cust-name" class="font-bold text-slate-900"></span></p>
-                <p><b>رقم الهاتف:</b> <span id="rec-cust-phone"></span></p>
+                <div class="flex items-center space-x-2 space-x-reverse">
+                    <div class="w-8 h-8 flex items-center justify-center bg-white rounded-xl border border-[#C5A059]/40 p-0.5">
+                        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+                            <path d="M50 32C42 22 30 22 33 32C35.5 38.5 48 35 50 32Z" stroke="#C5A059" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M50 32C58 22 70 22 67 32C64.5 38.5 52 35 50 32Z" stroke="#C5A059" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                            <rect x="25" y="32" width="50" height="12" fill="white" stroke="#C5A059" stroke-width="3" stroke-linejoin="round"/>
+                            <rect x="28" y="44" width="44" height="34" fill="white" stroke="#C5A059" stroke-width="3" stroke-linejoin="round"/>
+                            <line x1="50" y1="32" x2="50" y2="78" stroke="#C5A059" stroke-width="3"/>
+                        </svg>
+                    </div>
+                    <h1 class="text-xl font-bold tracking-[3px] text-slate-900 font-cinzel">FARAFERO</h1>
+                </div>
             </div>
-            <div class="space-y-1 text-left">
-                <p><b>رقم الفاتورة:</b> <span id="rec-id" class="font-bold text-[#C5A059]"></span></p>
-                <p><b>تاريخ الإصدار:</b> <span id="rec-date"></span></p>
+            <div class="text-left space-y-0.5">
+                <p class="text-[10px] text-slate-400 tracking-widest uppercase">INVOICE</p>
+                <p class="font-bold text-slate-800 text-sm">Draft</p>
             </div>
         </div>
 
-        <div class="space-y-2 pt-2">
-            <h3 class="font-black text-slate-900 text-xs border-b pb-1">تفاصيل البضاعة المباعة:</h3>
-            <table class="w-full text-right text-xs">
+        <!-- قسم بيانات العميل وتواريخ الفاتورة -->
+        <div class="grid grid-cols-2 gap-4 text-slate-700 text-[11px] pt-1">
+            <div class="space-y-1">
+                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">BILL TO</p>
+                <p id="rec-cust-name" class="font-bold text-slate-900 text-sm"></p>
+                <p id="rec-cust-phone" class="text-slate-600 font-semibold"></p>
+            </div>
+            <div class="space-y-1.5 text-left bg-slate-50/60 p-3 rounded-xl border border-slate-100">
+                <div class="flex justify-between">
+                    <span class="text-slate-400">Invoice date</span>
+                    <span id="rec-date" class="font-semibold text-slate-800"></span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-400">Due date</span>
+                    <span id="rec-due-date" class="font-semibold text-slate-800"></span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-400">Reference</span>
+                    <span id="rec-id" class="font-bold text-[#C5A059]"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- جدول المنتجات والأصناف -->
+        <div class="pt-2">
+            <table class="w-full text-right text-[11px]">
                 <thead>
-                    <tr class="bg-slate-100 text-slate-600 font-bold border-b">
-                        <th class="p-2">الصنف</th>
-                        <th class="p-2 text-center">الكمية</th>
-                        <th class="p-2 text-center">السعر</th>
-                        <th class="p-2 text-left">الإجمالي</th>
+                    <tr class="text-slate-400 font-bold border-b border-slate-200 uppercase text-[10px]">
+                        <th class="pb-2.5 pr-2">DESCRIPTION</th>
+                        <th class="pb-2.5 text-center">SKU</th>
+                        <th class="pb-2.5 text-center">QTY</th>
+                        <th class="pb-2.5 text-center">UNIT PRICE</th>
+                        <th class="pb-2.5 text-center">TAX</th>
+                        <th class="pb-2.5 text-left pl-2">TOTAL</th>
                     </tr>
                 </thead>
-                <tbody id="rec-items-list" class="divide-y divide-slate-100"></tbody>
+                <tbody id="rec-items-list" class="divide-y divide-slate-100 font-medium text-slate-800"></tbody>
             </table>
         </div>
 
-        <div id="rec-extras-section" class="space-y-1 border-t pt-2 text-[11px] font-bold text-slate-700"></div>
-
-        <div class="border-t-2 border-[#C5A059] pt-3 flex justify-between items-center text-base font-black text-slate-900">
-            <span>الإجمالي النهائي المستحق:</span>
-            <span class="text-[#C5A059] text-xl"><span id="rec-grand-total">0</span> EGP</span>
+        <!-- المجاميع والخصم والشحن -->
+        <div class="flex justify-end pt-4 border-t border-slate-200">
+            <div class="w-64 space-y-2 text-[11px]">
+                <div class="flex justify-between text-slate-600">
+                    <span>Subtotal</span>
+                    <span id="rec-subtotal" class="font-bold">0.00 EGP</span>
+                </div>
+                <div id="rec-discount-row" class="flex justify-between text-rose-600 hidden">
+                    <span id="rec-discount-label">Discount</span>
+                    <span id="rec-discount-val" class="font-bold">0.00 EGP</span>
+                </div>
+                <div id="rec-packaging-row" class="flex justify-between text-slate-600 hidden">
+                    <span>مصاريف التغليف</span>
+                    <span id="rec-packaging-val" class="font-bold">0.00 EGP</span>
+                </div>
+                <div id="rec-shipping-row" class="flex justify-between text-slate-600 hidden">
+                    <span>مصاريف الشحن</span>
+                    <span id="rec-shipping-val" class="font-bold">0.00 EGP</span>
+                </div>
+                <div class="flex justify-between text-slate-600">
+                    <span>Tax</span>
+                    <span class="font-bold">0.00 EGP</span>
+                </div>
+                <div class="flex justify-between items-center text-sm font-black text-slate-900 border-t border-slate-300 pt-2.5">
+                    <span>Total</span>
+                    <span id="rec-grand-total" class="text-[#C5A059] text-base">0.00 EGP</span>
+                </div>
+            </div>
         </div>
 
-        <div class="text-center pt-6 border-t border-slate-100 text-[10px] text-slate-400 space-y-1 font-bold">
-            <p>شكراً لتعاملكم معنا! ❤️</p>
+        <!-- أسفل الفاتورة -->
+        <div class="text-left text-[10px] text-slate-400 pt-8">
+            <p>Farafero Gift Shop</p>
         </div>
     </div>
 
@@ -1300,7 +1350,7 @@
             const total = parseFloat(document.getElementById('pos-grand-total').innerText) || 0;
             
             const previewId = 'ORD-' + String(state.orders.length + 1).padStart(4, '0');
-            const dateStr = new Date().toLocaleString('ar-EG');
+            const dateStr = new Date().toLocaleDateString('en-GB');
 
             generateReceiptPDF(state.posCart, custName, custPhone, total, previewId, dateStr, discount, packaging, shipping);
         }
@@ -1323,7 +1373,7 @@
             
             const nextSeqNum = state.orders.length + 1;
             const orderId = 'ORD-' + String(nextSeqNum).padStart(4, '0');
-            const dateStr = new Date().toLocaleString('ar-EG');
+            const dateStr = new Date().toLocaleDateString('en-GB');
 
             state.posCart.forEach(item => {
                 const prod = state.products.find(p => p.id === item.id);
@@ -1382,30 +1432,61 @@
         function generateReceiptPDF(items, custName, custPhone, total, orderId, dateStr, discount, packaging, shipping) {
             document.getElementById('rec-id').innerText = orderId;
             document.getElementById('rec-date').innerText = dateStr;
+            document.getElementById('rec-due-date').innerText = dateStr;
             document.getElementById('rec-cust-name').innerText = custName;
             document.getElementById('rec-cust-phone').innerText = custPhone;
             
+            let subtotal = 0;
             const listContainer = document.getElementById('rec-items-list');
             listContainer.innerHTML = '';
             items.forEach(i => {
+                const itemTotal = i.price * i.qty;
+                subtotal += itemTotal;
                 listContainer.innerHTML += `
-                    <tr>
-                        <td class="p-2 font-bold text-slate-800">${i.name}</td>
-                        <td class="p-2 text-center font-bold">${i.qty}</td>
-                        <td class="p-2 text-center font-semibold text-slate-600">${i.price} EGP</td>
-                        <td class="p-2 text-left font-black text-slate-900">${i.price * i.qty} EGP</td>
+                    <tr class="border-b border-slate-50">
+                        <td class="py-3 pr-2">
+                            <p class="font-bold text-slate-900">${i.name}</p>
+                            <p class="text-[10px] text-slate-400">${i.code || '-'}</p>
+                        </td>
+                        <td class="py-3 text-center text-slate-600">${i.code || '-'}</td>
+                        <td class="py-3 text-center font-bold text-slate-800">${i.qty}.000</td>
+                        <td class="py-3 text-center text-slate-600">${i.price.toFixed(2)} EGP</td>
+                        <td class="py-3 text-center text-slate-500">0.00 EGP</td>
+                        <td class="py-3 text-left pl-2 font-bold text-slate-900">${itemTotal.toFixed(2)} EGP</td>
                     </tr>
                 `;
             });
 
-            const extrasSection = document.getElementById('rec-extras-section');
-            extrasSection.innerHTML = `
-                <div class="flex justify-between"><span>خصم الفاتورة:</span> <span class="text-[#C5A059]">- ${discount || 0} EGP</span></div>
-                <div class="flex justify-between"><span>مصاريف التغليف:</span> <span>+ ${packaging || 0} EGP</span></div>
-                <div class="flex justify-between"><span>مصاريف الشحن:</span> <span>+ ${shipping || 0} EGP</span></div>
-            `;
+            document.getElementById('rec-subtotal').innerText = subtotal.toFixed(2) + ' EGP';
 
-            document.getElementById('rec-grand-total').innerText = total;
+            // إظهار أو إخفاء الخصم
+            const discRow = document.getElementById('rec-discount-row');
+            if (discount > 0) {
+                discRow.classList.remove('hidden');
+                document.getElementById('rec-discount-label').innerText = `Discount`;
+                document.getElementById('rec-discount-val').innerText = `- ${discount.toFixed(2)} EGP`;
+            } else {
+                discRow.classList.add('hidden');
+            }
+
+            // إظهار التغليف والشحن إذا وجدا
+            const packRow = document.getElementById('rec-packaging-row');
+            if (packaging > 0) {
+                packRow.classList.remove('hidden');
+                document.getElementById('rec-packaging-val').innerText = `+ ${packaging.toFixed(2)} EGP`;
+            } else {
+                packRow.classList.add('hidden');
+            }
+
+            const shipRow = document.getElementById('rec-shipping-row');
+            if (shipping > 0) {
+                shipRow.classList.remove('hidden');
+                document.getElementById('rec-shipping-val').innerText = `+ ${shipping.toFixed(2)} EGP`;
+            } else {
+                shipRow.classList.add('hidden');
+            }
+
+            document.getElementById('rec-grand-total').innerText = total.toFixed(2) + ' EGP';
             window.print();
         }
 
