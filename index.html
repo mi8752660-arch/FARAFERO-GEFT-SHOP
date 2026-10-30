@@ -406,10 +406,9 @@
         </div>
     </div>
 
-    <!-- VIEW ORDER DETAILS MODAL (ADMIN) -> يعرض نفس نمط الفاتورة الرسمية -->
+    <!-- VIEW ORDER DETAILS MODAL (ADMIN) -->
     <div id="order-details-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl w-full max-w-lg p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar" dir="ltr">
-            <!-- رأس الفاتورة المطابق لنمط الحسابات -->
             <div class="flex justify-between items-start border-b border-slate-300 pb-4">
                 <div class="space-y-1">
                     <div class="flex items-center space-x-2">
@@ -431,26 +430,25 @@
                 </div>
             </div>
 
-            <!-- بيانات العميل والتاريخ -->
+            <!-- تم تبديل الأماكن هنا بناءً على العلامات الخضراء في صورتك -->
             <div class="grid grid-cols-2 gap-4 text-slate-700 text-[11px] pt-1">
-                <div class="space-y-1">
+                <div class="space-y-1.5 bg-slate-50/60 p-3 rounded-xl border border-slate-100 text-left">
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">Invoice date</span>
+                        <span id="modal-ord-date" class="font-semibold text-slate-800"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">Reference</span>
+                        <span id="modal-ord-id" class="font-bold text-[#C5A059]"></span>
+                    </div>
+                </div>
+                <div class="space-y-1 text-right">
                     <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">BILL TO</p>
                     <p id="modal-ord-cust-name" class="font-bold text-slate-900 text-sm"></p>
                     <p id="modal-ord-cust-phone" class="text-slate-600 font-semibold"></p>
                 </div>
-                <div class="space-y-1.5 bg-slate-50/60 p-3 rounded-xl border border-slate-100 text-right">
-                    <div class="flex justify-between">
-                        <span id="modal-ord-date" class="font-semibold text-slate-800"></span>
-                        <span class="text-slate-400">Invoice date</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span id="modal-ord-id" class="font-bold text-[#C5A059]"></span>
-                        <span class="text-slate-400">Reference</span>
-                    </div>
-                </div>
             </div>
 
-            <!-- جدول الأصناف -->
             <div class="pt-2">
                 <table class="w-full text-left text-[11px]">
                     <thead>
@@ -466,37 +464,37 @@
                 </table>
             </div>
 
-            <!-- المجاميع النهائية والخصم -->
+            <!-- تم تبديل أماكن الدوائر البرتقالية (Farafero Gift Shop والمجاميع) -->
             <div class="flex justify-between items-end pt-4 border-t border-slate-200">
-                <div class="text-[11px] text-slate-500 font-bold mx-auto text-center">
-                    <p>Farafero Gift Shop</p>
-                </div>
-
                 <div class="w-64 space-y-2 text-[11px] text-right">
                     <div class="flex justify-between text-slate-600">
-                        <span class="font-bold" id="modal-ord-subtotal">0.00 EGP</span>
                         <span class="text-slate-400">Subtotal</span>
+                        <span class="font-bold" id="modal-ord-subtotal">0.00 EGP</span>
                     </div>
+                    <!-- خانة Discount تحت Subtotal ومع تبديل مكانها مع الرقم -->
                     <div id="modal-ord-disc-row" class="flex justify-between text-rose-600 hidden">
-                        <span id="modal-ord-disc-val" class="font-bold">0.00 EGP</span>
                         <span class="text-slate-400">Discount</span>
+                        <span id="modal-ord-disc-val" class="font-bold">0.00 EGP</span>
                     </div>
                     <div id="modal-ord-pack-row" class="flex justify-between text-slate-600 hidden">
-                        <span id="modal-ord-pack-val" class="font-bold">0.00 EGP</span>
                         <span class="text-slate-400">مصاريف التغليف</span>
+                        <span id="modal-ord-pack-val" class="font-bold">0.00 EGP</span>
                     </div>
                     <div id="modal-ord-ship-row" class="flex justify-between text-slate-600 hidden">
-                        <span id="modal-ord-ship-val" class="font-bold">0.00 EGP</span>
                         <span class="text-slate-400">مصاريف الشحن</span>
+                        <span id="modal-ord-ship-val" class="font-bold">0.00 EGP</span>
                     </div>
                     <div class="flex justify-between items-center text-sm font-black text-slate-900 border-t border-slate-300 pt-2.5">
                         <span class="text-slate-800">Total</span>
                         <span class="text-[#C5A059] text-base" id="modal-ord-grand-total">0.00 EGP</span>
                     </div>
                 </div>
+
+                <div class="text-[11px] text-slate-500 font-bold text-center">
+                    <p>Farafero Gift Shop</p>
+                </div>
             </div>
 
-            <!-- الأزرار بالأسفل -->
             <div class="flex flex-col gap-2 pt-4 border-t" dir="rtl">
                 <div class="flex space-x-2 space-x-reverse">
                     <button onclick="closeOrderModal()" class="w-1/3 bg-slate-100 py-2.5 rounded-xl font-bold text-xs text-slate-600">إغلاق</button>
@@ -516,7 +514,6 @@
     <!-- POS ORDER DETAILS MODAL -->
     <div id="pos-order-details-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl w-full max-w-lg p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar" dir="ltr">
-            <!-- رأس الفاتورة المطابق -->
             <div class="flex justify-between items-start border-b border-slate-300 pb-4">
                 <div class="space-y-1">
                     <div class="flex items-center space-x-2">
@@ -538,26 +535,25 @@
                 </div>
             </div>
 
-            <!-- بيانات العميل والتاريخ -->
+            <!-- تبديل الأماكن للعلامات الخضراء -->
             <div class="grid grid-cols-2 gap-4 text-slate-700 text-[11px] pt-1">
-                <div class="space-y-1">
+                <div class="space-y-1.5 bg-slate-50/60 p-3 rounded-xl border border-slate-100 text-left">
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">Invoice date</span>
+                        <span id="pos-modal-ord-date" class="font-semibold text-slate-800"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">Reference</span>
+                        <span id="pos-modal-ord-id" class="font-bold text-[#C5A059]"></span>
+                    </div>
+                </div>
+                <div class="space-y-1 text-right">
                     <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">BILL TO</p>
                     <p id="pos-modal-ord-cust-name" class="font-bold text-slate-900 text-sm"></p>
                     <p id="pos-modal-ord-cust-phone" class="text-slate-600 font-semibold"></p>
                 </div>
-                <div class="space-y-1.5 bg-slate-50/60 p-3 rounded-xl border border-slate-100 text-right">
-                    <div class="flex justify-between">
-                        <span id="pos-modal-ord-date" class="font-semibold text-slate-800"></span>
-                        <span class="text-slate-400">Invoice date</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span id="pos-modal-ord-id" class="font-bold text-[#C5A059]"></span>
-                        <span class="text-slate-400">Reference</span>
-                    </div>
-                </div>
             </div>
 
-            <!-- جدول الأصناف -->
             <div class="pt-2">
                 <table class="w-full text-left text-[11px]">
                     <thead>
@@ -573,33 +569,34 @@
                 </table>
             </div>
 
-            <!-- المجاميع النهائية والخصم -->
+            <!-- تبديل الأماكن للعلامات البرتقالية -->
             <div class="flex justify-between items-end pt-4 border-t border-slate-200">
-                <div class="text-[11px] text-slate-500 font-bold mx-auto text-center">
-                    <p>Farafero Gift Shop</p>
-                </div>
-
                 <div class="w-64 space-y-2 text-[11px] text-right">
                     <div class="flex justify-between text-slate-600">
-                        <span class="font-bold" id="pos-modal-ord-subtotal">0.00 EGP</span>
                         <span class="text-slate-400">Subtotal</span>
+                        <span class="font-bold" id="pos-modal-ord-subtotal">0.00 EGP</span>
                     </div>
+                    <!-- Discount تحت Subtotal ومع تبديل مكانها مع الرقم -->
                     <div id="pos-modal-ord-disc-row" class="flex justify-between text-rose-600 hidden">
-                        <span id="pos-modal-ord-disc-val" class="font-bold">0.00 EGP</span>
                         <span class="text-slate-400">Discount</span>
+                        <span id="pos-modal-ord-disc-val" class="font-bold">0.00 EGP</span>
                     </div>
                     <div id="pos-modal-ord-pack-row" class="flex justify-between text-slate-600 hidden">
-                        <span id="pos-modal-ord-pack-val" class="font-bold">0.00 EGP</span>
                         <span class="text-slate-400">مصاريف التغليف</span>
+                        <span id="pos-modal-ord-pack-val" class="font-bold">0.00 EGP</span>
                     </div>
                     <div id="pos-modal-ord-ship-row" class="flex justify-between text-slate-600 hidden">
-                        <span id="pos-modal-ord-ship-val" class="font-bold">0.00 EGP</span>
                         <span class="text-slate-400">مصاريف الشحن</span>
+                        <span id="pos-modal-ord-ship-val" class="font-bold">0.00 EGP</span>
                     </div>
                     <div class="flex justify-between items-center text-sm font-black text-slate-900 border-t border-slate-300 pt-2.5">
                         <span class="text-slate-800">Total</span>
                         <span class="text-[#C5A059] text-base" id="pos-modal-ord-grand-total">0.00 EGP</span>
                     </div>
+                </div>
+
+                <div class="text-[11px] text-slate-500 font-bold text-center">
+                    <p>Farafero Gift Shop</p>
                 </div>
             </div>
 
@@ -613,7 +610,7 @@
         </div>
     </div>
 
-    <!-- IMAGE ZOOM MODAL (تكبير صورة المنتج عند الضغط عليها) -->
+    <!-- IMAGE ZOOM MODAL -->
     <div id="image-zoom-modal" class="fixed inset-0 z-50 hidden bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4" onclick="closeImageZoom()">
         <div class="relative max-w-2xl w-full bg-white rounded-3xl p-4 shadow-2xl overflow-hidden text-center" onclick="event.stopPropagation()">
             <button onclick="closeImageZoom()" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-slate-100 text-slate-700 font-bold flex items-center justify-center shadow-md hover:bg-rose-50 hover:text-rose-600 transition-all z-10">✕</button>
@@ -684,7 +681,7 @@
         </div>
     </div>
 
-    <!-- PRINTABLE RECEIPT TEMPLATE -->
+    <!-- PRINTABLE RECEIPT TEMPLATE (النسخة النهائية المطابقة تماماً) -->
     <div id="printable-receipt" class="hidden max-w-2xl mx-auto p-8 bg-white text-xs space-y-6" dir="ltr">
         <div class="flex justify-between items-start border-b border-slate-300 pb-5">
             <div class="space-y-1">
@@ -708,24 +705,20 @@
         </div>
 
         <div class="grid grid-cols-2 gap-4 text-slate-700 text-[11px] pt-1">
-            <div class="space-y-1">
+            <div class="space-y-1.5 bg-slate-50/60 p-3 rounded-xl border border-slate-100 text-left">
+                <div class="flex justify-between">
+                    <span class="text-slate-400">Invoice date</span>
+                    <span id="rec-date" class="font-semibold text-slate-800"></span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-400">Reference</span>
+                    <span id="rec-id" class="font-bold text-[#C5A059]"></span>
+                </div>
+            </div>
+            <div class="space-y-1 text-right">
                 <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">BILL TO</p>
                 <p id="rec-cust-name" class="font-bold text-slate-900 text-sm"></p>
                 <p id="rec-cust-phone" class="text-slate-600 font-semibold"></p>
-            </div>
-            <div class="space-y-1.5 bg-slate-50/60 p-3 rounded-xl border border-slate-100 text-right">
-                <div class="flex justify-between">
-                    <span id="rec-date" class="font-semibold text-slate-800"></span>
-                    <span class="text-slate-400">Invoice date</span>
-                </div>
-                <div class="flex justify-between">
-                    <span id="rec-due-date" class="font-semibold text-slate-800"></span>
-                    <span class="text-slate-400">Due date</span>
-                </div>
-                <div class="flex justify-between">
-                    <span id="rec-id" class="font-bold text-[#C5A059]"></span>
-                    <span class="text-slate-400">Reference</span>
-                </div>
             </div>
         </div>
 
@@ -745,31 +738,31 @@
         </div>
 
         <div class="flex justify-between items-end pt-4 border-t border-slate-200">
-            <div class="text-[11px] text-slate-500 font-bold mx-auto text-center">
-                <p>Farafero Gift Shop</p>
-            </div>
-
             <div class="w-64 space-y-2 text-[11px] text-right">
                 <div class="flex justify-between text-slate-600">
-                    <span class="font-bold" id="rec-subtotal">0.00 EGP</span>
                     <span class="text-slate-400">Subtotal</span>
+                    <span class="font-bold" id="rec-subtotal">0.00 EGP</span>
                 </div>
                 <div id="rec-discount-row" class="flex justify-between text-rose-600 hidden">
-                    <span id="rec-discount-val" class="font-bold">0.00 EGP</span>
                     <span class="text-slate-400">Discount</span>
+                    <span id="rec-discount-val" class="font-bold">0.00 EGP</span>
                 </div>
                 <div id="rec-packaging-row" class="flex justify-between text-slate-600 hidden">
-                    <span id="rec-packaging-val" class="font-bold">0.00 EGP</span>
                     <span class="text-slate-400">مصاريف التغليف</span>
+                    <span id="rec-packaging-val" class="font-bold">0.00 EGP</span>
                 </div>
                 <div id="rec-shipping-row" class="flex justify-between text-slate-600 hidden">
-                    <span id="rec-shipping-val" class="font-bold">0.00 EGP</span>
                     <span class="text-slate-400">مصاريف الشحن</span>
+                    <span id="rec-shipping-val" class="font-bold">0.00 EGP</span>
                 </div>
                 <div class="flex justify-between items-center text-sm font-black text-slate-900 border-t border-slate-300 pt-2.5">
                     <span class="text-slate-800">Total</span>
                     <span class="text-[#C5A059] text-base" id="rec-grand-total">0.00 EGP</span>
                 </div>
+            </div>
+
+            <div class="text-[11px] text-slate-500 font-bold text-center">
+                <p>Farafero Gift Shop</p>
             </div>
         </div>
     </div>
@@ -905,7 +898,6 @@
             }
         }
 
-        // تكبير الصورة عند الضغط عليها
         function openImageZoom(imgUrl, title) {
             document.getElementById('zoom-img-src').src = imgUrl;
             document.getElementById('zoom-img-title').innerText = title;
@@ -1214,7 +1206,7 @@
             const discRow = document.getElementById('pos-modal-ord-disc-row');
             if (order.discount > 0) {
                 discRow.classList.remove('hidden');
-                document.getElementById('pos-modal-ord-disc-val').innerText = `- ${order.discount.toFixed(2)} EGP`;
+                document.getElementById('pos-modal-ord-disc-val').innerText = `${order.discount.toFixed(2)} EGP`;
             } else {
                 discRow.classList.add('hidden');
             }
@@ -1222,7 +1214,7 @@
             const packRow = document.getElementById('pos-modal-ord-pack-row');
             if (order.packaging > 0) {
                 packRow.classList.remove('hidden');
-                document.getElementById('pos-modal-ord-pack-val').innerText = `+ ${order.packaging.toFixed(2)} EGP`;
+                document.getElementById('pos-modal-ord-pack-val').innerText = `${order.packaging.toFixed(2)} EGP`;
             } else {
                 packRow.classList.add('hidden');
             }
@@ -1230,7 +1222,7 @@
             const shipRow = document.getElementById('pos-modal-ord-ship-row');
             if (order.shipping > 0) {
                 shipRow.classList.remove('hidden');
-                document.getElementById('pos-modal-ord-ship-val').innerText = `+ ${order.shipping.toFixed(2)} EGP`;
+                document.getElementById('pos-modal-ord-ship-val').innerText = `${order.shipping.toFixed(2)} EGP`;
             } else {
                 shipRow.classList.add('hidden');
             }
@@ -1393,7 +1385,6 @@
             }
         }
 
-        // فتح تفاصيل الفاتورة في الإدارة بنفس نمط الفاتورة الرسمية
         function openOrderDetails(firebaseId) {
             const order = state.orders.find(o => o.firebaseId === firebaseId);
             if (!order) return;
@@ -1441,7 +1432,7 @@
             const discRow = document.getElementById('modal-ord-disc-row');
             if (order.discount > 0) {
                 discRow.classList.remove('hidden');
-                document.getElementById('modal-ord-disc-val').innerText = `- ${order.discount.toFixed(2)} EGP`;
+                document.getElementById('modal-ord-disc-val').innerText = `${order.discount.toFixed(2)} EGP`;
             } else {
                 discRow.classList.add('hidden');
             }
@@ -1449,7 +1440,7 @@
             const packRow = document.getElementById('modal-ord-pack-row');
             if (order.packaging > 0) {
                 packRow.classList.remove('hidden');
-                document.getElementById('modal-ord-pack-val').innerText = `+ ${order.packaging.toFixed(2)} EGP`;
+                document.getElementById('modal-ord-pack-val').innerText = `${order.packaging.toFixed(2)} EGP`;
             } else {
                 packRow.classList.add('hidden');
             }
@@ -1457,7 +1448,7 @@
             const shipRow = document.getElementById('modal-ord-ship-row');
             if (order.shipping > 0) {
                 shipRow.classList.remove('hidden');
-                document.getElementById('modal-ord-ship-val').innerText = `+ ${order.shipping.toFixed(2)} EGP`;
+                document.getElementById('modal-ord-ship-val').innerText = `${order.shipping.toFixed(2)} EGP`;
             } else {
                 shipRow.classList.add('hidden');
             }
@@ -1595,7 +1586,6 @@
         function generateReceiptPDF(items, custName, custPhone, total, orderId, dateStr, discount, packaging, shipping) {
             document.getElementById('rec-id').innerText = orderId;
             document.getElementById('rec-date').innerText = dateStr;
-            document.getElementById('rec-due-date').innerText = dateStr;
             document.getElementById('rec-cust-name').innerText = custName;
             document.getElementById('rec-cust-phone').innerText = custPhone;
             
@@ -1624,7 +1614,7 @@
             const discRow = document.getElementById('rec-discount-row');
             if (discount > 0) {
                 discRow.classList.remove('hidden');
-                document.getElementById('rec-discount-val').innerText = `- ${discount.toFixed(2)} EGP`;
+                document.getElementById('rec-discount-val').innerText = `${discount.toFixed(2)} EGP`;
             } else {
                 discRow.classList.add('hidden');
             }
@@ -1632,7 +1622,7 @@
             const packRow = document.getElementById('rec-packaging-row');
             if (packaging > 0) {
                 packRow.classList.remove('hidden');
-                document.getElementById('rec-packaging-val').innerText = `+ ${packaging.toFixed(2)} EGP`;
+                document.getElementById('rec-packaging-val').innerText = `${packaging.toFixed(2)} EGP`;
             } else {
                 packRow.classList.add('hidden');
             }
@@ -1640,7 +1630,7 @@
             const shipRow = document.getElementById('rec-shipping-row');
             if (shipping > 0) {
                 shipRow.classList.remove('hidden');
-                document.getElementById('rec-shipping-val').innerText = `+ ${shipping.toFixed(2)} EGP`;
+                document.getElementById('rec-shipping-val').innerText = `${shipping.toFixed(2)} EGP`;
             } else {
                 shipRow.classList.add('hidden');
             }
