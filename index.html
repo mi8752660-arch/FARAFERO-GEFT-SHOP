@@ -1689,7 +1689,7 @@
             const enteredPin = document.getElementById('admin-pin-input').value.trim();
             const errorMsg = document.getElementById('pin-error-msg');
             if (enteredPin === ADMIN_PIN) {
-                closePinModal();
+                document.getElementById('admin-pin-modal').classList.add('hidden');
                 switchTab('admin');
             } else {
                 errorMsg.classList.remove('hidden');
