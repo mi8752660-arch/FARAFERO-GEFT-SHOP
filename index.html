@@ -263,7 +263,7 @@
             </div>
         </div>
 
-        <!-- TAB 4: INVENTORY (تم شيل عمود التكلفة منه) -->
+        <!-- TAB 4: INVENTORY -->
         <div id="tab-inventory" class="app-tab hidden space-y-6">
             <div class="bg-white/90 backdrop-blur-sm rounded-3xl p-6 border shadow-sm space-y-4">
                 <div class="flex justify-between items-center border-b pb-3">
@@ -1316,7 +1316,6 @@
             document.getElementById('pos-grand-total').innerText = grandTotal;
         }
 
-        // دالة عرض صفحة المخزون العامة (تم حذف خانة التكلفة منها)
         function renderInventoryView() {
             const tbody = document.getElementById('inventory-view-body');
             if(!tbody) return;
@@ -1683,7 +1682,7 @@
         }
 
         function closePinModal() {
-            document.getElementById('admin-pin-modal').classList.remove('hidden');
+            document.getElementById('admin-pin-modal').classList.add('hidden');
         }
 
         function verifyAdminPin() {
