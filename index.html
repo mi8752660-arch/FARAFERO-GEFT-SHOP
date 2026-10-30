@@ -263,7 +263,7 @@
             </div>
         </div>
 
-        <!-- TAB 4: INVENTORY -->
+        <!-- TAB 4: INVENTORY (تم شيل عمود التكلفة منه) -->
         <div id="tab-inventory" class="app-tab hidden space-y-6">
             <div class="bg-white/90 backdrop-blur-sm rounded-3xl p-6 border shadow-sm space-y-4">
                 <div class="flex justify-between items-center border-b pb-3">
@@ -283,7 +283,6 @@
                                 <th class="p-3">الكود</th>
                                 <th class="p-3">الهدية</th>
                                 <th class="p-3">القسم</th>
-                                <th class="p-3">التكلفة</th>
                                 <th class="p-3">البيع</th>
                                 <th class="p-3">المخزون</th>
                                 <th class="p-3 text-left">الحالة</th>
@@ -423,7 +422,6 @@
                 </div>
             </div>
 
-            <!-- التواريخ على اليمين والعناوين على الشمال -->
             <div class="grid grid-cols-2 gap-4 text-slate-700 text-[11px] pt-1">
                 <div class="space-y-1.5 bg-slate-50/60 p-3 rounded-xl border border-slate-100 text-left">
                     <div class="flex justify-between">
@@ -526,7 +524,6 @@
                 </div>
             </div>
 
-            <!-- التواريخ على اليمين والعناوين على الشمال -->
             <div class="grid grid-cols-2 gap-4 text-slate-700 text-[11px] pt-1">
                 <div class="space-y-1.5 bg-slate-50/60 p-3 rounded-xl border border-slate-100 text-left">
                     <div class="flex justify-between">
@@ -713,7 +710,6 @@
             </div>
         </div>
 
-        <!-- التواريخ على اليمين والعناوين على الشمال في القالب المخفي -->
         <div class="grid grid-cols-2 gap-4 text-slate-700 text-[11px] pt-1">
             <div class="space-y-1.5 bg-slate-50/60 p-3 rounded-xl border border-slate-100 text-left">
                 <div class="flex justify-between">
@@ -751,7 +747,6 @@
             </table>
         </div>
 
-        <!-- Farafero Gift Shop في منتصف الصفحة من تحت -->
         <div class="flex justify-between items-end pt-4 border-t border-slate-200">
             <div class="text-[11px] text-slate-500 font-bold text-center mx-auto">
                 <p>Farafero Gift Shop</p>
@@ -1321,6 +1316,7 @@
             document.getElementById('pos-grand-total').innerText = grandTotal;
         }
 
+        // دالة عرض صفحة المخزون العامة (تم حذف خانة التكلفة منها)
         function renderInventoryView() {
             const tbody = document.getElementById('inventory-view-body');
             if(!tbody) return;
@@ -1333,7 +1329,6 @@
                         <td class="p-3 font-bold text-[#C5A059]">${p.code || '-'}</td>
                         <td class="p-3 font-bold text-slate-800">${p.name}</td>
                         <td class="p-3 text-slate-500">${p.category}</td>
-                        <td class="p-3 font-semibold text-slate-600">${p.cost || 0} EGP</td>
                         <td class="p-3 font-black text-[#C5A059]">${p.price} EGP</td>
                         <td class="p-3 font-bold ${p.stock <= 3 ? 'text-rose-600' : 'text-slate-700'}">${p.stock} قطعة</td>
                         <td class="p-3 text-left"><span class="${p.stock > 3 ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'} text-[10px] px-2.5 py-1 rounded-full font-bold">${p.stock > 3 ? 'متوفر' : 'منخفض'}</span></td>
@@ -1688,7 +1683,7 @@
         }
 
         function closePinModal() {
-            document.getElementById('admin-pin-modal').classList.add('hidden');
+            document.getElementById('admin-pin-modal').classList.remove('hidden');
         }
 
         function verifyAdminPin() {
