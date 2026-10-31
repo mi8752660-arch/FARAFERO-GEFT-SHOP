@@ -93,6 +93,8 @@
         <!-- TAB 1: POS (الحسابات) -->
         <div id="tab-pos" class="app-tab space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- شبكة الهدايا (تم تعديل الترتيب لتظهر بوضوح أولاً) -->
                 <div class="lg:col-span-7 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
                     <div class="flex items-center justify-between border-b pb-3">
                         <h3 class="text-xl font-black text-slate-900 flex items-center">
@@ -101,9 +103,10 @@
                         <span class="text-xs font-bold bg-slate-100 px-3 py-1 rounded-xl">اضغط لإضافة صنف</span>
                     </div>
                     <input type="text" id="pos-search" oninput="renderPOSProducts()" placeholder="ابحث عن هدية أو كود..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-gold">
-                    <div id="pos-product-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[480px] overflow-y-auto custom-scrollbar p-1"></div>
+                    <div id="pos-product-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[520px] overflow-y-auto custom-scrollbar p-1"></div>
                 </div>
 
+                <!-- فاتورة العميل -->
                 <div class="lg:col-span-5 space-y-6">
                     <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-lg flex flex-col justify-between space-y-4">
                         <div class="space-y-3">
@@ -174,6 +177,7 @@
                         <div id="pos-recent-orders-list" class="space-y-2 max-h-[220px] overflow-y-auto custom-scrollbar"></div>
                     </div>
                 </div>
+
             </div>
         </div>
 
@@ -537,7 +541,7 @@
         </div>
     </div>
 
-    <!-- ADD / EDIT PRODUCT MODAL (تم استبدال خانة رابط الصورة بزر اختيار ملف من الجهاز) -->
+    <!-- ADD / EDIT PRODUCT MODAL -->
     <div id="product-modal" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-4">
             <div class="flex justify-between border-b pb-3">
@@ -1341,7 +1345,6 @@
 
         function closeProductModal() { document.getElementById('product-modal').classList.add('hidden'); }
 
-        // دالة الحفظ المحدثة لرفع الصور من الجهاز وتحويلها برمجياً لمتجر الأونلاين
         function saveProductData() {
             const editId = document.getElementById('edit-prod-id').value;
             const code = document.getElementById('prod-code').value.trim();
