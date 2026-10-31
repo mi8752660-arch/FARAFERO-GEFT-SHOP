@@ -243,7 +243,7 @@
             </div>
         </div>
 
-        <!-- TAB 4: INVENTORY (تم إضافة خانة الفلتر والبحث بالكود هنا) -->
+        <!-- TAB 4: INVENTORY -->
         <div id="tab-inventory" class="app-tab hidden space-y-6">
             <div class="bg-white rounded-3xl p-6 border shadow-sm space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-3 gap-3">
@@ -335,12 +335,19 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <div class="lg:col-span-8 bg-white rounded-3xl p-6 border shadow-sm space-y-4">
-                    <div class="flex justify-between items-center border-b pb-3">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-3 gap-3">
                         <h3 class="text-lg font-black text-slate-900">إدارة وتعديل المخزون والأسعار</h3>
                         <button onclick="openAddProductModal()" class="bg-gold hover:bg-[#b08b49] text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md">
                             <i class="fa-solid fa-plus ml-1"></i> إضافة هدية جديدة للمحل
                         </button>
                     </div>
+
+                    <!-- خانة الفلتر والبحث في لوحة إدارة manger -->
+                    <div class="bg-slate-50 p-2.5 rounded-xl border flex items-center space-x-2 space-x-reverse">
+                        <i class="fa-solid fa-filter text-gold text-xs"></i>
+                        <input type="text" id="admin-code-filter" oninput="renderDashboard()" placeholder="بحث سريع بالكود أو الاسم لإدارة المخزون..." class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs font-bold focus:outline-none focus:border-gold">
+                    </div>
+
                     <div class="overflow-x-auto">
                         <table class="w-full text-right text-xs">
                             <thead class="bg-slate-50 text-slate-500 font-bold border-b">
@@ -1103,9 +1110,18 @@
             document.getElementById('dash-total-pieces').innerText = totalPiecesVal;
             
             const tbody = document.getElementById('admin-inventory-table');
+            const adminFilterInput = document.getElementById('admin-code-filter');
             if(tbody) {
                 tbody.innerHTML = '';
-                state.products.forEach(p => {
+                const adminFilterVal = adminFilterInput ? adminFilterInput.value.toLowerCase().trim() : '';
+                
+                const filteredAdminProducts = state.products.filter(p => {
+                    const codeMatch = p.code && p.code.toLowerCase().includes(adminFilterVal);
+                    const nameMatch = p.name && p.name.toLowerCase().includes(adminFilterVal);
+                    return codeMatch || nameMatch;
+                });
+
+                filteredAdminProducts.forEach(p => {
                     tbody.innerHTML += `
                         <tr>
                             <td class="p-2"><img src="${p.image}" class="w-8 h-8 rounded-lg object-cover cursor-pointer" onclick="openImageZoom('${p.image}', '${p.name}')"></td>
