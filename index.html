@@ -918,6 +918,7 @@
             renderPoOrdersTable();
         }
 
+        // دالة تصفير تضمن مسح كل الـ orders والـ counters من قاعدة البيانات تماماً
         function resetAllOrdersAndPOs() {
             if (confirm('⚠️ تحذير: هل أنت متأكد تماماً من رغبتك في حذف جميع الفواتير وطلبات الـ PO نهائياً والبدء من جديد برقم 1؟')) {
                 db.collection("orders").get().then((querySnapshot) => {
@@ -927,7 +928,7 @@
                     });
                     return batch.commit();
                 }).then(() => {
-                    alert('تم تصفير جميع العمليات والطلبات بنجاح، وسيبدأ التسلسل المشترك من جديد!');
+                    alert('تم تصفير جميع العمليات والطلبات بنجاح، وسيبدأ التسلسل من 1!');
                 }).catch((error) => {
                     alert('حدث خطأ أثناء محاولة مسح البيانات: ' + error.message);
                 });
@@ -1577,7 +1578,7 @@
             const shipping = parseFloat(document.getElementById('pos-shipping').value) || 0;
             const total = Math.round(parseFloat(document.getElementById('pos-grand-total').innerText) || 0);
             
-            // تسلسل موحد لكل العمليات (سواء فاتورة محل أو PO)
+            // حساب التسلسل بناءً على العد الحقيقي للطلبات بالداتا بيز
             const nextSeqNum = state.orders.length + 1;
             const previewId = 'ORD-' + String(nextSeqNum).padStart(4, '0');
             const dateStr = new Date().toLocaleDateString('en-GB');
@@ -1799,6 +1800,7 @@
             populateCategoryDropdown();
             document.getElementById('prod-category').value = p.category;
             document.getElementById('prod-image').value = p.image;
+            document.getElementById('product-modal').classList.hidden = false;
             document.getElementById('product-modal').classList.remove('hidden');
         }
 
@@ -1859,6 +1861,10 @@
                 renderPoOrdersTable();
             }
         }
+
+        document.getElementById('product-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeProductModal();
+        });
 
         document.addEventListener('DOMContentLoaded', initApp);
     </script>
