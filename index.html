@@ -527,7 +527,7 @@
             <div class="flex flex-col gap-2 pt-4 border-t" dir="rtl">
                 <button id="approve-po-btn" onclick="approvePoOrder()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-xl font-bold text-xs shadow-md flex items-center justify-center space-x-1.5 space-x-reverse hidden">
                     <i class="fa-solid fa-circle-check"></i>
-                    <span>تأكيد واعتماد طلب PO وخصم المخزون وتسجيل العميل</span>
+                    <span>تأكيد واعتماد طلب PO وخصم المخزون</span>
                 </button>
 
                 <div class="flex space-x-2 space-x-reverse">
@@ -1598,9 +1598,7 @@
             const o = state.currentActiveModalOrder;
             if (!o || o.status !== 'pending') return;
 
-            // استخلاص رقم التليفون واسم العميل بدقة من بيانات طلب الـ PO
             const phoneClean = o.customerPhone ? o.customerPhone.split(' - ')[0].trim() : 'غير معروف';
-            const custName = o.customerName || 'عميل PO';
             const customerDocId = 'cust_' + phoneClean.replace(/\s+/g, '_');
 
             // فحص هل العميل محظور أم لا
@@ -1610,8 +1608,8 @@
                 return;
             }
 
-            if (confirm(`هل أنت متأكد من اعتماد طلب الشراء ${o.id}، وخصم الكميات من المخزون، وتسجيل العميل في قائمة VIP أوتوماتيكياً؟`)) {
-                // 1. خصم المخزون
+            if (confirm(`هل أنت متأكد من اعتماد طلب الشراء ${o.id} وخصم الكميات من المخزون؟`)) {
+                // 1. خصم المخزون فقط عند الاعتماد
                 o.detailedItems.forEach(item => {
                     const prod = state.products.find(p => p.id === item.id || p.code === item.code);
                     if (prod) {
@@ -1620,34 +1618,9 @@
                     }
                 });
 
-                // 2. تحديث حالة الطلب إلى معتمد
+                // 2. تحديث حالة الطلب إلى معتمد فقط (دون إعادة تسجيل العميل مرة ثانية)
                 db.collection("orders").doc(o.firebaseId).update({ status: 'approved' }).then(() => {
-                    
-                    // 3. تسجيل العميل أو تحديث بياناته في مجموعة (customers) أوتوماتيكياً
-                    const customerRef = db.collection("customers").doc(customerDocId);
-                    const dateStr = new Date().toLocaleDateString('en-GB');
-
-                    customerRef.get().then((docSnap) => {
-                        if (docSnap.exists) {
-                            const existingData = docSnap.data();
-                            customerRef.update({
-                                name: custName,
-                                ordersCount: (existingData.ordersCount || 1) + 1,
-                                lastDate: dateStr
-                            });
-                        } else {
-                            customerRef.set({
-                                name: custName,
-                                phone: phoneClean,
-                                ordersCount: 1,
-                                lastDate: dateStr,
-                                timestamp: Date.now(),
-                                isBlocked: false
-                            });
-                        }
-                    });
-
-                    alert('تم اعتماد طلب الـ PO، خصم المخزون، وإضافة العميل لسجل الـ VIP بنجاح!');
+                    alert('تم اعتماد طلب الـ PO وخصم المخزون بنجاح!');
                     closeOrderModal();
                 }).catch(err => {
                     alert('حدث خطأ أثناء تحديث حالة الطلب.');
