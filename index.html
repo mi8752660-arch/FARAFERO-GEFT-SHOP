@@ -919,7 +919,7 @@
         }
 
         function resetAllOrdersAndPOs() {
-            if (confirm('⚠️ تحذير: هل أنت متأكد تماماً من رغبتك في حذف جميع الفواتير وطلبات الـ PO نهائياً والبدء من جديد برقم ORD-0001؟')) {
+            if (confirm('⚠️ تحذير: هل أنت متأكد تماماً من رغبتك في حذف جميع الفواتير وطلبات الـ PO نهائياً والبدء من جديد برقم 1؟')) {
                 db.collection("orders").get().then((querySnapshot) => {
                     const batch = db.batch();
                     querySnapshot.forEach((doc) => {
@@ -927,7 +927,7 @@
                     });
                     return batch.commit();
                 }).then(() => {
-                    alert('تم تصفير وحذف جميع الفواتير وطلبات الـ PO بنجاح، وسيبدأ الترقيم من الصفر!');
+                    alert('تم تصفير جميع العمليات والطلبات بنجاح، وسيبدأ التسلسل المشترك من جديد!');
                 }).catch((error) => {
                     alert('حدث خطأ أثناء محاولة مسح البيانات: ' + error.message);
                 });
@@ -1200,7 +1200,7 @@
                 list.innerHTML += `
                     <div class="bg-white/80 hover:bg-slate-100 border p-2.5 rounded-xl text-xs space-y-1.5 transition-all shadow-sm ${isCancelled ? 'opacity-60 bg-amber-50/20' : ''}">
                         <div class="flex justify-between items-center cursor-pointer" onclick="openPOSOrderDetails('${o.firebaseId}')">
-                            <b class="text-slate-900">${o.id} ${isPoApproved ? '<span class="text-emerald-600 text-[9px] font-bold">(PO معتمد)</span>' : ''} ${isCancelled ? '<span class="text-amber-600 text-[9px]">(ملغية)</span>' : ''}</b>
+                            <b class="text-slate-900">${o.id} ${isPoApproved ? '<span class="text-emerald-600 text-[9px] font-bold">(معتمد)</span>' : ''} ${isCancelled ? '<span class="text-amber-600 text-[9px]">(ملغية)</span>' : ''}</b>
                             <span class="font-black ${isCancelled ? 'text-slate-400 line-through' : 'text-[#C5A059]'}">${Math.round(o.total)} EGP</span>
                         </div>
                         <div class="flex justify-between items-center text-[10px]">
@@ -1420,7 +1420,7 @@
                     ordersList.innerHTML += `
                         <div onclick="openOrderDetails('${o.firebaseId}')" class="bg-white/80 hover:bg-amber-50 border p-3 rounded-2xl text-xs space-y-1 cursor-pointer transition-all shadow-sm ${isCancelled ? 'opacity-60 border-amber-300 bg-amber-50/30' : ''}">
                             <div class="flex justify-between items-center">
-                                <b class="text-slate-900">${o.id} ${isPoApproved ? '<span class="text-emerald-600 text-[10px] font-bold">(PO معتمد)</span>' : ''} ${isCancelled ? '<span class="text-amber-600 text-[10px]">(ملغية)</span>' : ''}</b>
+                                <b class="text-slate-900">${o.id} ${isPoApproved ? '<span class="text-emerald-600 text-[10px] font-bold">(معتمد)</span>' : ''} ${isCancelled ? '<span class="text-amber-600 text-[10px]">(ملغية)</span>' : ''}</b>
                                 <span class="font-black ${isCancelled ? 'text-slate-400 line-through' : 'text-[#C5A059]'}">${Math.round(o.total)} EGP</span>
                             </div>
                             <p class="text-slate-600 text-[11px] font-semibold">العميل: ${o.customerName}</p>
@@ -1577,7 +1577,7 @@
             const shipping = parseFloat(document.getElementById('pos-shipping').value) || 0;
             const total = Math.round(parseFloat(document.getElementById('pos-grand-total').innerText) || 0);
             
-            // حساب رقم الفاتورة التالي ليبدأ من 1 بانتظام
+            // تسلسل موحد لكل العمليات (سواء فاتورة محل أو PO)
             const nextSeqNum = state.orders.length + 1;
             const previewId = 'ORD-' + String(nextSeqNum).padStart(4, '0');
             const dateStr = new Date().toLocaleDateString('en-GB');
