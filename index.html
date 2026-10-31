@@ -346,9 +346,14 @@
                     <h3 class="text-lg font-black text-slate-900 flex items-center">
                         <i class="fa-solid fa-folder-tree text-[#C5A059] ml-2"></i> إدارة فئات وبنود الهدايا
                     </h3>
-                    <button onclick="openAddCategoryModal()" class="bg-[#C5A059] hover:bg-[#b08b49] text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md">
-                        <i class="fa-solid fa-plus ml-1"></i> إضافة فئة جديدة
-                    </button>
+                    <div class="flex space-x-2 space-x-reverse">
+                        <button onclick="resetAllOrdersAndPOs()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-3 py-2 rounded-xl text-xs shadow-md">
+                            <i class="fa-solid fa-trash-can ml-1"></i> تصفير كل الفواتير و الـ PO
+                        </button>
+                        <button onclick="openAddCategoryModal()" class="bg-[#C5A059] hover:bg-[#b08b49] text-white font-bold px-4 py-2 rounded-xl text-xs shadow-md">
+                            <i class="fa-solid fa-plus ml-1"></i> إضافة فئة جديدة
+                        </button>
+                    </div>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" id="admin-categories-grid"></div>
             </div>
@@ -913,6 +918,23 @@
             renderPoOrdersTable();
         }
 
+        // دالة مسح وتصفير كل الفواتير وطلبات الـ PO برمجياً من سحابة فايربيس
+        function resetAllOrdersAndPOs() {
+            if (confirm('⚠️ تحذير: هل أنت متأكد تماماً من رغبتك في حذف وحذف جميع الفواتير وطلبات الـ PO نهائياً والبدء من جديد؟')) {
+                db.collection("orders").get().then((querySnapshot) => {
+                    const batch = db.batch();
+                    querySnapshot.forEach((doc) => {
+                        batch.delete(doc.ref);
+                    });
+                    return batch.commit();
+                }).then(() => {
+                    alert('تم تصفير وحذف جميع الفواتير وطلبات الـ PO بنجاح، وأصبح السجل نظيفاً تماماً!');
+                }).catch((error) => {
+                    alert('حدث خطأ أثناء محاولة مسح البيانات: ' + error.message);
+                });
+            }
+        }
+
         function lookupCustomerByPhone() {
             const phoneInput = document.getElementById('cust-phone').value.trim();
             const nameInput = document.getElementById('cust-name');
@@ -1160,13 +1182,11 @@
             });
         }
 
-        // دالة عرض سجل فواتير المحل والمبيعات المعتمدة (تظهر فواتير POS + طلبات PO التي تم تأكيدها واعتمادها فقط)
         function renderPOSRecentOrders() {
             const list = document.getElementById('pos-recent-orders-list');
             if(!list) return;
             list.innerHTML = '';
             
-            // إظهار فواتير المحل العادية أو طلبات الـ PO التي أصبح حالتها approved فقط
             const visibleOrders = state.orders.filter(o => o.type !== 'po' || o.status === 'approved');
             const sortedOrders = [...visibleOrders].sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
 
@@ -1351,7 +1371,6 @@
         }
 
         function renderDashboard() {
-            // إجمالي المبيعات يشمل فواتير المحل وطلبات الـ PO المعتمدة فقط
             const activeOrders = state.orders.filter(o => o.status !== 'cancelled' && (o.type !== 'po' || o.status === 'approved'));
             const totalRevenue = activeOrders.reduce((a, b) => a + b.total, 0);
             const totalOrders = activeOrders.length;
@@ -1835,9 +1854,7 @@
                 activeBtn.classList.add('text-[#C5A059]');
             }
 
-            if (tab === 'po') {
-                renderPoOrdersTable();
-            }
+            (tab === 'po') && renderPoOrdersTable();
         }
 
         document.addEventListener('DOMContentLoaded', initApp);
