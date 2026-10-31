@@ -537,7 +537,7 @@
         </div>
     </div>
 
-    <!-- ADD / EDIT PRODUCT MODAL (مع رفع الصورة من الجهاز مباشرة) -->
+    <!-- ADD / EDIT PRODUCT MODAL (تم استبدال خانة رابط الصورة بزر اختيار ملف من الجهاز) -->
     <div id="product-modal" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-4">
             <div class="flex justify-between border-b pb-3">
@@ -1341,7 +1341,7 @@
 
         function closeProductModal() { document.getElementById('product-modal').classList.add('hidden'); }
 
-        // الحفظ مع تحويل الصورة المرفوعة من الجهاز إلى Base64 لتظهر أوتوماتيك في الأونلاين
+        // دالة الحفظ المحدثة لرفع الصور من الجهاز وتحويلها برمجياً لمتجر الأونلاين
         function saveProductData() {
             const editId = document.getElementById('edit-prod-id').value;
             const code = document.getElementById('prod-code').value.trim();
@@ -1374,7 +1374,7 @@
         function processProductSave(editId, prodData) {
             if (editId) {
                 db.collection("products").doc(editId).update(prodData).then(() => {
-                    alert('تم التحديث بنجاح وتحديث الأونلاين!');
+                    alert('تم التحديث بنجاح وربطه بالأونلاين!');
                     closeProductModal();
                 });
             } else {
