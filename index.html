@@ -87,7 +87,7 @@
         </div>
     </header>
 
-    <!-- NAVIGATION BAR (تم حذف الأكثر مبيعا لإعطاء مساحة مريحة لجميع الأزرار) -->
+    <!-- NAVIGATION BAR -->
     <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-2 py-2 flex items-center justify-around shadow-2xl z-50 max-w-xl mx-auto md:max-w-7xl" dir="rtl">
         <button onclick="switchTab('catalog')" id="nav-catalog" class="nav-btn text-xs font-bold text-[#C5A059] flex flex-col items-center flex-1 px-2 py-1 transition-all">
             <i class="fa-solid fa-gift text-base mb-1"></i> الهدايا
@@ -495,7 +495,14 @@
                 </div>
             </div>
 
+            <!-- أزرار الإجراءات داخل نافذة المعاينة -->
             <div class="flex flex-col gap-2 pt-4 border-t" dir="rtl">
+                <!-- زر اعتماد وخصم المخزون للطلبات المعلقة PO -->
+                <button id="approve-po-btn" onclick="approvePoOrder()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-xl font-bold text-xs shadow-md flex items-center justify-center space-x-1.5 space-x-reverse hidden">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>تأكيد واعتماد طلب PO وخصم المخزون</span>
+                </button>
+
                 <div class="flex space-x-2 space-x-reverse">
                     <button onclick="closeOrderModal()" class="w-1/3 bg-slate-100 py-2.5 rounded-xl font-bold text-xs text-slate-600">إغلاق</button>
                     <button onclick="downloadCurrentModalOrderAsImage()" class="w-2/3 bg-[#C5A059] hover:bg-[#b08b49] text-white py-2.5 rounded-xl font-bold text-xs shadow-md flex items-center justify-center space-x-1.5 space-x-reverse">
@@ -697,7 +704,7 @@
         </div>
     </div>
 
-    <!-- PRINTABLE RECEIPT TEMPLATE (الشكل المخفي للرسم) -->
+    <!-- PRINTABLE RECEIPT TEMPLATE -->
     <div id="printable-receipt" class="hidden max-w-2xl mx-auto p-8 bg-white text-xs space-y-6" dir="ltr">
         <div class="flex justify-between items-start border-b border-slate-300 pb-5">
             <div class="space-y-1">
@@ -1404,13 +1411,20 @@
 
             const statusTextEl = document.getElementById('modal-ord-status-text');
             const cancelBtn = document.getElementById('cancel-order-btn');
+            const approvePoBtn = document.getElementById('approve-po-btn');
 
             if (order.status === 'cancelled') {
                 statusTextEl.innerHTML = 'Cancelled (ملغية)';
                 if(cancelBtn) cancelBtn.classList.add('hidden');
+                if(approvePoBtn) approvePoBtn.classList.add('hidden');
+            } else if (order.type === 'po' && order.status === 'pending') {
+                statusTextEl.innerHTML = 'Pending PO (معلق)';
+                if(cancelBtn) cancelBtn.classList.add('hidden');
+                if(approvePoBtn) approvePoBtn.classList.remove('hidden');
             } else {
-                statusTextEl.innerHTML = 'Official (سارية)';
+                statusTextEl.innerHTML = order.type === 'po' ? 'Approved PO (معتمد)' : 'Official (سارية)';
                 if(cancelBtn) cancelBtn.classList.remove('hidden');
+                if(approvePoBtn) approvePoBtn.classList.add('hidden');
             }
 
             let subtotal = 0;
@@ -1460,6 +1474,31 @@
             }
 
             document.getElementById('order-details-modal').classList.remove('hidden');
+        }
+
+        // دالة اعتماد طلب الـ PO وخصم المخزون السحابي وتحديث حالته
+        function approvePoOrder() {
+            const o = state.currentActiveModalOrder;
+            if (!o || o.status !== 'pending') return;
+
+            if (confirm(`هل أنت متأكد من اعتماد طلب الشراء ${o.id} وخصم الكميات من المخزون؟`)) {
+                // خصم المخزون للأصناف المطلوبة
+                o.detailedItems.forEach(item => {
+                    const prod = state.products.find(p => p.id === item.id || p.code === item.code);
+                    if (prod) {
+                        const newStock = Math.max(0, prod.stock - item.qty);
+                        db.collection("products").doc(prod.id).update({ stock: newStock });
+                    }
+                });
+
+                // تحديث حالة الطلب في فايربيس
+                db.collection("orders").doc(o.firebaseId).update({ status: 'approved' }).then(() => {
+                    alert('تم اعتماد الطلب وخصم الكميات من المخزون بنجاح!');
+                    closeOrderModal();
+                }).catch(err => {
+                    alert('حدث خطأ أثناء تحديث حالة الطلب.');
+                });
+            }
         }
 
         function cancelCurrentOrder() {
@@ -1616,7 +1655,7 @@
                 `;
             });
 
-            document.getElementById('rec-[#C5A059]').innerText = subtotal.toFixed(2) + ' EGP';
+            document.getElementById('rec-subtotal').innerText = subtotal.toFixed(2) + ' EGP';
 
             const discRow = document.getElementById('rec-discount-row');
             if (discount > 0) {
@@ -1723,7 +1762,7 @@
             document.getElementById('edit-prod-id').value = p.id;
             document.getElementById('prod-code').value = p.code || 'G-001';
             document.getElementById('prod-name').value = p.name;
-            document.getElementById('prod-[#C5A059]').value = p.cost || 0;
+            document.getElementById('prod-cost').value = p.cost || 0;
             document.getElementById('prod-price').value = p.price;
             document.getElementById('prod-stock').value = p.stock;
             populateCategoryDropdown();
