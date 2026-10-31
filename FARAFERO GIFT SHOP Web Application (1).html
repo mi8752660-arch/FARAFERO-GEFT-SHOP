@@ -87,27 +87,27 @@
         </div>
     </header>
 
-    <!-- NAVIGATION BAR -->
-    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-2 py-3 flex justify-around shadow-2xl z-50 max-w-xl mx-auto md:max-w-7xl">
-        <button onclick="switchTab('catalog')" id="nav-catalog" class="nav-btn text-xs font-bold text-[#C5A059] flex flex-col items-center transition-all">
+    <!-- NAVIGATION BAR (قابل للتمرير الأفقي لضمان ظهور زر PO دائماً) -->
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-2 py-2 flex items-center space-x-3 space-x-reverse overflow-x-auto shadow-2xl z-50 max-w-xl mx-auto md:max-w-7xl custom-scrollbar" dir="rtl">
+        <button onclick="switchTab('catalog')" id="nav-catalog" class="nav-btn text-xs font-bold text-[#C5A059] flex flex-col items-center flex-shrink-0 px-3 py-1 transition-all">
             <i class="fa-solid fa-gift text-base mb-1"></i> الهدايا
         </button>
-        <button onclick="switchTab('bestseller')" id="nav-bestseller" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center transition-all">
+        <button onclick="switchTab('bestseller')" id="nav-bestseller" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center flex-shrink-0 px-3 py-1 transition-all">
             <i class="fa-solid fa-fire text-base mb-1"></i> الأكثر مبيعا
         </button>
-        <button onclick="switchTab('pos')" id="nav-pos" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center transition-all">
+        <button onclick="switchTab('pos')" id="nav-pos" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center flex-shrink-0 px-3 py-1 transition-all">
             <i class="fa-solid fa-cash-register text-base mb-1"></i> الحسابات
         </button>
-        <button onclick="switchTab('po')" id="nav-po" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center transition-all">
+        <button onclick="switchTab('po')" id="nav-po" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center flex-shrink-0 px-3 py-1 transition-all">
             <i class="fa-solid fa-file-contract text-base mb-1"></i> طلبات PO
         </button>
-        <button onclick="switchTab('customers')" id="nav-customers" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center transition-all">
+        <button onclick="switchTab('customers')" id="nav-customers" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center flex-shrink-0 px-3 py-1 transition-all">
             <i class="fa-solid fa-users text-base mb-1"></i> العملاء
         </button>
-        <button onclick="switchTab('inventory')" id="nav-inventory" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center transition-all">
+        <button onclick="switchTab('inventory')" id="nav-inventory" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center flex-shrink-0 px-3 py-1 transition-all">
             <i class="fa-solid fa-boxes-stacked text-base mb-1"></i> المخزون
         </button>
-        <button onclick="requestAdminAccess()" id="nav-admin" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center transition-all">
+        <button onclick="requestAdminAccess()" id="nav-admin" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center flex-shrink-0 px-3 py-1 transition-all">
             <i class="fa-solid fa-chart-line text-base mb-1"></i> manger
         </button>
     </div>
@@ -1186,13 +1186,12 @@
             });
         }
 
-        // دالة عرض طلبات الـ PO في الجدول المخصص
+        // دالة عرض طلبات الـ PO الواردة في الجدول المخصص
         function renderPoOrdersTable() {
             const tbody = document.getElementById('po-orders-table-body');
             if (!tbody) return;
             tbody.innerHTML = '';
 
-            // تصفية الطلبات التي تحمل نوع 'po' فقط
             const poOrders = state.orders.filter(o => o.type === 'po');
 
             if (poOrders.length === 0) {
