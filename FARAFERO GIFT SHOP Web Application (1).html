@@ -87,27 +87,24 @@
         </div>
     </header>
 
-    <!-- NAVIGATION BAR (قابل للتمرير الأفقي لضمان ظهور زر PO دائماً) -->
-    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-2 py-2 flex items-center space-x-3 space-x-reverse overflow-x-auto shadow-2xl z-50 max-w-xl mx-auto md:max-w-7xl custom-scrollbar" dir="rtl">
-        <button onclick="switchTab('catalog')" id="nav-catalog" class="nav-btn text-xs font-bold text-[#C5A059] flex flex-col items-center flex-shrink-0 px-3 py-1 transition-all">
+    <!-- NAVIGATION BAR (تم حذف الأكثر مبيعا لإعطاء مساحة مريحة لجميع الأزرار) -->
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-2 py-2 flex items-center justify-around shadow-2xl z-50 max-w-xl mx-auto md:max-w-7xl" dir="rtl">
+        <button onclick="switchTab('catalog')" id="nav-catalog" class="nav-btn text-xs font-bold text-[#C5A059] flex flex-col items-center flex-1 px-2 py-1 transition-all">
             <i class="fa-solid fa-gift text-base mb-1"></i> الهدايا
         </button>
-        <button onclick="switchTab('bestseller')" id="nav-bestseller" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center flex-shrink-0 px-3 py-1 transition-all">
-            <i class="fa-solid fa-fire text-base mb-1"></i> الأكثر مبيعا
-        </button>
-        <button onclick="switchTab('pos')" id="nav-pos" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center flex-shrink-0 px-3 py-1 transition-all">
+        <button onclick="switchTab('pos')" id="nav-pos" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center flex-1 px-2 py-1 transition-all">
             <i class="fa-solid fa-cash-register text-base mb-1"></i> الحسابات
         </button>
-        <button onclick="switchTab('po')" id="nav-po" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center flex-shrink-0 px-3 py-1 transition-all">
+        <button onclick="switchTab('po')" id="nav-po" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center flex-1 px-2 py-1 transition-all">
             <i class="fa-solid fa-file-contract text-base mb-1"></i> طلبات PO
         </button>
-        <button onclick="switchTab('customers')" id="nav-customers" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center flex-shrink-0 px-3 py-1 transition-all">
+        <button onclick="switchTab('customers')" id="nav-customers" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center flex-1 px-2 py-1 transition-all">
             <i class="fa-solid fa-users text-base mb-1"></i> العملاء
         </button>
-        <button onclick="switchTab('inventory')" id="nav-inventory" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center flex-shrink-0 px-3 py-1 transition-all">
+        <button onclick="switchTab('inventory')" id="nav-inventory" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center flex-1 px-2 py-1 transition-all">
             <i class="fa-solid fa-boxes-stacked text-base mb-1"></i> المخزون
         </button>
-        <button onclick="requestAdminAccess()" id="nav-admin" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center flex-shrink-0 px-3 py-1 transition-all">
+        <button onclick="requestAdminAccess()" id="nav-admin" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center flex-1 px-2 py-1 transition-all">
             <i class="fa-solid fa-chart-line text-base mb-1"></i> manger
         </button>
     </div>
@@ -129,23 +126,6 @@
                 <input type="text" id="catalog-search" oninput="renderCatalogDashboard()" placeholder="ابحث في الهدايا أو الأكواد..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-[#C5A059]">
 
                 <div id="catalog-categories-container" class="space-y-4 max-h-[600px] overflow-y-auto custom-scrollbar p-1"></div>
-            </div>
-        </div>
-
-        <!-- TAB 1.5: BEST SELLER -->
-        <div id="tab-bestseller" class="app-tab hidden space-y-6">
-            <div class="bg-white/90 backdrop-blur-sm rounded-3xl p-6 border shadow-sm space-y-4">
-                <div class="flex items-center justify-between border-b pb-3">
-                    <div>
-                        <h3 class="text-xl font-black text-slate-900 flex items-center">
-                            <i class="fa-solid fa-fire text-amber-500 ml-2"></i> الموديلات والهدايا الأكثر مبيعا
-                        </h3>
-                        <p class="text-xs text-slate-500 mt-1">ترتيب الأصناف بناءً على إجمالي القطع المباعة من الفواتير المعتمدة</p>
-                    </div>
-                    <span class="bg-amber-50 text-amber-700 text-xs font-bold px-3 py-1.5 rounded-xl border border-amber-200">الأكثر طلباً</span>
-                </div>
-
-                <div id="bestseller-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
             </div>
         </div>
 
@@ -917,7 +897,6 @@
             renderPOSProducts();
             renderPOSCart();
             renderCatalogDashboard();
-            renderBestSellers();
             renderInventoryView();
             renderDashboard();
             renderPOSRecentOrders();
@@ -946,53 +925,6 @@
 
         function closeImageZoom() {
             document.getElementById('image-zoom-modal').classList.add('hidden');
-        }
-
-        function renderBestSellers() {
-            const grid = document.getElementById('bestseller-grid');
-            if(!grid) return;
-            grid.innerHTML = '';
-
-            let salesMap = {};
-            state.products.forEach(p => {
-                salesMap[p.id] = { ...p, totalSold: 0 };
-            });
-
-            state.orders.forEach(o => {
-                if (o.status !== 'cancelled' && o.detailedItems) {
-                    o.detailedItems.forEach(item => {
-                        if (salesMap[item.id]) {
-                            salesMap[item.id].totalSold += (item.qty || 0);
-                        }
-                    });
-                }
-            });
-
-            let sortedSellers = Object.values(salesMap).sort((a, b) => b.totalSold - a.totalSold);
-
-            sortedSellers.forEach((p, idx) => {
-                let badgeColor = idx === 0 ? 'bg-amber-500 text-white' : idx === 1 ? 'bg-slate-400 text-white' : idx === 2 ? 'bg-amber-700 text-white' : 'bg-slate-100 text-slate-700';
-                grid.innerHTML += `
-                    <div class="bg-white/90 backdrop-blur-sm rounded-3xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between space-y-3 relative overflow-hidden">
-                        <span class="absolute top-3 left-3 ${badgeColor} text-[10px] font-black px-2.5 py-1 rounded-xl shadow-sm">المركز #${idx + 1}</span>
-                        <div class="h-36 rounded-2xl overflow-hidden bg-slate-100 relative mt-2 cursor-pointer" onclick="openImageZoom('${p.image}', '${p.name}')" title="اضغط لتكبير الصورة">
-                            <img src="${p.image}" class="w-full h-full object-cover">
-                            <span class="absolute bottom-2 right-2 bg-[#C5A059] text-white text-[10px] font-bold px-2 py-0.5 rounded-lg">${p.code}</span>
-                        </div>
-                        <div class="space-y-1">
-                            <h4 class="font-black text-slate-900 text-sm line-clamp-1">${p.name}</h4>
-                            <div class="flex justify-between items-center text-xs pt-1">
-                                <span class="text-slate-500 font-bold">إجمالي المباع:</span>
-                                <span class="font-black text-amber-600 text-sm">${p.totalSold} قطعة</span>
-                            </div>
-                            <div class="flex justify-between items-center text-xs">
-                                <span class="text-slate-500 font-bold">السعر:</span>
-                                <span class="font-black text-[#C5A059]">${p.price} EGP</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
         }
 
         function renderPOSProducts() {
@@ -1186,7 +1118,6 @@
             });
         }
 
-        // دالة عرض طلبات الـ PO الواردة في الجدول المخصص
         function renderPoOrdersTable() {
             const tbody = document.getElementById('po-orders-table-body');
             if (!tbody) return;
@@ -1685,7 +1616,7 @@
                 `;
             });
 
-            document.getElementById('rec-subtotal').innerText = subtotal.toFixed(2) + ' EGP';
+            document.getElementById('rec-[#C5A059]').innerText = subtotal.toFixed(2) + ' EGP';
 
             const discRow = document.getElementById('rec-discount-row');
             if (discount > 0) {
@@ -1792,7 +1723,7 @@
             document.getElementById('edit-prod-id').value = p.id;
             document.getElementById('prod-code').value = p.code || 'G-001';
             document.getElementById('prod-name').value = p.name;
-            document.getElementById('prod-cost').value = p.cost || 0;
+            document.getElementById('prod-[#C5A059]').value = p.cost || 0;
             document.getElementById('prod-price').value = p.price;
             document.getElementById('prod-stock').value = p.stock;
             populateCategoryDropdown();
@@ -1836,7 +1767,7 @@
         }
 
         function switchTab(tab) {
-            ['catalog', 'bestseller', 'pos', 'po', 'customers', 'inventory', 'admin'].forEach(t => {
+            ['catalog', 'pos', 'po', 'customers', 'inventory', 'admin'].forEach(t => {
                 const el = document.getElementById('tab-' + t);
                 if(el) el.classList.add('hidden');
                 const btn = document.getElementById('nav-' + t);
