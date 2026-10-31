@@ -206,7 +206,7 @@
                     <div class="bg-white/90 backdrop-blur-sm rounded-3xl p-6 border border-slate-200 shadow-sm space-y-3">
                         <div class="border-b pb-2 flex justify-between items-center">
                             <h4 class="font-black text-slate-900 text-sm flex items-center">
-                                <i class="fa-solid fa-receipt text-[#C5A059] ml-2"></i> سجل الفواتير الصادرة والقديمة
+                                <i class="fa-solid fa-receipt text-[#C5A059] ml-2"></i> سجل فواتير المحل والمبيعات المعتمدة
                             </h4>
                             <span class="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-md font-bold">معاينة صورة</span>
                         </div>
@@ -319,7 +319,7 @@
             <!-- الملخص العام -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="bg-white/90 backdrop-blur-sm rounded-3xl p-6 border shadow-sm space-y-1">
-                    <p class="text-xs font-bold text-slate-400">إجمالي مبيعات المحل</p>
+                    <p class="text-xs font-bold text-slate-400">إجمالي مبيعات المحل والمعتمدة</p>
                     <h4 class="text-2xl font-black text-[#C5A059]"><span id="dash-total-revenue">0</span> EGP</h4>
                     <p class="text-[10px] text-slate-500 font-semibold" id="dash-total-orders">عدد الطلبات: 0</p>
                 </div>
@@ -381,7 +381,7 @@
 
                 <div class="lg:col-span-4 bg-white/90 backdrop-blur-sm rounded-3xl p-6 border shadow-sm space-y-4">
                     <div class="border-b pb-3">
-                        <h3 class="text-lg font-black text-slate-900">سجل الفواتير الصادرة (manger)</h3>
+                        <h3 class="text-lg font-black text-slate-900">سجل فواتير المحل والمبيعات (manger)</h3>
                         <p class="text-xs text-slate-500">اضغط على أي فاتورة لمعاينتها كصورة أو إلغائها</p>
                     </div>
                     <div id="recent-orders-list" class="space-y-3 max-h-[350px] overflow-y-auto custom-scrollbar"></div>
@@ -1160,17 +1160,28 @@
             });
         }
 
+        // دالة عرض سجل فواتير المحل والمبيعات المعتمدة (تظهر فواتير POS + طلبات PO التي تم تأكيدها واعتمادها فقط)
         function renderPOSRecentOrders() {
             const list = document.getElementById('pos-recent-orders-list');
             if(!list) return;
             list.innerHTML = '';
-            const sortedOrders = [...state.orders].sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+            
+            // إظهار فواتير المحل العادية أو طلبات الـ PO التي أصبح حالتها approved فقط
+            const visibleOrders = state.orders.filter(o => o.type !== 'po' || o.status === 'approved');
+            const sortedOrders = [...visibleOrders].sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+            if (sortedOrders.length === 0) {
+                list.innerHTML = '<p class="text-center text-slate-400 py-4 text-xs">لا توجد فواتير مبيعات معتمدة حتى الآن</p>';
+                return;
+            }
+
             sortedOrders.forEach(o => {
                 const isCancelled = o.status === 'cancelled';
+                const isPoApproved = o.type === 'po';
                 list.innerHTML += `
                     <div class="bg-white/80 hover:bg-slate-100 border p-2.5 rounded-xl text-xs space-y-1.5 transition-all shadow-sm ${isCancelled ? 'opacity-60 bg-amber-50/20' : ''}">
                         <div class="flex justify-between items-center cursor-pointer" onclick="openPOSOrderDetails('${o.firebaseId}')">
-                            <b class="text-slate-900">${o.id} ${isCancelled ? '<span class="text-amber-600 text-[9px]">(ملغية)</span>' : ''}</b>
+                            <b class="text-slate-900">${o.id} ${isPoApproved ? '<span class="text-emerald-600 text-[9px] font-bold">(PO معتمد)</span>' : ''} ${isCancelled ? '<span class="text-amber-600 text-[9px]">(ملغية)</span>' : ''}</b>
                             <span class="font-black ${isCancelled ? 'text-slate-400 line-through' : 'text-[#C5A059]'}">${o.total} EGP</span>
                         </div>
                         <div class="flex justify-between items-center text-[10px]">
@@ -1340,7 +1351,8 @@
         }
 
         function renderDashboard() {
-            const activeOrders = state.orders.filter(o => o.status !== 'cancelled' && o.type !== 'po');
+            // إجمالي المبيعات يشمل فواتير المحل وطلبات الـ PO المعتمدة فقط
+            const activeOrders = state.orders.filter(o => o.status !== 'cancelled' && (o.type !== 'po' || o.status === 'approved'));
             const totalRevenue = activeOrders.reduce((a, b) => a + b.total, 0);
             const totalOrders = activeOrders.length;
             
@@ -1352,7 +1364,7 @@
             });
 
             document.getElementById('dash-total-revenue').innerText = totalRevenue;
-            document.getElementById('dash-total-orders').innerText = 'الطلبات النشطة: ' + totalOrders;
+            document.getElementById('dash-total-orders').innerText = 'الطلبات المعتمدة: ' + totalOrders;
             document.getElementById('dash-total-cost').innerText = totalCostVal;
             document.getElementById('dash-total-value').innerText = totalValueVal;
             document.getElementById('dash-total-pieces').innerText = totalPiecesVal;
@@ -1382,13 +1394,15 @@
             const ordersList = document.getElementById('recent-orders-list');
             if(ordersList) {
                 ordersList.innerHTML = '';
-                const sortedOrders = [...state.orders].filter(o => o.type !== 'po').sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                const visibleOrders = state.orders.filter(o => o.type !== 'po' || o.status === 'approved');
+                const sortedOrders = [...visibleOrders].sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
                 sortedOrders.forEach(o => {
                     const isCancelled = o.status === 'cancelled';
+                    const isPoApproved = o.type === 'po';
                     ordersList.innerHTML += `
                         <div onclick="openOrderDetails('${o.firebaseId}')" class="bg-white/80 hover:bg-amber-50 border p-3 rounded-2xl text-xs space-y-1 cursor-pointer transition-all shadow-sm ${isCancelled ? 'opacity-60 border-amber-300 bg-amber-50/30' : ''}">
                             <div class="flex justify-between items-center">
-                                <b class="text-slate-900">${o.id} ${isCancelled ? '<span class="text-amber-600 text-[10px]">(ملغية)</span>' : ''}</b>
+                                <b class="text-slate-900">${o.id} ${isPoApproved ? '<span class="text-emerald-600 text-[10px] font-bold">(PO معتمد)</span>' : ''} ${isCancelled ? '<span class="text-amber-600 text-[10px]">(ملغية)</span>' : ''}</b>
                                 <span class="font-black ${isCancelled ? 'text-slate-400 line-through' : 'text-[#C5A059]'}">${o.total} EGP</span>
                             </div>
                             <p class="text-slate-600 text-[11px] font-semibold">العميل: ${o.customerName}</p>
@@ -1476,13 +1490,11 @@
             document.getElementById('order-details-modal').classList.remove('hidden');
         }
 
-        // دالة اعتماد طلب الـ PO وخصم المخزون السحابي وتحديث حالته
         function approvePoOrder() {
             const o = state.currentActiveModalOrder;
             if (!o || o.status !== 'pending') return;
 
             if (confirm(`هل أنت متأكد من اعتماد طلب الشراء ${o.id} وخصم الكميات من المخزون؟`)) {
-                // خصم المخزون للأصناف المطلوبة
                 o.detailedItems.forEach(item => {
                     const prod = state.products.find(p => p.id === item.id || p.code === item.code);
                     if (prod) {
@@ -1491,9 +1503,8 @@
                     }
                 });
 
-                // تحديث حالة الطلب في فايربيس
                 db.collection("orders").doc(o.firebaseId).update({ status: 'approved' }).then(() => {
-                    alert('تم اعتماد الطلب وخصم الكميات من المخزون بنجاح!');
+                    alert('تم اعتماد الطلب وخصم الكميات وإضافته لسجل الفواتير بنجاح!');
                     closeOrderModal();
                 }).catch(err => {
                     alert('حدث خطأ أثناء تحديث حالة الطلب.');
