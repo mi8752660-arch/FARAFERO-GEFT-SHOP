@@ -98,7 +98,7 @@
         <button onclick="switchTab('po')" id="nav-po" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center flex-1 px-2 py-1 transition-all">
             <i class="fa-solid fa-file-contract text-base mb-1"></i> طلبات PO
         </button>
-        <button onclick="switchTab('customers')" id="nav-customers" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center flex-1 px-2 py-1 transition-all">
+        <button onclick="requestCustomersAccess()" id="nav-customers" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center flex-1 px-2 py-1 transition-all">
             <i class="fa-solid fa-users text-base mb-1"></i> العملاء
         </button>
         <button onclick="switchTab('inventory')" id="nav-inventory" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center flex-1 px-2 py-1 transition-all">
@@ -412,6 +412,25 @@
             <div class="flex space-x-2 space-x-reverse pt-1">
                 <button onclick="closePinModal()" class="w-1/2 bg-slate-100 py-2.5 rounded-xl text-xs font-bold text-slate-600">إلغاء</button>
                 <button onclick="verifyAdminPin()" class="w-1/2 bg-[#C5A059] text-white py-2.5 rounded-xl text-xs font-bold shadow-md">دخول</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CUSTOMERS PIN CODE MODAL -->
+    <div id="customers-pin-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl w-full max-w-xs p-6 shadow-2xl space-y-4 text-center">
+            <div class="w-12 h-12 bg-amber-50 text-[#C5A059] rounded-2xl flex items-center justify-center mx-auto text-xl shadow-inner">
+                <i class="fa-solid fa-users-lock"></i>
+            </div>
+            <div>
+                <h3 class="font-black text-base text-slate-900">قسم العملاء محمي</h3>
+                <p class="text-[11px] text-slate-400 mt-1">أدخل كلمة المرور لعرض بيانات العملاء</p>
+            </div>
+            <input type="password" id="customers-pin-input" placeholder="كلمة المرور (2580)..." class="w-full border border-slate-200 bg-slate-50 p-3 rounded-xl text-center text-sm font-bold focus:outline-none focus:border-[#C5A059]">
+            <p id="customers-pin-error-msg" class="text-rose-500 text-[11px] font-bold hidden">كلمة المرور غير صحيحة!</p>
+            <div class="flex space-x-2 space-x-reverse pt-1">
+                <button onclick="closeCustomersPinModal()" class="w-1/2 bg-slate-100 py-2.5 rounded-xl text-xs font-bold text-slate-600">إلغاء</button>
+                <button onclick="verifyCustomersPin()" class="w-1/2 bg-[#C5A059] text-white py-2.5 rounded-xl text-xs font-bold shadow-md">دخول</button>
             </div>
         </div>
     </div>
@@ -816,6 +835,7 @@
         const db = firebase.firestore();
 
         const ADMIN_PIN = "2580";
+        const CUSTOMERS_PIN = "2580"; // الباسورد المطلوب لقسم العملاء
 
         let state = { 
             products: [], 
@@ -1120,6 +1140,28 @@
             if (confirm(`هل أنت متأكد من حذف الفئة "${catName}"؟`)) {
                 state.categories = state.categories.filter(c => c !== catName);
                 db.collection("settings").doc("categories").set({ list: state.categories });
+            }
+        }
+
+        // حماية قسم العملاء بكلمة المرور
+        function requestCustomersAccess() {
+            document.getElementById('customers-pin-input').value = '';
+            document.getElementById('customers-pin-error-msg').classList.add('hidden');
+            document.getElementById('customers-pin-modal').classList.remove('hidden');
+        }
+
+        function closeCustomersPinModal() {
+            document.getElementById('customers-pin-modal').classList.add('hidden');
+        }
+
+        function verifyCustomersPin() {
+            const enteredPin = document.getElementById('customers-pin-input').value.trim();
+            const errorMsg = document.getElementById('customers-pin-error-msg');
+            if (enteredPin === CUSTOMERS_PIN) {
+                document.getElementById('customers-pin-modal').classList.add('hidden');
+                switchTab('customers');
+            } else {
+                errorMsg.classList.remove('hidden');
             }
         }
 
@@ -1552,7 +1594,6 @@
             const o = state.currentActiveModalOrder;
             if (!o || o.status !== 'pending') return;
 
-            // التحقق مما إذا كان العميل محظوراً قبل الاعتماد
             const phoneClean = o.customerPhone.split(' - ')[0].trim();
             const customerDocId = 'cust_' + phoneClean.replace(/\s+/g, '_');
             const custSnap = await db.collection("customers").doc(customerDocId).get();
