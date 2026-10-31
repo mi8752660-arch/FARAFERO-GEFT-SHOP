@@ -918,7 +918,7 @@
             renderPoOrdersTable();
         }
 
-        // دالة تصفير تضمن مسح كل الـ orders والـ counters من قاعدة البيانات تماماً
+        // دالة تصفير تضمن مسح كل الـ orders من قاعدة البيانات تماماً
         function resetAllOrdersAndPOs() {
             if (confirm('⚠️ تحذير: هل أنت متأكد تماماً من رغبتك في حذف جميع الفواتير وطلبات الـ PO نهائياً والبدء من جديد برقم 1؟')) {
                 db.collection("orders").get().then((querySnapshot) => {
@@ -1569,6 +1569,18 @@
             }
         }
 
+        // دالة استخراج أحدث رقم مسلسل موحد من قاعدة البيانات لضمان عدم التضارب بين ORD و PO
+        function getNextUnifiedOrderId() {
+            let maxNum = 0;
+            state.orders.forEach(o => {
+                if (o.id) {
+                    const num = parseInt(o.id.replace(/[^0-9]/g, '')) || 0;
+                    if (num > maxNum) maxNum = num;
+                }
+            });
+            return maxNum + 1;
+        }
+
         function previewPOSReceiptAsImageView() {
             if (state.posCart.length === 0) return alert('برجاء اختيار هدايا للفاتورة أولاً!');
             const custName = document.getElementById('cust-name').value.trim() || 'عميل نقدي';
@@ -1578,8 +1590,8 @@
             const shipping = parseFloat(document.getElementById('pos-shipping').value) || 0;
             const total = Math.round(parseFloat(document.getElementById('pos-grand-total').innerText) || 0);
             
-            // حساب التسلسل بناءً على العد الحقيقي للطلبات بالداتا بيز
-            const nextSeqNum = state.orders.length + 1;
+            // حساب التسلسل بناءً على أكبر رقم مسلسل في الداتا بيز لتتطابق تماماً مع متجر الأونلاين
+            const nextSeqNum = getNextUnifiedOrderId();
             const previewId = 'ORD-' + String(nextSeqNum).padStart(4, '0');
             const dateStr = new Date().toLocaleDateString('en-GB');
 
@@ -1602,7 +1614,7 @@
             const shipping = parseFloat(document.getElementById('pos-shipping').value) || 0;
             const total = Math.round(parseFloat(document.getElementById('pos-grand-total').innerText) || 0);
             
-            const nextSeqNum = state.orders.length + 1;
+            const nextSeqNum = getNextUnifiedOrderId();
             const orderId = 'ORD-' + String(nextSeqNum).padStart(4, '0');
             const dateStr = new Date().toLocaleDateString('en-GB');
 
