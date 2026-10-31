@@ -68,8 +68,11 @@
         </div>
     </header>
 
-    <!-- NAVIGATION BAR -->
+    <!-- NAVIGATION BAR (تم إعادة زرار الهدايا هنا) -->
     <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-2 py-2 flex items-center justify-around shadow-2xl z-50 max-w-xl mx-auto md:max-w-7xl" dir="rtl">
+        <button onclick="switchTab('gifts')" id="nav-gifts" class="nav-btn text-xs font-bold text-slate-400 flex flex-col items-center flex-1 px-2 py-1 transition-all">
+            <i class="fa-solid fa-gift text-base mb-1"></i> الهدايا
+        </button>
         <button onclick="switchTab('pos')" id="nav-pos" class="nav-btn text-xs font-bold text-gold flex flex-col items-center flex-1 px-2 py-1 transition-all">
             <i class="fa-solid fa-cash-register text-base mb-1"></i> الحسابات
         </button>
@@ -90,11 +93,33 @@
     <!-- MAIN CONTAINER -->
     <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full space-y-6">
 
+        <!-- TAB: GIFTS (قسم الهدايا المستقل) -->
+        <div id="tab-gifts" class="app-tab hidden space-y-6">
+            <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+                <div class="flex items-center justify-between border-b pb-3">
+                    <div>
+                        <h3 class="text-xl font-black text-slate-900 flex items-center">
+                            <i class="fa-solid fa-gift text-gold ml-2"></i> معرض وقائمة الهدايا
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-1">تصفح الهدايا المتاحة والبحث السريع بالأكواد والأسماء</p>
+                    </div>
+                    <span class="text-xs font-bold bg-slate-100 px-3 py-1 rounded-xl">اضغط لإضافة صنف للفاتورة</span>
+                </div>
+                
+                <div class="bg-slate-50 p-3 rounded-2xl border flex items-center space-x-3 space-x-reverse">
+                    <i class="fa-solid fa-magnifying-glass text-gold"></i>
+                    <input type="text" id="gifts-page-search" oninput="renderGiftsPage()" placeholder="ابحث عن هدية أو كود (مثال: G-010)..." class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs font-bold focus:outline-none focus:border-gold">
+                </div>
+
+                <div id="gifts-page-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 p-1"></div>
+            </div>
+        </div>
+
         <!-- TAB 1: POS (الحسابات) -->
         <div id="tab-pos" class="app-tab space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 
-                <!-- شبكة الهدايا -->
+                <!-- شبكة الهدايا في الحسابات -->
                 <div class="lg:col-span-7 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
                     <div class="flex items-center justify-between border-b pb-3">
                         <h3 class="text-xl font-black text-slate-900 flex items-center">
@@ -772,6 +797,7 @@
         }
 
         function renderAll() {
+            renderGiftsPage();
             renderPOSProducts();
             renderPOSCart();
             renderInventoryView();
@@ -781,6 +807,33 @@
             renderAdminCategories();
             populateCategoryDropdown();
             renderPoOrdersTable();
+        }
+
+        function renderGiftsPage() {
+            const grid = document.getElementById('gifts-page-grid');
+            const searchInput = document.getElementById('gifts-page-search');
+            if(!grid) return;
+            const search = searchInput ? searchInput.value.toLowerCase().trim() : '';
+            grid.innerHTML = '';
+
+            const filtered = state.products.filter(p => p.name.toLowerCase().includes(search) || (p.code && p.code.toLowerCase().includes(search)));
+
+            filtered.forEach(p => {
+                grid.innerHTML += `
+                    <div class="bg-white border rounded-2xl p-3 space-y-2 shadow-sm flex flex-col justify-between">
+                        <img src="${p.image}" class="w-full h-32 object-cover rounded-xl cursor-pointer" onclick="openImageZoom('${p.image}', '${p.name}')">
+                        <div>
+                            <span class="text-[10px] text-gold font-bold">${p.code || ''}</span>
+                            <h4 class="font-bold text-xs line-clamp-1">${p.name}</h4>
+                            <p class="text-[10px] text-slate-400 font-semibold">${p.category}</p>
+                        </div>
+                        <div class="flex justify-between items-center pt-1 border-t">
+                            <span class="font-black text-xs text-gold">${Math.round(p.price)} EGP</span>
+                            <button onclick="addToPOS('${p.id}'); switchTab('pos');" class="bg-gold text-white px-2.5 py-1 rounded-lg text-[10px] font-bold shadow-sm">إضافة للطلب</button>
+                        </div>
+                    </div>
+                `;
+            });
         }
 
         function resetAllOrdersAndPOs() {
@@ -1428,7 +1481,7 @@
         }
 
         function switchTab(tab) {
-            ['pos', 'po', 'customers', 'inventory', 'admin'].forEach(t => {
+            ['gifts', 'pos', 'po', 'customers', 'inventory', 'admin'].forEach(t => {
                 document.getElementById('tab-' + t).classList.add('hidden');
                 document.getElementById('nav-' + t).classList.remove('text-gold');
                 document.getElementById('nav-' + t).classList.add('text-slate-400');
@@ -1437,6 +1490,7 @@
             document.getElementById('nav-' + tab).classList.remove('text-slate-400');
             document.getElementById('nav-' + tab).classList.add('text-gold');
             if (tab === 'po') renderPoOrdersTable();
+            if (tab === 'gifts') renderGiftsPage();
         }
 
         document.addEventListener('DOMContentLoaded', initApp);
