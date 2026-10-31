@@ -251,9 +251,9 @@
                 <div class="flex justify-between items-center border-b pb-3">
                     <div>
                         <h3 class="text-xl font-black text-slate-900">سجل العملاء الدائم</h3>
-                        <p class="text-xs text-slate-500 mt-1">قائمة بجميع أسماء وأرقام هواتف العملاء المسجلين من الفواتير</p>
+                        <p class="text-xs text-slate-500 mt-1">قائمة بجميع أسماء وأرقام هواتف العملاء المسجلين مع إمكانية الحذف أو البلوك</p>
                     </div>
-                    <span class="bg-emerald-50 text-emerald-700 text-xs font-bold px-3 py-1.5 rounded-xl border border-emerald-200">حفظ دائم</span>
+                    <span class="bg-emerald-50 text-emerald-700 text-xs font-bold px-3 py-1.5 rounded-xl border border-emerald-200">إدارة العملاء</span>
                 </div>
                 
                 <input type="text" id="customers-search" oninput="renderCustomersPage()" placeholder="ابحث باسم العميل أو رقم الهاتف..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-[#C5A059]">
@@ -265,8 +265,9 @@
                                 <th class="p-3">#</th>
                                 <th class="p-3">اسم العميل</th>
                                 <th class="p-3">رقم الهاتف</th>
-                                <th class="p-3">عدد الطلبات والفواتير</th>
-                                <th class="p-3 text-left">آخر تواصل / معاملة</th>
+                                <th class="p-3">عدد الطلبات</th>
+                                <th class="p-3">الحالة</th>
+                                <th class="p-3 text-left">التحكم (حذف / بلوك)</th>
                             </tr>
                         </thead>
                         <tbody id="customers-table-body" class="divide-y font-medium"></tbody>
@@ -500,9 +501,7 @@
                 </div>
             </div>
 
-            <!-- أزرار الإجراءات داخل نافذة المعاينة -->
             <div class="flex flex-col gap-2 pt-4 border-t" dir="rtl">
-                <!-- زر اعتماد وخصم المخزون للطلبات المعلقة PO -->
                 <button id="approve-po-btn" onclick="approvePoOrder()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-xl font-bold text-xs shadow-md flex items-center justify-center space-x-1.5 space-x-reverse hidden">
                     <i class="fa-solid fa-circle-check"></i>
                     <span>تأكيد واعتماد طلب PO وخصم المخزون</span>
@@ -918,7 +917,6 @@
             renderPoOrdersTable();
         }
 
-        // دالة تصفير تضمن مسح كل الـ orders من قاعدة البيانات تماماً
         function resetAllOrdersAndPOs() {
             if (confirm('⚠️ تحذير: هل أنت متأكد تماماً من رغبتك في حذف جميع الفواتير وطلبات الـ PO نهائياً والبدء من جديد برقم 1؟')) {
                 db.collection("orders").get().then((querySnapshot) => {
@@ -942,6 +940,11 @@
 
             const foundCustomer = state.customers.find(c => c.phone.trim() === phoneInput);
             if (foundCustomer) {
+                if (foundCustomer.isBlocked) {
+                    alert('⚠️ تنبيه: هذا العميل محظور (Blocked) ولا يمكن إتمام معاملة له!');
+                    document.getElementById('cust-phone').value = '';
+                    return;
+                }
                 nameInput.value = foundCustomer.name;
             }
         }
@@ -1120,6 +1123,29 @@
             }
         }
 
+        // دوال التحكم بالعملاء (حذف وبلوك)
+        function deleteCustomer(docId) {
+            if (confirm('هل أنت متأكد من حذف هذا العميل من السجل نهائياً؟')) {
+                db.collection("customers").doc(docId).delete().then(() => {
+                    alert('تم حذف العميل بنجاح.');
+                }).catch(err => {
+                    alert('حدث خطأ أثناء الحذف.');
+                });
+            }
+        }
+
+        function toggleCustomerBlock(docId, currentBlockStatus) {
+            const newStatus = !currentBlockStatus;
+            const actionText = newStatus ? 'حظر (بلوك)' : 'إلغاء الحظر عن';
+            if (confirm(`هل أنت متأكد من رغبتك في ${actionText} هذا العميل؟`)) {
+                db.collection("customers").doc(docId).update({ isBlocked: newStatus }).then(() => {
+                    alert(newStatus ? 'تم حظر العميل بنجاح ولن يتمكن من الطلب أونلاين.' : 'تم رفع الحظر عن العميل بنجاح.');
+                }).catch(err => {
+                    alert('حدث خطأ أثناء تحديث حالة الحظر.');
+                });
+            }
+        }
+
         function renderCustomersPage() {
             const tbody = document.getElementById('customers-table-body');
             const searchInput = document.getElementById('customers-search');
@@ -1130,18 +1156,31 @@
             const filteredCustomers = state.customers.filter(c => c.name.toLowerCase().includes(search) || c.phone.toLowerCase().includes(search));
 
             if (filteredCustomers.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-slate-400 py-6">لا يوجد عملاء مسجلين حتى الآن</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-slate-400 py-6">لا يوجد عملاء مسجلين حتى الآن</td></tr>';
                 return;
             }
 
             filteredCustomers.forEach((c, idx) => {
+                const isBlocked = c.isBlocked || false;
                 tbody.innerHTML += `
-                    <tr>
+                    <tr class="border-b hover:bg-slate-50">
                         <td class="p-3 font-bold text-slate-400">${idx + 1}</td>
                         <td class="p-3 font-black text-slate-900">${c.name}</td>
                         <td class="p-3 font-bold text-[#C5A059] dir-ltr text-right">${c.phone}</td>
                         <td class="p-3 font-bold text-slate-700">${c.ordersCount || 1} طلبات</td>
-                        <td class="p-3 text-left font-semibold text-slate-500">${c.lastDate || 'سجل دائم'}</td>
+                        <td class="p-3">
+                            <span class="${isBlocked ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'} text-[10px] px-2.5 py-1 rounded-full font-bold">
+                                ${isBlocked ? 'محظور (Blocked)' : 'نشط'}
+                            </span>
+                        </td>
+                        <td class="p-3 text-left space-x-1 space-x-reverse">
+                            <button onclick="toggleCustomerBlock('${c.id}', ${isBlocked})" class="${isBlocked ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-amber-500 hover:bg-amber-600'} text-white px-2.5 py-1.5 rounded-xl font-bold text-xs shadow-sm transition-all">
+                                ${isBlocked ? 'إلغاء البلوك' : 'عمل بلوك'}
+                            </button>
+                            <button onclick="deleteCustomer('${c.id}')" class="bg-rose-600 hover:bg-rose-700 text-white px-2.5 py-1.5 rounded-xl font-bold text-xs shadow-sm transition-all">
+                                حذف
+                            </button>
+                        </td>
                     </tr>
                 `;
             });
@@ -1509,9 +1548,18 @@
             document.getElementById('order-details-modal').classList.remove('hidden');
         }
 
-        function approvePoOrder() {
+        async function approvePoOrder() {
             const o = state.currentActiveModalOrder;
             if (!o || o.status !== 'pending') return;
+
+            // التحقق مما إذا كان العميل محظوراً قبل الاعتماد
+            const phoneClean = o.customerPhone.split(' - ')[0].trim();
+            const customerDocId = 'cust_' + phoneClean.replace(/\s+/g, '_');
+            const custSnap = await db.collection("customers").doc(customerDocId).get();
+            if (custSnap.exists && custSnap.data().isBlocked) {
+                alert('⚠️ عذراً، هذا العميل محظور (Blocked) ولا يمكن اعتماد طلبه!');
+                return;
+            }
 
             if (confirm(`هل أنت متأكد من اعتماد طلب الشراء ${o.id} وخصم الكميات من المخزون؟`)) {
                 o.detailedItems.forEach(item => {
@@ -1569,7 +1617,6 @@
             }
         }
 
-        // دالة استخراج أحدث رقم مسلسل موحد من قاعدة البيانات لضمان عدم التضارب بين ORD و PO
         function getNextUnifiedOrderId() {
             let maxNum = 0;
             state.orders.forEach(o => {
@@ -1590,7 +1637,6 @@
             const shipping = parseFloat(document.getElementById('pos-shipping').value) || 0;
             const total = Math.round(parseFloat(document.getElementById('pos-grand-total').innerText) || 0);
             
-            // حساب التسلسل بناءً على أكبر رقم مسلسل في الداتا بيز لتتطابق تماماً مع متجر الأونلاين
             const nextSeqNum = getNextUnifiedOrderId();
             const previewId = 'ORD-' + String(nextSeqNum).padStart(4, '0');
             const dateStr = new Date().toLocaleDateString('en-GB');
@@ -1606,6 +1652,13 @@
 
             if (!custName || !custPhone) {
                 alert('عذراً، يجب إدخال اسم العميل ورقم الهاتف لإتمام الفاتورة!');
+                return;
+            }
+
+            const customerDocId = 'cust_' + custPhone.replace(/\s+/g, '_');
+            const foundCust = state.customers.find(c => c.id === customerDocId);
+            if (foundCust && foundCust.isBlocked) {
+                alert('⚠️ عذراً، هذا العميل محظور (Blocked) ولا يمكن إصدار فاتورة له!');
                 return;
             }
 
@@ -1643,9 +1696,7 @@
             db.collection("orders").add(newOrder).then((docRef) => {
                 state.lastCheckoutOrder = { ...newOrder, firebaseId: docRef.id };
                 
-                const customerDocId = 'cust_' + custPhone.replace(/\s+/g, '_');
                 const customerRef = db.collection("customers").doc(customerDocId);
-                
                 customerRef.get().then((docSnap) => {
                     if (docSnap.exists) {
                         const existingData = docSnap.data();
@@ -1660,7 +1711,8 @@
                             phone: custPhone,
                             ordersCount: 1,
                             lastDate: dateStr,
-                            timestamp: Date.now()
+                            timestamp: Date.now(),
+                            isBlocked: false
                         });
                     }
                 });
