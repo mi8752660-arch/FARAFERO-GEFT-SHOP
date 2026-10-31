@@ -253,7 +253,7 @@
                         <h3 class="text-xl font-black text-slate-900 flex items-center">
                             سجل العملاء الدائم <span class="bg-amber-100 text-[#C5A059] text-xs px-2.5 py-0.5 rounded-full mr-2 font-black">VIP</span>
                         </h3>
-                        <p class="text-xs text-slate-500 mt-1">قائمة بجميع أسماء وأرقام هواتف العملاء المسجلين مع إمكانية الحذف أو البلوك</p>
+                        <p class="text-xs text-slate-500 mt-1">قائمة بجميع أسماء وأرقام هواتف العملاء المسجلين أوتوماتيكياً مع إمكانية الحذف أو البلوك</p>
                     </div>
                     <span class="bg-emerald-50 text-emerald-700 text-xs font-bold px-3 py-1.5 rounded-xl border border-emerald-200">إدارة العملاء</span>
                 </div>
@@ -527,7 +527,7 @@
             <div class="flex flex-col gap-2 pt-4 border-t" dir="rtl">
                 <button id="approve-po-btn" onclick="approvePoOrder()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-xl font-bold text-xs shadow-md flex items-center justify-center space-x-1.5 space-x-reverse hidden">
                     <i class="fa-solid fa-circle-check"></i>
-                    <span>تأكيد واعتماد طلب PO وخصم المخزون</span>
+                    <span>تأكيد واعتماد طلب PO وخصم المخزون وتسجيل العميل</span>
                 </button>
 
                 <div class="flex space-x-2 space-x-reverse">
@@ -1598,15 +1598,20 @@
             const o = state.currentActiveModalOrder;
             if (!o || o.status !== 'pending') return;
 
-            const phoneClean = o.customerPhone.split(' - ')[0].trim();
+            // استخلاص رقم التليفون واسم العميل بدقة من بيانات طلب الـ PO
+            const phoneClean = o.customerPhone ? o.customerPhone.split(' - ')[0].trim() : 'غير معروف';
+            const custName = o.customerName || 'عميل PO';
             const customerDocId = 'cust_' + phoneClean.replace(/\s+/g, '_');
+
+            // فحص هل العميل محظور أم لا
             const custSnap = await db.collection("customers").doc(customerDocId).get();
             if (custSnap.exists && custSnap.data().isBlocked) {
                 alert('⚠️ عذراً، هذا العميل محظور (Blocked) ولا يمكن اعتماد طلبه!');
                 return;
             }
 
-            if (confirm(`هل أنت متأكد من اعتماد طلب الشراء ${o.id} وخصم الكميات من المخزون؟`)) {
+            if (confirm(`هل أنت متأكد من اعتماد طلب الشراء ${o.id}، وخصم الكميات من المخزون، وتسجيل العميل في قائمة VIP أوتوماتيكياً؟`)) {
+                // 1. خصم المخزون
                 o.detailedItems.forEach(item => {
                     const prod = state.products.find(p => p.id === item.id || p.code === item.code);
                     if (prod) {
@@ -1615,8 +1620,34 @@
                     }
                 });
 
+                // 2. تحديث حالة الطلب إلى معتمد
                 db.collection("orders").doc(o.firebaseId).update({ status: 'approved' }).then(() => {
-                    alert('تم اعتماد الطلب وخصم الكميات وإضافته لسجل الفواتير بنجاح!');
+                    
+                    // 3. تسجيل العميل أو تحديث بياناته في مجموعة (customers) أوتوماتيكياً
+                    const customerRef = db.collection("customers").doc(customerDocId);
+                    const dateStr = new Date().toLocaleDateString('en-GB');
+
+                    customerRef.get().then((docSnap) => {
+                        if (docSnap.exists) {
+                            const existingData = docSnap.data();
+                            customerRef.update({
+                                name: custName,
+                                ordersCount: (existingData.ordersCount || 1) + 1,
+                                lastDate: dateStr
+                            });
+                        } else {
+                            customerRef.set({
+                                name: custName,
+                                phone: phoneClean,
+                                ordersCount: 1,
+                                lastDate: dateStr,
+                                timestamp: Date.now(),
+                                isBlocked: false
+                            });
+                        }
+                    });
+
+                    alert('تم اعتماد طلب الـ PO، خصم المخزون، وإضافة العميل لسجل الـ VIP بنجاح!');
                     closeOrderModal();
                 }).catch(err => {
                     alert('حدث خطأ أثناء تحديث حالة الطلب.');
